@@ -52,14 +52,14 @@ recommonmark = "^0.7.1"
 minversion = "6.0"
 addopts = """
     --ruff --ruff-format
-    --mypy --ignore=docs/ --ignore=src/__init__.py
+    --mypy --ignore ./docs --ignore ./tests
     --cov ./src --json-report --json-report-file=htmlcov/report.json --cov-report html
     --junitxml=./build/reports/unit-tests.xml
 """
 testpaths = ["tests"]
 
 [tool.coverage.run]
-source = ["./*"]
+source = ["./src"]
 omit = ["tests/*", "**/__init__.py"]
 
 
@@ -112,7 +112,7 @@ ignore = [
     "D401",  # non-imperative-mood
     "G004",  # logging-f-string
     "INP001",  # implicit-namespace-package
-    "S101",  # assert
+    "S101", "S104",  # assert, possible binding to all interfaces
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
@@ -134,7 +134,13 @@ docstring-code-format = true
 docstring-code-line-length = 20
 
 [tool.mypy]
-exclude = ["docs"]
+exclude = [
+    "./docs",
+    "./tests",
+]
+[[tool.mypy.overrides]]
+module = ["ska_ser_logging"]
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
