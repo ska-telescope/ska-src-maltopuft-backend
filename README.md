@@ -50,7 +50,7 @@ Navigating to `0.0.0.0:8000` in the browser should return the application landin
 ruff format . && ruff check . --fix
 ```
 
-* All unit and integration tests are defined in `./tests`. [PyTest](http://pythontesting.net/framework/pytest/pytest-introduction/) is used as the testing framework. Pytest is configured to run ruff's linter and perform static type checking with [mypy](https://www.mypy-lang.org/) while testing. Use the command below to run tests:
+* All unit and integration tests are defined in [./tests](./tests). [PyTest](http://pythontesting.net/framework/pytest/pytest-introduction/) is used as the testing framework. Pytest is configured to run ruff's linter and perform static type checking with [mypy](https://www.mypy-lang.org/) while testing. Use the command below to run tests:
 
 ```bash
 python -m pytest .
