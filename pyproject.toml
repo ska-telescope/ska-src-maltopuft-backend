@@ -10,10 +10,22 @@ packages = [
 ]
 
 
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
+
+
+[[tool.poetry.source]]
+name = "ska-nexus"
+url = "https://artefact.skao.int/repository/pypi-internal/simple"
+priority = "primary"
+
+
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = "^0.109.2"
 uvicorn = {extras = ["standard"], version = "^0.27.1"}
+ska-ser-logging = "^0.4.3"
 
 
 [tool.poetry.group.test]
@@ -25,6 +37,7 @@ pytest-cov = "^3.0"
 pytest-json-report = "^1.5.0"
 pytest-ruff = "^0.2.1"
 pytest-mypy = "^0.10.3"
+pylint = "^3.1.0"
 
 
 [tool.poetry.group.docs]
@@ -39,7 +52,7 @@ recommonmark = "^0.7.1"
 minversion = "6.0"
 addopts = """
     --ruff --ruff-format
-    --mypy --ignore=docs/
+    --mypy --ignore=docs/ --ignore=src/__init__.py
     --cov ./src --json-report --json-report-file=htmlcov/report.json --cov-report html
     --junitxml=./build/reports/unit-tests.xml
 """
@@ -71,13 +84,16 @@ exclude = [
     ".tox",
     ".venv",
     ".vscode",
+    "**/__init__.py",
     "__pypackages__",
     "_build",
     "buck-out",
     "build",
     "dist",
+    "docs",
     "node_modules",
     "site-packages",
+    "test",
     "venv",
 ]
 
@@ -91,19 +107,12 @@ indent-width = 4
 
 [tool.ruff.lint]
 # Pylint, flake8 and isort replacement
-select = [
-    # pycodestyle
-    "E",
-    # Pyflakes
-    "F",
-    # pyupgrade
-    "UP",
-    # flake8-bugbear
-    "B",
-    # flake8-simplify
-    "SIM",
-    # isort
-    "I",
+select = ["ALL"]
+ignore = [
+    "D401",  # non-imperative-mood
+    "G004",  # logging-f-string
+    "INP001",  # implicit-namespace-package
+    "S101",  # assert
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
