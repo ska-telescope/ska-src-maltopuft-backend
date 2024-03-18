@@ -1,3 +1,5 @@
+"""Create a FastAPI application."""
+
 from fastapi import FastAPI
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,11 +8,16 @@ from src.api import router
 
 
 def init_routers(app_: FastAPI) -> None:
+    """Include all routers defined in src.api initialisation."""
     app_.include_router(router)
 
 
 def make_middleware() -> list[Middleware]:
-    middleware = [
+    """Return an ordered list of "middleware" to be used by the Fast API application.
+
+    Ordered means that earlier list elements take priority over later list elements.
+    """
+    return [
         Middleware(
             CORSMiddleware,
             allow_origins=["http://localhost:3000"],
@@ -19,10 +26,10 @@ def make_middleware() -> list[Middleware]:
             allow_headers=["*"],
         ),
     ]
-    return middleware
 
 
 def create_app() -> FastAPI:
+    """Create a Fast API application."""
     app_ = FastAPI(middleware=make_middleware())
     init_routers(app_=app_)
     return app_

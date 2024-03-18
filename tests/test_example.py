@@ -1,6 +1,6 @@
-"""Example unit tests"""
+"""Example unit tests."""
 
 
 def test_example() -> None:
-    """This test will always pass"""
+    """Example test that always passes."""
     assert True

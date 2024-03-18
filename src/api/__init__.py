@@ -1,3 +1,5 @@
+"""Initialise all routers used in the application."""
+
 from fastapi import APIRouter
 
 from .root import root_router
