@@ -32,11 +32,17 @@ optional = true
 [tool.poetry.group.docs.dependencies]
 sphinx = "^7.2.6"
 sphinx-rtd-theme = "^2.0.0"
+recommonmark = "^0.7.1"
 
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--ruff --ruff-format --mypy --cov ./src --json-report --json-report-file=htmlcov/report.json --cov-report html --junitxml=./build/reports/unit-tests.xml"
+addopts = """
+    --ruff --ruff-format
+    --mypy --ignore=docs/
+    --cov ./src --json-report --json-report-file=htmlcov/report.json --cov-report html
+    --junitxml=./build/reports/unit-tests.xml
+"""
 testpaths = ["tests"]
 
 [tool.coverage.run]
@@ -118,6 +124,8 @@ line-ending = "auto"
 docstring-code-format = true
 docstring-code-line-length = 20
 
+[tool.mypy]
+exclude = ["docs"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

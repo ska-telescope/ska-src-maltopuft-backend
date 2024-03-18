@@ -50,13 +50,29 @@ Navigating to `0.0.0.0:8000` in the browser should return the application landin
 ruff format . && ruff check . --fix
 ```
 
-* All unit and integration tests are defined in [./tests](./tests). [PyTest](http://pythontesting.net/framework/pytest/pytest-introduction/) is used as the testing framework. Pytest is configured to run ruff's linter and perform static type checking with [mypy](https://www.mypy-lang.org/) while testing. Use the command below to run tests:
+* All unit and integration tests are defined in `./tests`. [PyTest](http://pythontesting.net/framework/pytest/pytest-introduction/) is used as the testing framework. Py
+test is configured to run ruff's linter and perform static type checking with [mypy](https://www.mypy-lang.org/) while testing. Use the command below to run tests:
 
 ```bash
 python -m pytest .
 ```
 
 * Running the tests creates the `htmlcov` directory. The `html` test report can be viewed in any modern web browser by opening `./htmlcov/index.html`. All the tests should pass before merging code.
+
+## Documentation
+
+Documentation is generated with [sphinx](https://www.sphinx-doc.org/en/master/). All configuration and documentation pages are stored in `./docs`. To build the documentation, first ensure that `docs` dependencies are installed and use `make`:
+
+```bash
+# Install doc dependencies
+poetry install --with docs --no-root
+
+# Build the docs
+cd ./docs
+make clean && make html
+```
+
+The docs are built in `./docs/build` and can be viewed in any modern web browser by opening `./docs/build/html/index.html`. The documentation is configured to auto-generate docs for all functions, classes and class methods in the `./src` package. General documentation pages should be created in `./docs/src/package/*.rst`. These pages should be referenced in `./docs/src/index.rst` to be included in the built docs.
 
 ## Documentation
 
