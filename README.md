@@ -8,6 +8,20 @@ MALTOPUFT is a prototype MAchine Learning TOolkit for PUlsars and Fast Transient
 
 This repository will hold all code relating to the MALTOPUFT backend web service.
 
+## Clone the repository
+
+The repository and all submodules can be cloned with:
+
+```bash
+git clone --recurse-submodules git@gitlab.com:ska-telescope/src/ska-src-maltopuft-backend.git
+```
+
+Change to the remote repository and submodules can be pulled into the local copy with:
+
+```bash
+git fetch --all && git pull --recurse-submodules
+```
+
 ## Documentation
 
 Documentation is generated with [sphinx](https://www.sphinx-doc.org/en/master/). All configuration and documentation pages are stored in `./docs`. To build the documentation, first ensure that `docs` dependencies are installed and use `make`:
