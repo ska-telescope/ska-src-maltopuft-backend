@@ -11,7 +11,7 @@ if __name__ == "__main__":
     logger.info(f"Initalised logger for process {__name__}")
 
     uvicorn.run(
-        app="src.core.server:app",
+        app="src.ska_src_maltopuft_backend.core.server:app",
         reload=True,
         workers=1,
         host="127.0.0.1",

@@ -29,7 +29,7 @@ ska-src-maltopuft-backend/
 ```
 
 * `docs`: Developer documentation pages.
-* `src`: Application code.
+* `src.ska_src_maltopuft_backend`: Application code.
     * `api`: Defines versioned API "routers" which are the paths of REST endpoints exposed by the application.
     * `app`: Application-specific logic.
         * `app.schemas`: Schemas for application requests and responses.

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api import router
+from src.ska_src_maltopuft_backend.api import router
 
 
 def init_routers(app_: FastAPI) -> None:
