@@ -1,0 +1,6 @@
+# Dummy CI stage
+dummy-ci:
+  image: python:3.11-slim
+  stage: dummy-ci
+  script:
+    - echo "hello world";
