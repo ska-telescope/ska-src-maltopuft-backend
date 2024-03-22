@@ -1,4 +1,4 @@
-"""Package initialisation routine."""
+"""MALTOPUFT API source code"""
 
 import logging
 
