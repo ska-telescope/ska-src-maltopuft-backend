@@ -33,10 +33,10 @@ MALTOPUFT documentation
 
 .. toctree::
   :maxdepth: 2
-  :caption: Package name
+  :caption: MALTOPUFT API
   :hidden:
 
-  package/guide
+  package/api
 
 
 MALTOPUFT API
@@ -44,4 +44,4 @@ MALTOPUFT API
 
 These are all the packages, functions and scripts that form part of the project.
 
-- :doc:`package/guide`
+- :doc:`package/api`

@@ -5,18 +5,8 @@
     - Insert todo's here
 
 ***************************
-MALTOPUFT API documentation
+API documentation
 ***************************
-
-This section describes requirements and guidelines.
-
-Subtitle
-========
-
-Text ...
-
-Public API Documentation
-````````````````````````
 
 .. Autosummary method taken from https://stackoverflow.com/a/62613202
 

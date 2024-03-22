@@ -1,4 +1,5 @@
 """Routers for health check endpoints."""
+
 from fastapi import APIRouter
 
 health_router = APIRouter()
