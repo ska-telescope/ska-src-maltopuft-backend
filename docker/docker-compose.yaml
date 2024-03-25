@@ -37,3 +37,24 @@ services:
       interval: 30s
       timeout: 3s
       retries: 5
+
+  ska-src-maltopuft-frontend:
+    image: ska-src-maltopuft-frontend:0.0.0
+    build: ../../ska-src-maltopuft-frontend/
+    restart: always
+    container_name: "ska-src-maltopuft-frontend"
+    environment:
+      - PORT=3000
+    volumes:
+      # Ensure node_modules/ isn't mounted here
+      - ../../ska-src-maltopuft-frontend/src:/ska-src-maltopuft-frontend/src
+    ports:
+      - 3000:3000
+    depends_on:
+      ska-src-maltopuft-backend:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://ska-src-maltopuft-frontend:3000 || exit 1
+      interval: 30s
+      timeout: 3s
+      retries: 5
