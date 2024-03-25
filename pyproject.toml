@@ -18,7 +18,7 @@ priority = "primary"
 [[tool.poetry.source]]
 name = "ska-nexus"
 url = "https://artefact.skao.int/repository/pypi-internal/simple"
-priority = "primary"
+priority = "supplemental"
 
 
 [tool.poetry.dependencies]
@@ -44,8 +44,9 @@ pylint = "^3.1.0"
 optional = true
 [tool.poetry.group.docs.dependencies]
 sphinx = "^7.2.6"
-sphinx-rtd-theme = "^2.0.0"
 recommonmark = "^0.7.1"
+ska-ser-sphinx-theme = "^0.1.2"
+myst-parser = "^2.0.0"
 
 
 [tool.pytest.ini_options]
