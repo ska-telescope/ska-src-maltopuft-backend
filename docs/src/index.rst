@@ -1,7 +1,6 @@
 .. ska-src-maltopuft-backend documentation master file.
 
 .. HOME SECTION ==================================================
-
 .. Hidden toctree to manage the sidebar navigation.
 
 .. toctree::
@@ -14,21 +13,31 @@ MALTOPUFT documentation
 =======================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+  :maxdepth: 2
+  :caption: Contents:
 
-.. README =============================================================
-
+.. README ========================================================
 ..
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Readme
+  :maxdepth: 2
+  :caption: Readme
 
-   ../../README
+  README
 
-.. COMMUNITY SECTION ==================================================
+.. PAGES ========================================================
+..
 
+.. toctree::
+  :maxdepth: 2
+  :caption: Developer documentation
+  :hidden:
+
+  pages/getting-started.md
+  pages/project-tooling.md
+  pages/project-structure.rst
+
+.. MALTOPUFT API =================================================
 ..
 
 .. toctree::
