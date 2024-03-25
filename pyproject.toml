@@ -6,7 +6,7 @@ authors = ["Elliot Goodwin <elliot.goodwin@manchester.ac.uk>"]
 readme = ["README.md", "LICENSE"]
 license = "BSD-3-Clause"
 packages = [
-    { include = "my_module", from = "src" }
+    { include = "ska-src-maltopuft-backend", from = "src" }
 ]
 
 
