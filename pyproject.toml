@@ -1,0 +1,147 @@
+[tool.poetry]
+name = "ska-src-maltopuft-backend"
+version = "0.0.1"
+description = "MALTOPUFT backend service"
+authors = ["Elliot Goodwin <elliot.goodwin@manchester.ac.uk>"]
+readme = ["README.md", "LICENSE"]
+license = "BSD-3-Clause"
+packages = [
+    { include = "my_module", from = "src" }
+]
+
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
+
+
+[[tool.poetry.source]]
+name = "ska-nexus"
+url = "https://artefact.skao.int/repository/pypi-internal/simple"
+priority = "primary"
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.109.2"
+uvicorn = {extras = ["standard"], version = "^0.27.1"}
+ska-ser-logging = "^0.4.3"
+
+
+[tool.poetry.group.test]
+optional = true
+[tool.poetry.group.test.dependencies]
+mypy = "^1.8.0"
+pytest = "^8.0.0"
+pytest-cov = "^3.0"
+pytest-json-report = "^1.5.0"
+pytest-ruff = "^0.2.1"
+pytest-mypy = "^0.10.3"
+pylint = "^3.1.0"
+
+
+[tool.poetry.group.docs]
+optional = true
+[tool.poetry.group.docs.dependencies]
+sphinx = "^7.2.6"
+sphinx-rtd-theme = "^2.0.0"
+recommonmark = "^0.7.1"
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = """
+    --ruff --ruff-format
+    --mypy --ignore ./docs --ignore ./tests
+    --cov ./src --json-report --json-report-file=htmlcov/report.json --cov-report html
+    --junitxml=./build/reports/unit-tests.xml
+"""
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["./src"]
+omit = ["tests/*", "**/__init__.py"]
+
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "**/__init__.py",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "docs",
+    "node_modules",
+    "site-packages",
+    "test",
+    "venv",
+]
+
+# Assume Python 3.11
+target-version = "py311"
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+
+[tool.ruff.lint]
+# Pylint, flake8 and isort replacement
+select = ["ALL"]
+ignore = [
+    "D401",  # non-imperative-mood
+    "G004",  # logging-f-string
+    "INP001",  # implicit-namespace-package
+    "S101", "S104",  # assert, possible binding to all interfaces
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Black compatible formatting
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+# Enable auto-formatting of code examples in docstrings.
+docstring-code-format = true
+docstring-code-line-length = 20
+
+[tool.mypy]
+exclude = [
+    "./docs",
+    "./tests",
+]
+[[tool.mypy.overrides]]
+module = ["ska_ser_logging"]
+ignore_missing_imports = true
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
