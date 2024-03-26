@@ -12,6 +12,10 @@ __pycache__
 Pipfile.lock
 .venv
 
+# Environment variables
+.env*
+!.env.example
+
 # Pytest
 htmlcov
 .coverage
