@@ -6,7 +6,7 @@ from fastapi import APIRouter
 
 from src.ska_src_maltopuft_backend.app.schemas.responses.user import User
 
-logger = logging.getLogger("src.api.v1.users")
+logger = logging.getLogger(__name__)
 user_router = APIRouter()
 
 

@@ -15,11 +15,13 @@ class Settings(BaseSettings):
     # Application settings
     RELEASE_VERSION: str = "0.1.0"
     DEBUG: int = 0
+
+    # Database settings
     MALTOPUFT_POSTGRES_USER: str
     MALTOPUFT_POSTGRES_PASSWORD: str
     MALTOPUFT_POSTGRES_HOST: str
     MALTOPUFT_POSTGRES_PORT: int
-    MALTOPUFT_POSTGRES_NAME: str
+    MALTOPUFT_POSTGRES_DB_NAME: str
 
     @computed_field  # type: ignore[misc]
     @property
@@ -40,7 +42,7 @@ class Settings(BaseSettings):
             password=self.MALTOPUFT_POSTGRES_PASSWORD,
             host=self.MALTOPUFT_POSTGRES_HOST,
             port=self.MALTOPUFT_POSTGRES_PORT,
-            path=self.MALTOPUFT_POSTGRES_NAME,
+            path=self.MALTOPUFT_POSTGRES_DB_NAME,
         )
 
 
