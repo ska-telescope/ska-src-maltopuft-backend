@@ -6,7 +6,7 @@ authors = ["Elliot Goodwin <elliot.goodwin@manchester.ac.uk>"]
 readme = ["README.md", "LICENSE"]
 license = "BSD-3-Clause"
 packages = [
-    { include = "ska-src-maltopuft-backend", from = "src" }
+    { include = "ska_src_maltopuft_backend", from = "src" }
 ]
 
 
@@ -22,15 +22,13 @@ priority = "supplemental"
 
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.10,<4.0.0"
 fastapi = "^0.109.2"
 uvicorn = {extras = ["standard"], version = "^0.27.1"}
 ska-ser-logging = "^0.4.3"
 
 
-[tool.poetry.group.test]
-optional = true
-[tool.poetry.group.test.dependencies]
+[tool.poetry.dev-dependencies]
 mypy = "^1.8.0"
 pytest = "^8.0.0"
 pytest-cov = "^3.0"
