@@ -13,9 +13,11 @@ def init_routers(app_: FastAPI) -> None:
 
 
 def make_middleware() -> list[Middleware]:
-    """Return an ordered list of "middleware" to be used by the Fast API application.
+    """Return an ordered list of "middleware" used by the Fast API
+    application.
 
-    Ordered means that earlier list elements take priority over later list elements.
+    Ordered means that earlier list elements take priority over later list
+    elements.
     """
     return [
         Middleware(

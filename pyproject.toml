@@ -6,7 +6,7 @@ authors = ["Elliot Goodwin <elliot.goodwin@manchester.ac.uk>"]
 readme = ["README.md", "LICENSE"]
 license = "BSD-3-Clause"
 packages = [
-    { include = "my_module", from = "src" }
+    { include = "ska_src_maltopuft_backend", from = "src" }
 ]
 
 
@@ -22,22 +22,24 @@ priority = "supplemental"
 
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.10,<4.0.0"
 fastapi = "^0.109.2"
 uvicorn = {extras = ["standard"], version = "^0.27.1"}
 ska-ser-logging = "^0.4.3"
 
 
-[tool.poetry.group.test]
-optional = true
-[tool.poetry.group.test.dependencies]
+[tool.poetry.dev-dependencies]
 mypy = "^1.8.0"
 pytest = "^8.0.0"
 pytest-cov = "^3.0"
 pytest-json-report = "^1.5.0"
-pytest-ruff = "^0.2.1"
 pytest-mypy = "^0.10.3"
 pylint = "^3.1.0"
+black = "^24.3.0"
+isort = "^5.13.2"
+flake8 = "^7.0.0"
+pylint-junit = "^0.3.4"
+ruff = "^0.3.4"
 
 
 [tool.poetry.group.docs]
@@ -52,16 +54,17 @@ myst-parser = "^2.0.0"
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = """
-    --ruff --ruff-format
-    --mypy --ignore ./docs --ignore ./tests
-    --cov ./src --json-report --json-report-file=htmlcov/report.json --cov-report html
-    --junitxml=./build/reports/unit-tests.xml
+    --cov src
+    --cov-report=term-missing
+    --cov-report html:build/reports/code-coverage
 """
+
+
 testpaths = ["tests"]
 
 [tool.coverage.run]
 source = ["./src"]
-omit = ["tests/*", "**/__init__.py"]
+omit = ["**/__init__.py"]
 
 
 [tool.ruff]
@@ -96,21 +99,19 @@ exclude = [
     "site-packages",
     "test",
     "venv",
+    ".make",
 ]
 
 # Assume Python 3.11
 target-version = "py311"
-
-# Same as Black.
-line-length = 88
-indent-width = 4
 
 
 [tool.ruff.lint]
 # Pylint, flake8 and isort replacement
 select = ["ALL"]
 ignore = [
-    "D401",  # non-imperative-mood
+    "D203", "D213",  # Silence incompatability warnings
+    "D205", "D401",  # blank-line-after-summary, non-imperative-mood
     "G004",  # logging-f-string
     "INP001",  # implicit-namespace-package
     "S101", "S104",  # assert, possible binding to all interfaces
@@ -123,16 +124,6 @@ unfixable = []
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-[tool.ruff.format]
-# Black compatible formatting
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
-
-# Enable auto-formatting of code examples in docstrings.
-docstring-code-format = true
-docstring-code-line-length = 20
 
 [tool.mypy]
 exclude = [
