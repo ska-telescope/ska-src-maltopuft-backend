@@ -11,8 +11,7 @@ PYTHON_SWITCHES_FOR_PYLINT = --disable=W1203
 # [tool.pytest.ini_options], addopts
 
 # Run pre-commit checks
-python-do-pre-commit:
-	# Note: mypy isn't included in CI templates yet
+pre-commit:
 	@python -m mypy src
 	make python-format
 	make python-lint

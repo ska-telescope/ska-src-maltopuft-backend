@@ -2,9 +2,16 @@
 
 ## Clone the repository
 
+The repository and all submodules can be cloned with:
+
 ```bash
-git@gitlab.com:ska-telescope/src/ska-src-maltopuft-backend.git
-cd ska-src-maltopuft-backend
+git clone --recurse-submodules git@gitlab.com:ska-telescope/src/ska-src-maltopuft-backend.git
+```
+
+Change to the remote repository and submodules can be pulled into the local copy with:
+
+```bash
+git fetch --all && git pull --recurse-submodules
 ```
 
 ## Run the application
