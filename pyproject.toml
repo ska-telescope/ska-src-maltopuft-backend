@@ -12,13 +12,12 @@ packages = [
 
 [[tool.poetry.source]]
 name = "PyPI"
-priority = "primary"
+url = "https://pypi.org/"
 
 
 [[tool.poetry.source]]
 name = "ska-nexus"
 url = "https://artefact.skao.int/repository/pypi-internal/simple"
-priority = "supplemental"
 
 
 [tool.poetry.dependencies]
