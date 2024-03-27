@@ -3,20 +3,30 @@ image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
-include:
-  # Python stages
-  - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/python.gitlab-ci.yml'
-  # Documentation
-  - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/docs.gitlab-ci.yml'
-  # Badges from CI metrics
-  - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
-
 stages:
   - lint
   - test
   - scan
   - build
   - pages
+
+include:
+  # Python stages
+  # Lint
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
+  # Test
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-test.gitlab-ci.yml'
+  # Scan
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-scan.gitlab-ci.yml'
+  # Build
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-build.gitlab-ci.yml'
+  # Documentation
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/docs.gitlab-ci.yml'
+  # Badges from CI metrics
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
