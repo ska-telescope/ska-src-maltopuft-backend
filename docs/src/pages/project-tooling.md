@@ -14,7 +14,7 @@ With the exception of `mypy`, all of these tools are configured to run in the CI
 Before commiting any changes to the repository, you can run each of these tools (including `mypy`) locally with:
 
 ```bash
-make python-do-pre-commit
+make pre-commit
 ```
 
 ### Optional

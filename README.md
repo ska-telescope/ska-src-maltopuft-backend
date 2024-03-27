@@ -13,6 +13,10 @@ This repository will hold all code relating to the MALTOPUFT backend web service
 Documentation is generated with [sphinx](https://www.sphinx-doc.org/en/master/). All configuration and documentation pages are stored in `./docs`. To build the documentation, first ensure that `docs` dependencies are installed and use `make`:
 
 ```bash
+make docs-build html
+
+### ----- OR ----- ###
+
 # Install doc dependencies
 poetry install --with docs --no-root
 

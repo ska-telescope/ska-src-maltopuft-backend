@@ -7,6 +7,9 @@ include:
   # Python stages
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python.gitlab-ci.yml'
+  # Documentation
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/docs.gitlab-ci.yml'
   # Badges from CI metrics
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
@@ -16,3 +19,4 @@ stages:
   - test
   - scan
   - build
+  - pages
