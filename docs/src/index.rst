@@ -36,21 +36,4 @@ MALTOPUFT documentation
   pages/getting-started.md
   pages/project-tooling.md
   pages/project-structure.rst
-
-.. MALTOPUFT API =================================================
-..
-
-.. toctree::
-  :maxdepth: 2
-  :caption: MALTOPUFT API
-  :hidden:
-
-  package/api
-
-
-MALTOPUFT API
-=============
-
-These are all the packages, functions and scripts that form part of the project.
-
-- :doc:`package/api`
+  autoapi/index.rst

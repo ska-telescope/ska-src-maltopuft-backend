@@ -34,11 +34,11 @@ extensions = [
     "sphinx.ext.viewcode",
     # Auto document packages
     "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",
+    "autoapi.extension",
     "recommonmark",
 ]
 
-autosummary_generate = True
+autoapi_dirs = ["../../src"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

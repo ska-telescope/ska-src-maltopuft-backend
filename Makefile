@@ -11,13 +11,6 @@ PYTHON_SWITCHES_FOR_PYLINT = --disable=W1203
 # PYTHON_VARS_AFTER_PYTEST are defined in pyproject.toml
 # [tool.pytest.ini_options], addopts
 
-# Doc builds with ska template will fail because core deps
-# (not just doc deps) are required for package auto-summary
-# documentation. Therefore ensure all deps required for the
-# build are installed first.
-docs-pre-build:
-	poetry install --with docs --no-root
-
 # Run pre-commit checks
 pre-commit:
 	@python -m mypy src
