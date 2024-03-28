@@ -13,29 +13,42 @@ After following one of the deployment methods below, navigating to `localhost:80
 
 ### Compose (recommended)
 
-It is recommended to deploy a local development environment with the provided `./docker/docker-compose.yaml` file. This method brings up all the application dependencies and configures the network connectivity between them on the local machine.
+It is recommended to deploy a local development environment with the docker compose file provided at `./docker/docker-compose.yaml`. This method brings up all the application dependencies and configures the network connectivity between them on the local machine.
 
-The build steps below build `Dockerfile`s on the local filesystem rather than using locally built images or pulling published images from a container registry. In order for the supplied `docker-compose.yaml` to work out-of-the-box, this repository (`ska-src-maltopuft-backend`) and the frontend repository (`ska-src-maltopuft-frontend`) must therefore exist at the same level in the directory tree, as shown below:
+The build steps below build `Dockerfile`s on the local filesystem rather than using pre-existing, locally built images or pulling published images from a container registry.
+
+In order for the supplied `docker-compose.yaml` to work out-of-the-box, this repository (`ska-src-maltopuft-backend`) and the frontend repository (`ska-src-maltopuft-frontend`) must therefore exist at the same level in the directory tree, as shown below:
 
 ```bash
 <parent-dir>
-├─ ska-src-maltopuft-backend/
-    ├─ docker/
-        ├─ docker-compose.yaml
-├─ ska-src-maltopuft-frontend/
+    ├─ ska-src-maltopuft-backend/
+        ├─ docker/
+            ├─ docker-compose.yaml
+        ├─ ...
+    ├─ ska-src-maltopuft-frontend/
+        ├─ ...
 ```
 
-Alternatively, the `build` fields in `docker-compose.yaml` can be modified to point to the respective directory.
+Alternatively, the `build` fields in `docker-compose.yaml` can be modified to point to the respective directory. The remainder of this document assumes that commands are run from the `ska-src-maltopuft-backend/` directory.
 
-Then, run the commands given below from the `ska-src-maltopuft-backend` directory to bring up the application development environment:
+Next, configure the `.env.docker` file by copying from the example:
+
+```
+cp .env.example .env.docker
+```
+
+The contents of `.env.example` will work as-is with the docker compose configuration provided.
+
+You can rename `.env.docker` to anything you like. If renaming the file, the value of `services.ska-src-maltopuft-backend.env_file` must be modified. Alternatively, this field can be removed and provided as a [command-line argument](https://docs.docker.com/compose/environment-variables/set-environment-variables/#substitute-with---env-file).
+
+After configuring the environment variables, the following command will bring up the application development environment:
 
 
 ```bash
-podman compose -f "docker/docker-compose.yaml" down
 podman compose -f "docker/docker-compose.yaml" up -d --build
 ```
 
-If you are only interested in bringing up the backend service and database, the second command given above can be modified to only bring up the required services:
+If you are only interested in bringing up the backend service and database the command can be modified as follows:
 
 ```bash
 podman compose  -f "docker/docker-compose.yaml" up -d --build maltopuftdb ska-src-maltopuft-backend

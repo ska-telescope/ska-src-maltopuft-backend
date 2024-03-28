@@ -50,3 +50,13 @@ python -m pytest .
 ```
 
 Running the tests creates the `build` directory. The `html` test report can be viewed in any modern web browser by opening `./build/reports/code-coverage/index.html`. All the tests should pass before merging code.
+
+If the database is deployed with docker, then you must ensure that the database is visible to the host where the test command is being executed.
+
+For example, if both the application and database are deployed in the same container network (e.g. after deploying with `compose`) then this can be achieved by executing test commands *inside* the backend application container:
+
+```bash
+docker exec -it ska-src-maltopuft-backend make python-test
+```
+
+or by updating the `MALTOPUFT_DB_HOST` environment variable to point to the IP address of the docker container, etc.
