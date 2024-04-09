@@ -66,9 +66,8 @@ def ping_db(
         ) from e
 
 
-def ping_db_from_pool() -> sqlalchemy.engine.cursor.Result:
+def ping_db_from_pool(db: Session) -> sqlalchemy.engine.cursor.Result:
     """Database readiness check."""
-    db = next(get_db())
     try:
         return db.execute(sqlalchemy.text("SELECT 1"))
     except sqlalchemy.exc.SQLAlchemyError as e:

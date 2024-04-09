@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env")
 
     # Application settings
+    APP_NAME: str = "ska-src-maltopuft-backend"
     RELEASE_VERSION: str = "0.1.0"
     DEBUG: int = 0
 

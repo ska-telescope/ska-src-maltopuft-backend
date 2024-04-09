@@ -5,7 +5,7 @@ from collections.abc import Generator
 import pytest
 import sqlalchemy
 from fastapi.testclient import TestClient
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 
 from src.ska_src_maltopuft_backend.core.database import (
     Base,
@@ -15,7 +15,7 @@ from src.ska_src_maltopuft_backend.core.database import (
 from src.ska_src_maltopuft_backend.core.server import app
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 def engine() -> Generator[sqlalchemy.engine.base.Engine, None, None]:
     """Create a test database engine.
 
@@ -77,5 +77,40 @@ def client(db: Session) -> Generator[TestClient, None, None]:
     rolls back test transactions.
     """
     app.dependency_overrides[get_db] = lambda: db
+    with TestClient(app) as c:
+        yield c
+
+
+@pytest.fixture()
+def one_off_test_client() -> Generator[TestClient, None, None]:
+    """Creates a FastAPI test client scoped to the test function.
+
+    This fixture should only be used when the test case is expected to raise
+    an exception due to an invalid database connection.
+
+    Because this fixture configures its own database session for the duration
+    of the test, it can be used *after monkeypatching* environment variables
+    inside a test to mock 'bad' database connections.
+
+    As the database referenced by this fixture isn't expected to exist, there
+    are a few key differences with the `db` fixture defined in conftest.py.
+
+        1. There is no attempt to create the database schemas before the test.
+        2. There is no attempt to clean up database schemas after a test.
+    """
+    test_session = sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=init_engine(),
+    )
+
+    def override_get_db() -> Generator[Session, None, None]:
+        try:
+            db = test_session()
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as c:
         yield c
