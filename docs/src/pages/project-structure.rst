@@ -16,9 +16,8 @@ An outline of the repository structure is given below:
     │  │  │  ├─ requests/
     │  │  │  ├─ responses/
     │  ├─ core/
-    │  │  ├─ database/
-    │  │  │  ├─ database.py
     │  │  ├─ config.py
+    │  │  ├─ database.py
     │  │  ├─ server.py
     ├─ tests/
     ├─ main.py
@@ -34,5 +33,6 @@ An outline of the repository structure is given below:
         * `schemas`: Schemas for application requests and responses.
     * `core`: Generic application configuration and boilerplate code. For example modules that establish database connections, enforce Role-Based Access Control (RBAC) and define any base classes re-used by several application components will all be defined here.
         * `config`: Application configuration.
+        * `database`: Database connection.
         * `server`: Creates a FastAPI application.
 * `tests`: Unit and integration tests.

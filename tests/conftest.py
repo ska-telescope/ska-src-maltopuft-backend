@@ -7,7 +7,7 @@ import sqlalchemy
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from src.ska_src_maltopuft_backend.core.database.database import (
+from src.ska_src_maltopuft_backend.core.database import (
     Base,
     get_db,
     init_engine,
