@@ -33,6 +33,7 @@ MALTOPUFT documentation
   :caption: Developer documentation
   :hidden:
 
+  pages/maltopuft.rst
   pages/getting-started.md
   pages/project-tooling.md
   pages/project-structure.rst
