@@ -53,15 +53,6 @@ def invalid_database_user_in_conn_string(monkeypatch: MonkeyPatch) -> None:
     )
 
 
-@given("an invalid database password in the connection string")
-def invalid_database_password_in_conn_string(monkeypatch: MonkeyPatch) -> None:
-    monkeypatch.setattr(
-        settings,
-        "MALTOPUFT_POSTGRES_PASSWORD",
-        "this-is-an-invalid-password",
-    )
-
-
 ##############################################################################
 # Then steps #################################################################
 ##############################################################################

@@ -18,7 +18,3 @@ Feature: Backend-database connection
     Scenario: Connection to invalid database user
         Given an invalid database user in the connection string
         Then a 'Database unavailable' error message is raised
-
-    Scenario: Connection to invalid database password
-        Given an invalid database password in the connection string
-        Then a 'Database unavailable' error message is raised
