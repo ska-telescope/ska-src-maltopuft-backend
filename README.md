@@ -1,12 +1,28 @@
 # ska-src-maltopuft-backend
 
+## MALTOPUFT
+
 MALTOPUFT is a prototype MAchine Learning TOolkit for PUlsars and Fast Transients. The toolkit will provide a unified interface to:
 
 1. View single pulse and periodic candidates identified by SKA precursors and, once operational, the SKA.
 2. Assign "ground-truth" labels to candidates for use in Machine Learning classifier training.
 3. Retrieve and create version controlled datasets for use in the Machine Learning classifier training and evaluation pipelines. 
 
-This repository will hold all code relating to the MALTOPUFT backend web service.
+This repository will hold all code relating to the MALTOPUFT API web service.
+
+## Clone the repository
+
+The repository and all submodules can be cloned with:
+
+```bash
+git clone --recurse-submodules git@gitlab.com:ska-telescope/src/ska-src-maltopuft-backend.git
+```
+
+Change to the remote repository and submodules can be pulled into the local copy with:
+
+```bash
+git fetch --all && git pull --recurse-submodules
+```
 
 ## Documentation
 

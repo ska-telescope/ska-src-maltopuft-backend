@@ -12,6 +12,10 @@ __pycache__
 Pipfile.lock
 .venv
 
+# Environment variables
+.env*
+!.env.example
+
 # Pytest
 htmlcov
 .coverage
@@ -25,7 +29,6 @@ coverage.xml
 docs/_build
 docs/src/_build
 docs/apidocs
-docs/src/package/_autosummary
 
 # ide
 .idea

@@ -13,9 +13,8 @@ build:
       # Tell poetry to not use a virtual environment
       - poetry config virtualenvs.create false
     post_install:
-      # Install core and docs dependencies.
-      # Core package dependencies are required for generating API documentation with autosummary.
-      - poetry install --with docs
+      # Install docs dependencies.
+      - poetry install --only docs
 
 sphinx:
   configuration: docs/src/conf.py

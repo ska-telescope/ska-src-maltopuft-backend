@@ -1,0 +1,62 @@
+version: "3.9"
+name: ska-src-maltopuft
+
+services:
+  maltopuftdb:
+    image: postgres:16.2-alpine3.19
+    restart: always
+    container_name: "maltopuftdb"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: asdasd
+      POSTGRES_DB: "maltopuftdb"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+
+  ska-src-maltopuft-backend:
+    image: ska-src-maltopuft-backend:0.1.0
+    build: ../
+    restart: always
+    container_name: "ska-src-maltopuft-backend"
+    environment:
+      - PORT=8000
+    volumes:
+      - ../:/ska-src-maltopuft-backend
+    env_file:
+      - path: ../.env.docker
+    ports:
+      - 8000:8000
+    depends_on:
+      maltopuftdb:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://ska-src-maltopuft-backend:8000/v1/ping || exit 1
+      interval: 30s
+      timeout: 3s
+      retries: 5
+
+  ska-src-maltopuft-frontend:
+    image: ska-src-maltopuft-frontend:0.0.0
+    build: ../../ska-src-maltopuft-frontend/
+    restart: always
+    container_name: "ska-src-maltopuft-frontend"
+    environment:
+      - PORT=3000
+    volumes:
+      # Ensure node_modules/ isn't mounted here
+      - ../../ska-src-maltopuft-frontend/src:/ska-src-maltopuft-frontend/src
+    ports:
+      - 3000:3000
+    depends_on:
+      ska-src-maltopuft-backend:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://ska-src-maltopuft-frontend:3000 || exit 1
+      interval: 30s
+      timeout: 3s
+      retries: 5

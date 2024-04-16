@@ -11,7 +11,7 @@ This project uses the following tools for static code analysis:
 
 With the exception of `mypy`, all of these tools are configured to run in the CI pipeline.
 
-Before commiting any changes to the repository, you can run each of these tools (including `mypy`) locally with:
+Before commiting any changes to the repository, you can run static code analysis locally with:
 
 ```bash
 make pre-commit
@@ -42,6 +42,10 @@ At this point in time, there are still some minor differences between `black` an
 All unit and integration tests are defined in `./tests`. [PyTest](http://pythontesting.net/framework/pytest/pytest-introduction/) is used as the testing framework. Use the command below to run tests:
 
 ```bash
+make python-test
+
+### ----- OR ----- ###
+
 python -m pytest .
 ```
 
