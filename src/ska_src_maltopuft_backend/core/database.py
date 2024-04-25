@@ -1,7 +1,6 @@
-"""Initialises the engine for the database connection pool."""
+"""Initialises the database connection pool."""
 
 import logging
-import traceback
 from collections.abc import Generator
 
 import sqlalchemy
@@ -20,15 +19,7 @@ def init_engine() -> sqlalchemy.engine.base.Engine:
         f"Initialising database engine for {settings.MALTOPUFT_POSTGRES_INFO}",
     )
 
-    try:
-        engine_ = create_engine(str(settings.MALTOPUFT_POSTGRES_URI))
-    except Exception as e:
-        logger.exception(
-            "Failed to initialise engine for "
-            f"{settings.MALTOPUFT_POSTGRES_INFO}."
-            "Check the engine parameters are valid.",
-        )
-        raise e from None
+    engine_ = create_engine(str(settings.MALTOPUFT_POSTGRES_URI))
 
     logger.info(
         "Successfully initialised engine for "
@@ -46,10 +37,9 @@ def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
-    except Exception as e:
+    except sqlalchemy.exc.OperationalError as e:
         logger.exception(
-            f"Failed to connect to {settings.MALTOPUFT_POSTGRES_INFO}. "
-            f"Traceback: {traceback.format_tb(e.__traceback__)}",
+            f"Failed to connect to {settings.MALTOPUFT_POSTGRES_INFO}. ",
         )
         raise HTTPException(
             status_code=503,
@@ -59,31 +49,30 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
-def ping_db() -> sqlalchemy.engine.cursor.Result:
+def ping_db(
+    db_engine: sqlalchemy.engine.base.Engine = engine,
+) -> sqlalchemy.engine.cursor.Result:
     """Database readiness check."""
-    with engine.connect() as conn:
-        try:
+    try:
+        with db_engine.connect() as conn:
             return conn.execute(sqlalchemy.text("SELECT 1"))
-        except Exception as e:
-            logger.exception(
-                f"Failed to connect to {settings.MALTOPUFT_POSTGRES_INFO}. "
-                f"Traceback: {traceback.format_tb(e.__traceback__)}",
-            )
-            raise HTTPException(
-                status_code=503,
-                detail="Database unavailable.",
-            ) from e
+    except sqlalchemy.exc.OperationalError as e:
+        logger.exception(
+            f"Failed to connect to {settings.MALTOPUFT_POSTGRES_INFO}. ",
+        )
+        raise HTTPException(
+            status_code=503,
+            detail="Database unavailable.",
+        ) from e
 
 
-def ping_db_from_pool() -> sqlalchemy.engine.cursor.Result:
+def ping_db_from_pool(db: Session) -> sqlalchemy.engine.cursor.Result:
     """Database readiness check."""
-    db = next(get_db())
     try:
         return db.execute(sqlalchemy.text("SELECT 1"))
-    except Exception as e:
+    except sqlalchemy.exc.SQLAlchemyError as e:
         logger.exception(
-            f"Failed to connect to {settings.MALTOPUFT_POSTGRES_INFO}. "
-            f"Traceback: {traceback.format_tb(e.__traceback__)}",
+            f"Failed to connect to {settings.MALTOPUFT_POSTGRES_INFO}. ",
         )
         raise HTTPException(
             status_code=503,

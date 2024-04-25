@@ -6,7 +6,7 @@ ARG POETRY_HOME="/opt/poetry"
 # libpq-dev and gcc binaries are required to use the psycopg python
 # package which handles connections to a PostgreSQL database.
 RUN apt update && \
-    apt-get install -y curl libpq-dev gcc && \
+    apt-get install -y curl libpq-dev gcc make && \
     curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} python3 - && \
     ln -s ${POETRY_HOME}/bin/poetry /usr/local/bin/poetry
 

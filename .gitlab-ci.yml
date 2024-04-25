@@ -1,8 +1,14 @@
 image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
 
+services:
+  - postgres:16.2-alpine3.19
+
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   CI_POETRY_VERSION: 1.8.2
+  POSTGRES_USER: $TEST_POSTGRES_USER
+  POSTGRES_DB: $TEST_POSTGRES_DB
+  POSTGRES_PASSWORD: $TEST_POSTGRES_PASSWORD
 
 stages:
   - lint
@@ -36,6 +42,14 @@ include:
   before_script:
     # Install OS packages required for psycopg python package
     - (apt update && apt-get install -y libpq-dev gcc)
+    # Set environment variables for PostgreSQL service connection
+    - |
+      export \
+        MALTOPUFT_POSTGRES_USER=$TEST_POSTGRES_USER \
+        MALTOPUFT_POSTGRES_PASSWORD=$TEST_POSTGRES_PASSWORD \
+        MALTOPUFT_POSTGRES_HOST=postgres \
+        MALTOPUFT_POSTGRES_PORT=5432 \
+        MALTOPUFT_POSTGRES_DB_NAME=$TEST_POSTGRES_DB
 
 # Override included jobs to run .setup.before_script first
 python-lint:

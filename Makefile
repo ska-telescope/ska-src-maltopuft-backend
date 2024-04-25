@@ -13,7 +13,7 @@ PYTHON_SWITCHES_FOR_PYLINT = --disable=W1203
 
 # Run pre-commit checks
 pre-commit:
-	@python -m mypy src
+	@python -m mypy {src,tests}
 	make python-format
 	make python-lint
 	make python-test
