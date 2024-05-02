@@ -17,6 +17,28 @@ class Settings(BaseSettings):
     RELEASE_VERSION: str = "0.1.0"
     DEBUG: int = 0
 
+    # OIDC Client
+    MALTOPUFT_OIDC_SERVER: str = Field(
+        ...,
+        json_schema_extra={"env": "MALTOPUFT_OIDC_SERVER"},
+    )
+    MALTOPUFT_OIDC_CLIENT_ID: str = Field(
+        ...,
+        json_schema_extra={"env": "MALTOPUFT_OIDC_CLIENT_ID"},
+    )
+    MALTOPUFT_OIDC_CLIENT_SECRET: str = Field(
+        ...,
+        json_schema_extra={"env": "MALTOPUFT_OIDC_CLIENT_SECRET"},
+    )
+    MALTOPUFT_OIDC_CLIENT_SCOPE: str = Field(
+        ...,
+        json_schema_extra={"env": "MALTOPUFT_OIDC_CLIENT_SCOPE"},
+    )
+    MALTOPUFT_OIDC_AUTHORIZATION_STATE: str = Field(
+        ...,
+        json_schema_extra={"env": "MALTOPUFT_OIDC_AUTHORIZATION_STATE"},
+    )
+
     # Database settings
     MALTOPUFT_POSTGRES_USER: str = Field(
         ...,
