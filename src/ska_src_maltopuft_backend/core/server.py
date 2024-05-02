@@ -3,9 +3,11 @@
 from fastapi import FastAPI
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.ska_src_maltopuft_backend.api import router
+from src.ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
 from src.ska_src_maltopuft_backend.core.config import settings
 
 
@@ -33,6 +35,10 @@ def make_middleware() -> list[Middleware]:
             allow_methods=["*"],
             allow_headers=["*"],
             expose_headers=["*"],
+        ),
+        Middleware(
+            AuthenticationMiddleware,
+            backend=BearerTokenAuthBackend(),
         ),
     ]
 
