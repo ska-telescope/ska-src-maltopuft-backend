@@ -4,11 +4,9 @@ from fastapi import FastAPI
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 
 from src.ska_src_maltopuft_backend.api import router
 from src.ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
-from src.ska_src_maltopuft_backend.core.config import settings
 
 
 def init_routers(app_: FastAPI) -> None:
@@ -24,10 +22,6 @@ def make_middleware() -> list[Middleware]:
     elements.
     """
     return [
-        Middleware(
-            SessionMiddleware,
-            secret_key=settings.MALTOPUFT_OIDC_AUTHORIZATION_STATE,
-        ),
         Middleware(
             CORSMiddleware,
             allow_origins=["*"],
