@@ -3,6 +3,8 @@
 import logging
 
 import jwt
+from fastapi import status
+from fastapi.responses import JSONResponse
 from starlette.authentication import (
     AuthCredentials,
     AuthenticationBackend,
@@ -10,6 +12,7 @@ from starlette.authentication import (
 )
 from starlette.requests import HTTPConnection
 
+from src.ska_src_maltopuft_backend.core.exceptions import MaltopuftError
 from src.ska_src_maltopuft_backend.core.schemas import (
     AccessToken,
     AuthenticatedUser,
@@ -122,4 +125,22 @@ class BearerTokenAuthBackend(AuthenticationBackend):
         return (
             AuthCredentials(scopes),
             AuthenticatedUser(**token.model_dump()),
+        )
+
+    def on_auth_error(
+        self,
+        exc: AuthenticationError,
+    ) -> JSONResponse:
+        """Re-raises AuthBackend exceptions as HTTPExceptions."""
+        status_code = status.HTTP_403_FORBIDDEN
+        return JSONResponse(
+            status_code=status_code,
+            content={
+                "message": (
+                    exc.message
+                    if isinstance(exc, MaltopuftError)
+                    else str(exc)
+                ),
+                "status_code": status_code,
+            },
         )

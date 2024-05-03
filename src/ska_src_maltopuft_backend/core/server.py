@@ -52,6 +52,7 @@ def make_middleware() -> list[Middleware]:
         Middleware(
             AuthenticationMiddleware,
             backend=BearerTokenAuthBackend(),
+            on_error=BearerTokenAuthBackend.on_auth_error,
         ),
     ]
 
