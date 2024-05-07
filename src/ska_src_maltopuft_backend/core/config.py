@@ -61,5 +61,10 @@ class Settings(BaseSettings):
             path=self.MALTOPUFT_POSTGRES_DB_NAME,
         )
 
+    MALTOPUFT_ROOT_GROUP: str = Field(
+        ...,
+        json_schema_extra={"env": "MALTOPUFT_ROOT_GROUP"},
+    )
+
 
 settings: Settings = Settings()

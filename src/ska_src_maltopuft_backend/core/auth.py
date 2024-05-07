@@ -120,10 +120,9 @@ class BearerTokenAuthBackend(AuthenticationBackend):
             return None
 
         token = self._do_token_exchange(pre_exchange_token)
-        scopes = ["authenticated", *token.groups]
 
         return (
-            AuthCredentials(scopes),
+            AuthCredentials(token.groups),
             AuthenticatedUser(**token.model_dump()),
         )
 
