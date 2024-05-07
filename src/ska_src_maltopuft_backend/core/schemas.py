@@ -1,5 +1,7 @@
 """Schemas used by src.ska_src_maltopuft_backend.core sub-package."""
 
+from enum import Enum
+
 from pydantic import UUID4, BaseModel, Field, HttpUrl
 from pydantic.dataclasses import dataclass
 from starlette.authentication import BaseUser
@@ -20,6 +22,15 @@ class AccessToken(BaseModel):
     exp: int = Field(gt=0)
     iat: int = Field(gt=0)
     jti: UUID4
+
+
+class UserGroups(str, Enum):
+    """User group definitions."""
+
+    SRC = "src"
+    MALTOPUFT = "src/maltopuft"
+    MALTOPUFT_USER = "src/maltopuft/user"
+    MALTOPUFT_ADMIN = "src/maltopuft/admin"
 
 
 @dataclass
