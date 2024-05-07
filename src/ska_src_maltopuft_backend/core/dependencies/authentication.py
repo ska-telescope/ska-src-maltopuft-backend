@@ -1,9 +1,13 @@
 """Dependency to check user is authenticated."""
 
+import logging
+
 from fastapi import Depends, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from src.ska_src_maltopuft_backend.core.exceptions import MaltopuftError
+
+log = logging.getLogger(__name__)
 
 
 class AuthenticationRequiredError(MaltopuftError):
@@ -29,5 +33,14 @@ class Authenticated:
         if not token:
             raise AuthenticationRequiredError
 
-        if not request.user.is_authenticated:
+        try:
+            is_authenticated = request.user.is_authenticated
+        except AttributeError as exc:
+            log.exception(
+                "Received request with valid token but missing user "
+                "information.",
+            )
+            raise AuthenticationRequiredError from exc
+
+        if not is_authenticated:
             raise AuthenticationRequiredError

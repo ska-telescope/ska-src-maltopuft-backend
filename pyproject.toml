@@ -127,6 +127,7 @@ ignore = [
     "D407",  # dashed-underline-after-section
     "G004",  # logging-f-string
     "INP001",  # implicit-namespace-package
+    "PT012",  # `pytest.raises()` block should contain a single simple statement
     "S101", "S104",  # assert, possible binding to all interfaces
 ]
 
@@ -147,7 +148,6 @@ exclude = [
 [[tool.mypy.overrides]]
 module = [
     "ska_ser_logging",
-    "authlib.integrations.starlette_client",
 ]
 ignore_missing_imports = true
 
