@@ -1,0 +1,72 @@
+.. _auth-docs:
+
+================================
+Authentication and Authorization
+================================
+
+This documentation outlines MALTOPUFT authentication and authorization.
+
+Introduction
+============
+
+Authentication
+--------------
+
+Navigating to the MALTOPUFT frontend in the web browser and clicking the `Login` button starts the login flow.
+
+The login flow calls the SKA auth-api `/login` endpoint, which redirects the user to login securely via `SKA IAM <https://ska-iam.stfc.skao>`_.
+
+Logging in via SKA-IAM redirects the user to the `/callback` route on the MALTOPUFT frontend, where the `OIDC PKCE flow <https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow-with-pkce>`_ begins.
+
+After verifying the login, a `JWT <https://auth0.com/learn/json-web-tokens#!>`_ (referred to as the 'token') is returned and stored on the user's browser.
+
+The token is embedded in the headers of every HTTP request sent to the backend service.
+
+Authorization
+-------------
+
+When an HTTP request reaches the MALTOPUFT backend, a series of auth operations are performed.
+
+The token extracted from the request headers is sent to the SKA auth-api `/token/exchange/maltopuft-api` endpoint.
+
+At a high-level, this endpoint:
+
+1. Verifies the authenticity of the token sent in the request
+2. Exchanges the token for a maltopuft-api access token
+
+.. note::
+    
+    Users must be a member of the `services/maltopuft-api` group in order to retrieve an exchanged token from the SKA IAM auth-api at step 2 above.
+
+The MALTOPUFT backend injects user identity and permissions into the request, which can be accessed throughout the application.
+
+Using auth in the application
+=============================
+
+The code sample below provides a minimal working example for using auth in MALTOPUFT.
+
+.. code-block:: python
+
+    from fastapi import APIRouter, Depends
+    from src.ska_src_maltopuft_backend.core.dependencies.authentication import (
+        Authenticated,
+    )
+    from src.ska_src_maltopuft_backend.core.dependencies.authorization import (
+        AuthorizationChecker,
+    )
+    from src.ska_src_maltopuft_backend.core.schemas import UserGroups
+
+    router = APIRouter()
+
+
+    @router.get("/unprotected")
+    async def unprotected_route() -> None:
+        print("Anyone can access this route.")
+
+    @router.get("/authenticated", Depends(Authenticated))
+    async def authenticated_route() -> None:
+        print("All authenticated users can access this route, no matter which security groups they are a member of.")
+
+    @router.get("/user-only" Depends(AuthorizationChecker([UserGroups.MALTOPUFT_USER])))
+    async def authenticated_route() -> None:
+        print("Only users who are members of the `src/maltopuft/user` group can access this route.")

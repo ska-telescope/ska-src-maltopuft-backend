@@ -51,7 +51,7 @@ Two core components of "auth" are authentication and authorisation.
 
 Authentication essentially asks the question "*is this person who they say they are?*". If the answer is "*yes*", then authorisation goes on to ask "*is this person authorised to perform the requested operation on the specified resource(s)?*".
 
-In MALTOPUFT, auth will be handled with `SKA's STFC IAM <https://ska-iam.stfc.ac.uk/login>`_ Open ID Connect (OIDC) client. Please refer to the `(external) How OIDC works <https://openid.net/developers/how-connect-works/>`_ documentation for an overview.
+In MALTOPUFT, auth will be handled with `SKA IAM <https://ska-iam.stfc.ac.uk/login>`_ Open ID Connect (OIDC) client. Please refer to the `(external) How OIDC works <https://openid.net/developers/how-connect-works/>`_ documentation for an overview.
 
 MALTOPUFT will interact with the IAM client with the `ska-src-auth-api <https://gitlab.com/ska-telescope/src/src-service-apis/ska-src-auth-api/-/tree/main?ref_type=heads>`_. This feature has not been integrated into MALTOPUFT yet, however the documentation will be kept up-to-date with any changes.
 
