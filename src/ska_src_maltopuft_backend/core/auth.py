@@ -36,13 +36,12 @@ class BearerTokenAuthBackend(AuthenticationBackend):
 
         Looks for a string of the form "Bearer <token>" in a request's
         "Authorization" header where <token> is a base64 encoded string.
-        Successful token decoding is deferred to the src-ska-auth-api.
 
         Args:
             auth_header (str): The authorization header.
 
         Returns:
-            str | None: A base64 encoded access token with "auth-api" audience
+            str: A base64 encoded access token with "auth-api" audience
             ready for exchange. If no authorization header is present in the
             request then nothing is returned.
 
@@ -80,14 +79,19 @@ class BearerTokenAuthBackend(AuthenticationBackend):
             tuple[AuthCredentials, AuthenticatedUser] | None:
             `AuthCredentials` is a list of user groups to be used in
             authorisation and `AuthenticatedUser` is an object containing
-            basic user information. The returned tuple is injected into
-            the request.
+            basic user information which inherits from starlette's
+            `SimpleUser`.
+
+            The returned tuple is injected into the request to enable
+            accessing user auth information throughout the application. If
+            None is returned, then a starlette UnauthenticatedUser object
+            is injected into the request.
 
         """
         auth_header = conn.headers.get("Authorization")
 
         if auth_header is None:
-            # Return UnauthenticatedUser
+            # Inject UnauthenticatedUser into request
             return None
 
         token = self._get_token_from_header(
@@ -97,6 +101,7 @@ class BearerTokenAuthBackend(AuthenticationBackend):
         # For now, just return the decoded access_token with auth-api audience
         decoded_token = self._decode_jwt(token=token)
 
+        # Inject authenticated user information into request
         return (
             AuthCredentials(decoded_token.groups),
             AuthenticatedUser(**decoded_token.model_dump()),

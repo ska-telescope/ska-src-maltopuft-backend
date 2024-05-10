@@ -22,7 +22,7 @@ class TokenMock:
     """Mock interface for the BearerToken dependency.
 
     Args:
-        verified (bool): Depedency passes if True.
+        verified (bool): Dependency passes if True.
 
     """
 

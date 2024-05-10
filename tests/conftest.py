@@ -2,17 +2,32 @@
 
 # ruff: noqa: ARG001 E402
 
+import uuid
 from collections.abc import Generator
+from unittest.mock import AsyncMock
 
 import pytest
 import sqlalchemy
 from fastapi.testclient import TestClient
+from pytest_mock import MockerFixture
 from sqlalchemy.orm import Session, sessionmaker
+from starlette.authentication import AuthCredentials
 
+from src.ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
 from src.ska_src_maltopuft_backend.core.database import (
     Base,
     get_db,
     init_engine,
+)
+from src.ska_src_maltopuft_backend.core.dependencies.authentication import (
+    Authenticated,
+)
+from src.ska_src_maltopuft_backend.core.dependencies.authorization import (
+    AuthorizationChecker,
+)
+from src.ska_src_maltopuft_backend.core.schemas import (
+    AuthenticatedUser,
+    UserGroups,
 )
 from src.ska_src_maltopuft_backend.core.server import app
 
@@ -87,25 +102,6 @@ def client_with_auth(db: Session) -> Generator[TestClient, None, None]:
 def auth_backend() -> "BearerTokenAuthBackend":
     """Instantiate a BearerTokenAuthBackend object test fixture."""
     return BearerTokenAuthBackend()
-
-
-import uuid
-from unittest.mock import AsyncMock
-
-from pytest_mock import MockerFixture
-from starlette.authentication import AuthCredentials
-
-from src.ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
-from src.ska_src_maltopuft_backend.core.dependencies.authentication import (
-    Authenticated,
-)
-from src.ska_src_maltopuft_backend.core.dependencies.authorization import (
-    AuthorizationChecker,
-)
-from src.ska_src_maltopuft_backend.core.schemas import (
-    AuthenticatedUser,
-    UserGroups,
-)
 
 
 @pytest.fixture(scope="session")

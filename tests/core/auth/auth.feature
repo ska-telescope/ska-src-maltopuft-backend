@@ -1,5 +1,4 @@
-@unit
-@auth
+@unit @auth
 Feature: TokenBearerAuthBackend
     Scenario: Valid bearer token extraction
         Given an authentication header with a valid bearer token

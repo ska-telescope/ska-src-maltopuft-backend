@@ -1,3 +1,4 @@
+@unit @auth
 Feature: Authenticated Dependency
 
     Scenario: User is authenticated

@@ -1,5 +1,5 @@
+@unit @auth
 Feature: Authorization Dependency
-
     Scenario Outline: Valid authorization scopes
         Given a request object containing valid <scopes>
         When the AuthorizationChecker checks for valid <required>
