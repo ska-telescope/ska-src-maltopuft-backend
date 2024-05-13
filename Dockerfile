@@ -23,7 +23,10 @@ RUN poetry config virtualenvs.create false && \
 ARG PORT=8000
 EXPOSE ${PORT}
 
+COPY alembic.ini ./alembic.ini
 COPY main.py ./
+COPY entrypoint.sh ./
+COPY alembic ./alembic
 COPY ./src ./src/
 
-CMD [ "python", "./main.py" ]
+CMD [ "/bin/sh", "entrypoint.sh" ]
