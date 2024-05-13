@@ -7,9 +7,10 @@ from sqlalchemy.dialects.postgresql import UUID as SA_UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.ska_src_maltopuft_backend.core.database import Base
+from src.ska_src_maltopuft_backend.core.mixins import TimestampMixin
 
 
-class User(Base):
+class User(Base, TimestampMixin):
     """User database model."""
 
     __tablename__ = "user"
