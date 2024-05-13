@@ -4,10 +4,10 @@ import logging
 
 from fastapi import APIRouter, Depends
 
-from src.ska_src_maltopuft_backend.app.schemas.responses.user import User
 from src.ska_src_maltopuft_backend.core.dependencies.authentication import (
     Authenticated,
 )
+from src.ska_src_maltopuft_backend.user.responses import User
 
 logger = logging.getLogger(__name__)
 user_router = APIRouter()
