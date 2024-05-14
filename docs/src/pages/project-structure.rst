@@ -8,31 +8,27 @@ An outline of the repository structure is given below:
     ska-src-maltopuft-backend/
     ├─ docs/
     ├─ src/
-    │  ├─ api/
-    │  │  ├─ v1/
     │  ├─ app/
+    │  │  ├─ api/
     │  │  ├─ models/
-    │  │  ├─ schemas/
-    │  │  │  ├─ requests/
-    │  │  │  ├─ responses/
+    │  ├─ candle/
     │  ├─ core/
-    │  │  ├─ config.py
-    │  │  ├─ database.py
-    │  │  ├─ server.py
+    │  ├─ health/
+    │  ├─ user/
     ├─ tests/
     ├─ main.py
 
 .. note::
     The directory structure is subject to change during early prototyping. 
 
-* `docs`: Developer documentation pages.
-* `src.ska_src_maltopuft_backend`: Application code.
-    * `api`: Defines versioned API "routers" which are the paths of REST endpoints exposed by the application.
-    * `app`: Application-specific logic.
-        * `models`: SQLAlchemy models.
-        * `schemas`: Schemas for application requests and responses.
-    * `core`: Generic application configuration and boilerplate code. For example modules that establish database connections, enforce Role-Based Access Control (RBAC) and define any base classes re-used by several application components will all be defined here.
-        * `config`: Application configuration.
-        * `database`: Database connection.
-        * `server`: Creates a FastAPI application.
+* `docs/`: User and developer documentation pages.
+* `src/ska_src_maltopuft_backend/`: Application code.
+    * `app/`: MALTOPUFT web-service initialisation.
+        * `api/`: Defines versioned API "routers" which are the paths of REST endpoints exposed by the application.
+        * `models/`: Central location for all MALTOPUFT database models.
+    * `candle/`: Candidate handler feature.
+    * `core/`: Generic application configuration and boilerplate code. For example modules that establish database connections, enforce Role-Based Access Control (RBAC) and define any base classes re-used by several application components will all be defined here.
+    * `health/`: Health check feature.
+    * `user/`: User feature.
 * `tests`: Unit and integration tests.
+* `main.py`: 

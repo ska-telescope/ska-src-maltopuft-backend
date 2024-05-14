@@ -14,7 +14,17 @@ from src.ska_src_maltopuft_backend.core.mixins import TimestampMixin
 
 
 class Candidate(Base, TimestampMixin):
-    """Base candidate database model."""
+    """Base candidate database model.
+
+    A model which records observation metadata 'shared' between single pulse
+    and period candidates. It has relationships the child sp_candidate and
+    periodic_candidate tables.
+
+    Allowing single pulse and period candidates to have a relationship to the
+    same parent table facilitates identifying potential repeat candidates
+    (e.g. by cross-matching dm, ra and dec between candidates, labels and
+    known sources).
+    """
 
     __tablename__ = "candidate"
 
@@ -31,7 +41,13 @@ class Candidate(Base, TimestampMixin):
 
 
 class SPCandidate(Base, TimestampMixin):
-    """Single-pulse candidate database model."""
+    """Single-pulse candidate database model.
+
+    Records the observation metadata unique to a single pulse candidate
+    observations. The sp_candidate model must have exactly one parent
+    candidate which records the observation metadata attributes shared
+    with periodic candidates.
+    """
 
     __tablename__ = "sp_candidate"
 

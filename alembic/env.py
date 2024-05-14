@@ -6,7 +6,7 @@ Mostly boilerplate generated with `alembic init alembic` command.
 from logging.config import fileConfig
 
 from alembic import context
-from src.ska_src_maltopuft_backend import models
+from src.ska_src_maltopuft_backend.app import models
 from src.ska_src_maltopuft_backend.core.config import settings
 from src.ska_src_maltopuft_backend.core.database import engine
 

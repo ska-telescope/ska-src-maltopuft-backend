@@ -11,7 +11,7 @@ from src.ska_src_maltopuft_backend.core.database import Base
 from src.ska_src_maltopuft_backend.core.mixins import TimestampMixin
 
 if TYPE_CHECKING:
-    from src.ska_src_maltopuft_backend.models import Label
+    from src.ska_src_maltopuft_backend.app.models import Label
 
 
 class User(Base, TimestampMixin):

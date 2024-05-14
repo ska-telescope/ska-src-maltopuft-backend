@@ -1,0 +1,1 @@
+"""MALTOPUFT web-service initialisation."""
