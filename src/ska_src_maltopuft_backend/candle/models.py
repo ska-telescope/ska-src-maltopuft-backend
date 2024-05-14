@@ -36,8 +36,10 @@ class Candidate(Base, TimestampMixin):
     dec: Mapped[str] = mapped_column(sa.Unicode(12), nullable=False)
 
     # Relationships
-    sp_candidate: Mapped["SPCandidate"] = relationship()
-    labels: Mapped[list["Label"]] = relationship()
+    sp_candidate: Mapped["SPCandidate"] = relationship(
+        back_populates="candidate",
+    )
+    labels: Mapped[list["Label"]] = relationship(back_populates="candidate")
 
 
 class SPCandidate(Base, TimestampMixin):
@@ -62,7 +64,10 @@ class SPCandidate(Base, TimestampMixin):
     )
 
     # Relationships
-    candidate: Mapped["Candidate"] = relationship(single_parent=True)
+    candidate: Mapped["Candidate"] = relationship(
+        back_populates="sp_candidate",
+        single_parent=True,
+    )
 
 
 class Label(Base, TimestampMixin):
@@ -87,7 +92,10 @@ class Label(Base, TimestampMixin):
     )
 
     # Relationships
-    candidate: Mapped["Candidate"] = relationship()
+    labeller: Mapped["User"] = relationship(  # noqa: F821
+        back_populates="labels",
+    )
+    candidate: Mapped["Candidate"] = relationship(back_populates="labels")
 
 
 class Entity(Base, TimestampMixin):
