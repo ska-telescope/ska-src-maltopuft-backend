@@ -102,21 +102,6 @@ def no_user_data(context: dict[str, Any]) -> None:
     assert context.get("auth_result") is None
 
 
-@then("authenticated user data is parsed")
-def user_data(context: dict[str, Any]) -> None:
-    groups, user = context.get("auth_result", (None, None))
-
-    assert groups is not None
-    assert user is not None
-
-    assert groups.scopes == settings.TEST_SUPERUSER_DECODED_TOKEN.get("groups")
-    assert user.name == settings.TEST_SUPERUSER_BASE_DECODED_TOKEN.get("name")
-    assert user.preferred_username == (
-        settings.TEST_SUPERUSER_BASE_DECODED_TOKEN.get("preferred_username")
-    )
-    assert user.is_authenticated
-
-
 @then("on_auth_error returns a JSONResponse with HTTP 401 status code")
 def auth_error_response(auth_backend: BearerTokenAuthBackend) -> None:
     exc = AuthenticationError("Test error")

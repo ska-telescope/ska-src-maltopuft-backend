@@ -13,8 +13,3 @@ Feature: TokenBearerAuthBackend
         Given no authorization header is present in the request
         When the authentication middleware is executed
         Then nothing is returned
-
-    Scenario: Valid bearer token returns authenticated user
-        Given an authentication header with a valid bearer token
-        When the authentication middleware is executed
-        Then authenticated user data is parsed

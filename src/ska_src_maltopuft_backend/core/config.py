@@ -78,6 +78,11 @@ class Settings(BaseSettings):
         json_schema_extra={"env": "MALTOPUFT_ROOT_GROUP"},
     )
 
+    AUTHN_API_URL: str = Field(
+        ...,
+        json_schema_extra={"env": "AUTHN_API_URL"},
+    )
+
     TEST_UUID4: str = Field(
         ...,
         json_schema_extra={"env": "TEST_UUID4"},
