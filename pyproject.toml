@@ -76,6 +76,11 @@ testpaths = ["tests"]
 source = ["./src"]
 omit = ["**/__init__.py"]
 
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
