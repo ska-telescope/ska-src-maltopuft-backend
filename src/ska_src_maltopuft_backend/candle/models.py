@@ -64,13 +64,13 @@ class SPCandidate(Base, TimestampMixin):
     # Foreign keys
     candidate_id: Mapped[int] = mapped_column(
         sa.ForeignKey("candidate.id"),
+        unique=True,
         nullable=False,
     )
 
     # Relationships
     candidate: Mapped["Candidate"] = relationship(
         back_populates="sp_candidate",
-        single_parent=True,
     )
 
 
@@ -98,6 +98,7 @@ class Label(Base, TimestampMixin):
     # Relationships
     labeller: Mapped["User"] = relationship(back_populates="labels")
     candidate: Mapped["Candidate"] = relationship(back_populates="labels")
+    entity: Mapped["Entity"] = relationship(back_populates="labels")
 
 
 class Entity(Base, TimestampMixin):
