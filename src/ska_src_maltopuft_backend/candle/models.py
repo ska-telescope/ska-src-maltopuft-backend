@@ -1,6 +1,7 @@
 """Candidate handler database models."""
 
 import datetime as dt
+from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -11,6 +12,9 @@ from src.ska_src_maltopuft_backend.candle.entity import (
 )
 from src.ska_src_maltopuft_backend.core.database import Base
 from src.ska_src_maltopuft_backend.core.mixins import TimestampMixin
+
+if TYPE_CHECKING:
+    from src.ska_src_maltopuft_backend.app.models import User
 
 
 class Candidate(Base, TimestampMixin):
@@ -92,9 +96,7 @@ class Label(Base, TimestampMixin):
     )
 
     # Relationships
-    labeller: Mapped["User"] = relationship(  # noqa: F821
-        back_populates="labels",
-    )
+    labeller: Mapped["User"] = relationship(back_populates="labels")
     candidate: Mapped["Candidate"] = relationship(back_populates="labels")
 
 
