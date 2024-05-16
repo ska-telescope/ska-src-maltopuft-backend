@@ -23,7 +23,7 @@ priority = "supplemental"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0.0"
-fastapi = "^0.109.2"
+fastapi = "^0.110.2"
 uvicorn = {extras = ["standard"], version = "^0.27.1"}
 ska-ser-logging = "^0.4.3"
 pydantic-settings = "^2.2.1"
