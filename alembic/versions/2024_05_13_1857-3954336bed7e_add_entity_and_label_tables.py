@@ -11,7 +11,7 @@ from collections.abc import Sequence
 import sqlalchemy as sa
 
 from alembic import op
-from src.ska_src_maltopuft_backend.candle.entity import EntityNamesDBEnum
+from src.ska_src_maltopuft_backend.label.entity import EntityNamesDBEnum
 
 # revision identifiers, used by Alembic.
 revision: str = "3954336bed7e"

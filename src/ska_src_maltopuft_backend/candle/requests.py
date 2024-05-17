@@ -77,6 +77,7 @@ class CreateCandidate(BaseModel):
 class GetSPCandidateQueryParams(BaseModel):
     """Query parameters for SPCandidate model HTTP Get requests."""
 
+    id: list[Annotated[int, None]] = Field(Query(default=[]))
     data_path: list[
         (Annotated[str, StringConstraints(strip_whitespace=True)] | None)
     ] = Field(Query(default=[]))

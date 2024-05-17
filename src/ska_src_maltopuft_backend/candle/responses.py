@@ -5,7 +5,6 @@ from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
-from .entity import EntityNames
 from .extras import DEC_PATTERN, RA_PATTERN
 
 
@@ -52,29 +51,14 @@ class SPCandidate(BaseModel):
     created_at: dt.datetime
     updated_at: dt.datetime
 
+
+class CandidateNested(Candidate):
+    """Nest single pulse candidate under candidate if it exists."""
+
+    sp_candidate: SPCandidate | None
+
+
+class SPCandidateNested(SPCandidate):
+    """Nest candidate under single pulse candidate."""
+
     candidate: Candidate
-
-
-class Label(BaseModel):
-    """Response model for Label HTTP GET/POST requests."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int = Field(gt=0)
-    labeller_id: int = Field(gt=0)
-    candidate_id: int = Field(gt=0)
-    entity_id: int = Field(gt=0)
-    created_at: dt.datetime
-    updated_at: dt.datetime
-
-
-class Entity(BaseModel):
-    """Response model for Entity HTTP GET/POST requests."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int = Field(gt=0)
-    type: EntityNames
-    css_color: str
-    created_at: dt.datetime
-    updated_at: dt.datetime

@@ -16,7 +16,7 @@ class SPCandidateRepository(BaseRepository[SPCandidate]):
     """Database CRUD operations for the SPCandidate model."""
 
     def __init__(self) -> None:
-        """Initialise a CandidateRepository instance."""
+        """Initialise an SPCandidateRepository instance."""
         super().__init__(model=SPCandidate)
 
 

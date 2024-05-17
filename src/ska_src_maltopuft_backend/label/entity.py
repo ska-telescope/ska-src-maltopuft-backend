@@ -10,6 +10,7 @@ from src.ska_src_maltopuft_backend.core.database import Base
 class EntityNames(str, Enum):
     """Names of entities which can be assigned as candidate labels."""
 
+    RFI = "RFI"
     SINGLE_PULSE = "SINGLE_PULSE"
     PERIODIC_PULSE = "PERIODIC_PULSE"
 

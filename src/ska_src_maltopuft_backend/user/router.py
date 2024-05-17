@@ -6,7 +6,6 @@ from typing import Any
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from src.ska_src_maltopuft_backend.core.auth import Authenticated
 from src.ska_src_maltopuft_backend.core.database import get_db
 from src.ska_src_maltopuft_backend.user.controller import user_controller
 from src.ska_src_maltopuft_backend.user.requests import (
