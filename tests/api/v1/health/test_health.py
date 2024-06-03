@@ -11,9 +11,9 @@ from fastapi.testclient import TestClient
 from httpx import Response
 from pytest_bdd import given, scenarios, then, when
 
-from src.ska_src_maltopuft_backend.app.schemas.responses.health import Status
 from src.ska_src_maltopuft_backend.core.config import settings
 from src.ska_src_maltopuft_backend.core.database import ping_db
+from src.ska_src_maltopuft_backend.health.responses import Status
 
 scenarios("./health.feature")
 

@@ -1,1 +1,1 @@
-"""Application-specific logic."""
+"""MALTOPUFT web-service initialisation."""
