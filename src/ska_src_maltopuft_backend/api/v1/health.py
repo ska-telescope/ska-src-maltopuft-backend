@@ -13,6 +13,10 @@ from src.ska_src_maltopuft_backend.core.database import (
     get_db,
     ping_db_from_pool,
 )
+from src.ska_src_maltopuft_backend.core.dependencies.authorization import (
+    AuthorizationChecker,
+)
+from src.ska_src_maltopuft_backend.core.schemas import UserGroups
 
 health_router = APIRouter()
 
@@ -41,7 +45,12 @@ async def health_app() -> Status:
     return Status(name=settings.APP_NAME, status=StatusEnum.HEALTHY)
 
 
-@health_router.get("/health/db")
+@health_router.get(
+    "/health/db",
+    dependencies=[
+        Depends(AuthorizationChecker([UserGroups.MALTOPUFT_ADMIN])),
+    ],
+)
 async def health_db(db: Session = Depends(get_db)) -> Status:
     """Return a 'HEALTHY' response to clients if the database is available.
 

@@ -5,7 +5,7 @@ include .make/python.mk
 
 # Define variables
 PYTHON_LINT_TARGET := ./src ./main.py
-PYTHON_SWITCHES_FOR_PYLINT = --disable=W1203
+PYTHON_SWITCHES_FOR_PYLINT = --disable=R0903,W1203
 
 # Note:
 # PYTHON_VARS_AFTER_PYTEST are defined in pyproject.toml
@@ -13,6 +13,7 @@ PYTHON_SWITCHES_FOR_PYLINT = --disable=W1203
 
 # Run pre-commit checks
 pre-commit:
+	@ruff check . --fix
 	@python -m mypy {src,tests}
 	make python-format
 	make python-lint

@@ -37,4 +37,6 @@ MALTOPUFT documentation
   pages/getting-started.md
   pages/project-tooling.md
   pages/project-structure.rst
+  pages/account.rst
+  pages/auth.rst
   autoapi/index.rst

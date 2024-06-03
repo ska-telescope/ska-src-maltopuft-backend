@@ -1,5 +1,4 @@
-@integration
-@database
+@integration @database
 Feature: Backend-database connection
     Tests related to connecting the backend service to the database.
 

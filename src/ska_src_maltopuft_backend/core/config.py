@@ -1,5 +1,7 @@
 """Application configuration."""
 
+from typing import Any
+
 from pydantic import Field, PostgresDsn, computed_field
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -59,6 +61,54 @@ class Settings(BaseSettings):
             host=self.MALTOPUFT_POSTGRES_HOST,
             port=self.MALTOPUFT_POSTGRES_PORT,
             path=self.MALTOPUFT_POSTGRES_DB_NAME,
+        )
+
+    MALTOPUFT_AUDIENCE: str = Field(
+        ...,
+        json_schema_extra={"env": "MALTOPUFT_AUDIENCE"},
+    )
+
+    MALTOPUFT_SERVICE_GROUP: str = Field(
+        ...,
+        json_schema_extra={"env": "MALTOPUFT_SERVICE_GROUP"},
+    )
+
+    MALTOPUFT_ROOT_GROUP: str = Field(
+        ...,
+        json_schema_extra={"env": "MALTOPUFT_ROOT_GROUP"},
+    )
+
+    TEST_UUID4: str = Field(
+        ...,
+        json_schema_extra={"env": "TEST_UUID4"},
+    )
+    TEST_SUPERUSER_BASE_DECODED_TOKEN: dict[str, Any] = Field(
+        ...,
+        json_schema_extra={"env": "TEST_SUPERUSER_BASE_DECODED_TOKEN"},
+    )
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def TEST_SUPERUSER_DECODED_TOKEN(self) -> dict[str, Any]:  # noqa: N802
+        """Add pre-generated UUID4 fields to test token."""
+        token = dict(self.TEST_SUPERUSER_BASE_DECODED_TOKEN)
+
+        # Add pre-generated test UUID4 to the token
+        token["sub"] = self.TEST_UUID4
+        token["client_id"] = self.TEST_UUID4
+        token["jti"] = self.TEST_UUID4
+        return token
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def TEST_SUPERUSER_TOKEN(self) -> str:  # noqa: N802
+        """Encode the test token."""
+        import jwt  # pylint: disable=C0415
+
+        return jwt.encode(
+            self.TEST_SUPERUSER_DECODED_TOKEN,
+            "secret",
+            algorithm="HS256",
         )
 
 
