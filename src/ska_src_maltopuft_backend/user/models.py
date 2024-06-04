@@ -38,4 +38,4 @@ class User(Base, TimestampMixin):
     is_admin: Mapped[bool] = mapped_column(server_default="false")
 
     # Relationships
-    labels: Mapped[list["Label"]] = relationship()
+    labels: Mapped[list["Label"]] = relationship(back_populates="labeller")

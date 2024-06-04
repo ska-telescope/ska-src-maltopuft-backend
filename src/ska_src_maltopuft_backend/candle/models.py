@@ -1,6 +1,7 @@
 """Candidate handler database models."""
 
 import datetime as dt
+from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -11,6 +12,9 @@ from src.ska_src_maltopuft_backend.candle.entity import (
 )
 from src.ska_src_maltopuft_backend.core.database import Base
 from src.ska_src_maltopuft_backend.core.mixins import TimestampMixin
+
+if TYPE_CHECKING:
+    from src.ska_src_maltopuft_backend.app.models import User
 
 
 class Candidate(Base, TimestampMixin):
@@ -36,8 +40,10 @@ class Candidate(Base, TimestampMixin):
     dec: Mapped[str] = mapped_column(sa.Unicode(12), nullable=False)
 
     # Relationships
-    sp_candidate: Mapped["SPCandidate"] = relationship()
-    labels: Mapped[list["Label"]] = relationship()
+    sp_candidate: Mapped["SPCandidate"] = relationship(
+        back_populates="candidate",
+    )
+    labels: Mapped[list["Label"]] = relationship(back_populates="candidate")
 
 
 class SPCandidate(Base, TimestampMixin):
@@ -62,7 +68,10 @@ class SPCandidate(Base, TimestampMixin):
     )
 
     # Relationships
-    candidate: Mapped["Candidate"] = relationship(single_parent=True)
+    candidate: Mapped["Candidate"] = relationship(
+        back_populates="sp_candidate",
+        single_parent=True,
+    )
 
 
 class Label(Base, TimestampMixin):
@@ -87,7 +96,8 @@ class Label(Base, TimestampMixin):
     )
 
     # Relationships
-    candidate: Mapped["Candidate"] = relationship()
+    labeller: Mapped["User"] = relationship(back_populates="labels")
+    candidate: Mapped["Candidate"] = relationship(back_populates="labels")
 
 
 class Entity(Base, TimestampMixin):
