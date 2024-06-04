@@ -1,22 +1,13 @@
 """Dependency to check user authorization."""
 
-from fastapi import Depends, Request, status
+from fastapi import Depends, Request
 
-from src.ska_src_maltopuft_backend.core.exceptions import MaltopuftError
+from src.ska_src_maltopuft_backend.core.exceptions import PermissionDeniedError
 
 
 def user_permissions(request: Request) -> set[str]:
     """Extract user permissions from the incoming request."""
     return set(request.auth.scopes)
-
-
-class PermissionDeniedError(MaltopuftError):
-    """Raised when an user has insufficient permissions to fulfil a
-    request.
-    """
-
-    status_code = status.HTTP_403_FORBIDDEN
-    message = "Permission denied."
 
 
 class AuthorizationChecker:

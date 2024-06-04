@@ -2,21 +2,14 @@
 
 import logging
 
-from fastapi import Depends, Request, status
+from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from src.ska_src_maltopuft_backend.core.exceptions import MaltopuftError
+from src.ska_src_maltopuft_backend.core.exceptions import (
+    AuthenticationRequiredError,
+)
 
 log = logging.getLogger(__name__)
-
-
-class AuthenticationRequiredError(MaltopuftError):
-    """Raised when an authenticated user makes a request that requires
-    authentication.
-    """
-
-    status_code = status.HTTP_401_UNAUTHORIZED
-    message = "Authentication required"
 
 
 class Authenticated:

@@ -2,6 +2,7 @@
 
 import logging
 
+import httpx
 import jwt
 from fastapi import status
 from fastapi.responses import JSONResponse
@@ -12,7 +13,11 @@ from starlette.authentication import (
 )
 from starlette.requests import HTTPConnection
 
-from src.ska_src_maltopuft_backend.core.exceptions import MaltopuftError
+from src.ska_src_maltopuft_backend.core.config import settings
+from src.ska_src_maltopuft_backend.core.exceptions import (
+    InvalidAudienceError,
+    MaltopuftError,
+)
 from src.ska_src_maltopuft_backend.core.schemas import (
     AccessToken,
     AuthenticatedUser,
@@ -46,25 +51,48 @@ class BearerTokenAuthBackend(AuthenticationBackend):
             request then nothing is returned.
 
         """
-        scheme, token = auth_header.split()
+        try:
+            scheme, token = auth_header.split()
+        except ValueError as exc:
+            msg = "Invalid or unsupported authentication scheme used."
+            raise AuthenticationError(msg) from exc
+
         if scheme.lower() != "bearer":
             msg = "Invalid or unsupported authentication scheme used."
             raise AuthenticationError(msg)
         return token
 
+    def _do_exchange_token(self, token: str) -> str:
+        """Exchange a token with authn-api audience for one with maltopuft-api
+        audience.
+        """
+        exchange_uri = (
+            f"{settings.AUTHN_API_URL}"
+            "/token/exchange"
+            f"/{settings.MALTOPUFT_AUDIENCE}"
+        )
+        response = httpx.get(
+            exchange_uri,
+            params={"access_token": token},
+        )
+        if response.status_code != status.HTTP_200_OK:
+            msg = "Attempt to exchange auth token failed."
+            raise AuthenticationError(msg)
+
+        return response.json().get("access_token")
+
     def _decode_jwt(self, token: str) -> AccessToken:
         """Decodes a base64 encoded JWT.
 
         Args:
-            token (string): The base64 encoded access token.
+            token (string): The base64 encoded Access token.
 
         Returns:
-            AccessToken: A decoded access token.
+            IDToken: A decoded Access token.
 
         """
-        return AccessToken(
-            **jwt.decode(token, options={"verify_signature": False}),
-        )
+        decoded = jwt.decode(token, options={"verify_signature": False})
+        return AccessToken(**decoded)
 
     async def authenticate(
         self,
@@ -78,7 +106,7 @@ class BearerTokenAuthBackend(AuthenticationBackend):
         Returns:
             tuple[AuthCredentials, AuthenticatedUser] | None:
             `AuthCredentials` is a list of user groups to be used in
-            authorisation and `AuthenticatedUser` is an object containing
+            authorization and `AuthenticatedUser` is an object containing
             basic user information which inherits from starlette's
             `SimpleUser`.
 
@@ -94,12 +122,13 @@ class BearerTokenAuthBackend(AuthenticationBackend):
             # Inject UnauthenticatedUser into request
             return None
 
-        token = self._get_token_from_header(
-            auth_header=auth_header,
-        )
+        token = self._get_token_from_header(auth_header=auth_header)
+        token = self._do_exchange_token(token=token)
 
-        # For now, just return the decoded access_token with auth-api audience
+        # Verify exchanged token audience
         decoded_token = self._decode_jwt(token=token)
+        if decoded_token.aud != settings.MALTOPUFT_AUDIENCE:
+            raise InvalidAudienceError
 
         # Inject authenticated user information into request
         return (
