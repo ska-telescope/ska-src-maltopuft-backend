@@ -4,15 +4,15 @@ import fastapi
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
+from src.ska_src_maltopuft_backend.core.auth import (
+    AuthorizationChecker,
+    UserGroups,
+)
 from src.ska_src_maltopuft_backend.core.config import settings
 from src.ska_src_maltopuft_backend.core.database import (
     get_db,
     ping_db_from_pool,
 )
-from src.ska_src_maltopuft_backend.core.dependencies.authorization import (
-    AuthorizationChecker,
-)
-from src.ska_src_maltopuft_backend.core.schemas import UserGroups
 from src.ska_src_maltopuft_backend.health.responses import Status, StatusEnum
 
 health_router = APIRouter()

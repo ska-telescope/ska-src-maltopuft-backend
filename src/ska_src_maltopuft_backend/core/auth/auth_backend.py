@@ -14,14 +14,10 @@ from starlette.authentication import (
 from starlette.requests import HTTPConnection
 
 from src.ska_src_maltopuft_backend.core.config import settings
-from src.ska_src_maltopuft_backend.core.exceptions import (
-    InvalidAudienceError,
-    MaltopuftError,
-)
-from src.ska_src_maltopuft_backend.core.schemas import (
-    AccessToken,
-    AuthenticatedUser,
-)
+from src.ska_src_maltopuft_backend.core.exceptions import MaltopuftError
+
+from .exceptions import InvalidAudienceError
+from .schemas import AccessToken, AuthenticatedUser
 
 logger = logging.getLogger(__name__)
 

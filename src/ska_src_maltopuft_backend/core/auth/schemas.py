@@ -1,4 +1,4 @@
-"""Schemas used by src.ska_src_maltopuft_backend.core sub-package."""
+"""Schemas used by auth sub-package."""
 
 from enum import Enum
 

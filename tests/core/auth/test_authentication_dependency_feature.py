@@ -8,11 +8,11 @@ import pytest
 from pytest_bdd import given, scenarios, then
 from starlette.authentication import AuthCredentials, UnauthenticatedUser
 
-from src.ska_src_maltopuft_backend.core.dependencies.authentication import (
+from src.ska_src_maltopuft_backend.core.auth import (
     Authenticated,
+    AuthenticatedUser,
     AuthenticationRequiredError,
 )
-from src.ska_src_maltopuft_backend.core.schemas import AuthenticatedUser
 from tests.extras import build_request
 
 scenarios("./authentication_dependency.feature")

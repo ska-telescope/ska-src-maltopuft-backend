@@ -2,7 +2,7 @@
 
 from fastapi import Depends, Request
 
-from src.ska_src_maltopuft_backend.core.exceptions import PermissionDeniedError
+from .exceptions import PermissionDeniedError
 
 
 def user_permissions(request: Request) -> set[str]:

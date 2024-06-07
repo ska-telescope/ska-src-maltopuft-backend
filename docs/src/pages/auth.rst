@@ -48,13 +48,11 @@ The code sample below provides a minimal working example for using auth in MALTO
 .. code-block:: python
 
     from fastapi import APIRouter, Depends
-    from src.ska_src_maltopuft_backend.core.dependencies.authentication import (
+    from src.ska_src_maltopuft_backend.core.auth import (
         Authenticated,
-    )
-    from src.ska_src_maltopuft_backend.core.dependencies.authorization import (
         AuthorizationChecker,
+        UserGroups,
     )
-    from src.ska_src_maltopuft_backend.core.schemas import UserGroups
 
     router = APIRouter()
 
