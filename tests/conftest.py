@@ -13,21 +13,17 @@ from pytest_mock import MockerFixture
 from sqlalchemy.orm import Session, sessionmaker
 from starlette.authentication import AuthCredentials
 
-from src.ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
+from src.ska_src_maltopuft_backend.core.auth import (
+    Authenticated,
+    AuthenticatedUser,
+    AuthorizationChecker,
+    BearerTokenAuthBackend,
+    UserGroups,
+)
 from src.ska_src_maltopuft_backend.core.database import (
     Base,
     get_db,
     init_engine,
-)
-from src.ska_src_maltopuft_backend.core.dependencies.authentication import (
-    Authenticated,
-)
-from src.ska_src_maltopuft_backend.core.dependencies.authorization import (
-    AuthorizationChecker,
-)
-from src.ska_src_maltopuft_backend.core.schemas import (
-    AuthenticatedUser,
-    UserGroups,
 )
 from src.ska_src_maltopuft_backend.core.server import app
 

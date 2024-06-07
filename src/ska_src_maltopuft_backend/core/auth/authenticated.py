@@ -5,9 +5,7 @@ import logging
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from src.ska_src_maltopuft_backend.core.exceptions import (
-    AuthenticationRequiredError,
-)
+from .exceptions import AuthenticationRequiredError
 
 log = logging.getLogger(__name__)
 

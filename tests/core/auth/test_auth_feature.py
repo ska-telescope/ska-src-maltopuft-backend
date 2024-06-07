@@ -9,11 +9,9 @@ import pytest
 from fastapi import status
 from fastapi.responses import JSONResponse
 from pytest_bdd import given, scenarios, then, when
+from starlette.authentication import AuthenticationError
 
-from src.ska_src_maltopuft_backend.core.auth import (
-    AuthenticationError,
-    BearerTokenAuthBackend,
-)
+from src.ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
 from src.ska_src_maltopuft_backend.core.config import settings
 from tests.extras import build_request
 
@@ -33,8 +31,16 @@ def valid_auth_header(context: dict[str, Any]) -> None:
     )
 
 
-@given("an authentication header with an invalid authentication scheme")
+@given("an bearer token authorization header")
 def invalid_auth_header(context: dict[str, Any]) -> None:
+    context["request"] = build_request(
+        headers={
+            "authorization": "this isn't a bearer token",
+        },
+    )
+
+@given("an authentication header with an invalid authentication scheme")
+def invalid_auth_scheme(context: dict[str, Any]) -> None:
     context["request"] = build_request(
         headers={
             "authorization": f"Invalid-auth-scheme {settings.TEST_SUPERUSER_TOKEN}",
