@@ -1,7 +1,8 @@
 @unit @auth
 Feature: Authorization Dependency
     Scenario Outline: Valid authorization scopes
-        Given a request object containing valid <scopes>
+        Given authentication is enabled
+        And a request object containing valid <scopes>
         When the AuthorizationChecker checks for valid <required>
         Then the AuthorizationChecker dependency should be called without errors
 
@@ -13,7 +14,8 @@ Feature: Authorization Dependency
 
 
     Scenario Outline: Invalid authorization scopes
-        Given a request object containing invalid <scopes>
+        Given authentication is enabled
+        And a request object containing invalid <scopes>
         When the AuthorizationChecker checks for invalid <required>
         Then the AuthorizationChecker dependency should raise a PermissionDeniedError
 

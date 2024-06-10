@@ -6,7 +6,6 @@ import json
 
 import fastapi
 import pytest
-from _pytest.monkeypatch import MonkeyPatch
 from fastapi.testclient import TestClient
 from httpx import Response
 from pytest_bdd import given, scenarios, then, when
@@ -35,7 +34,7 @@ def db_is_available() -> None:
 
 
 @given("a database is unavailable")
-def db_is_unavailable(monkeypatch: MonkeyPatch) -> None:
+def db_is_unavailable(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         settings,
         "MALTOPUFT_POSTGRES_HOST",

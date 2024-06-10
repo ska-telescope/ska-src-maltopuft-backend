@@ -2,6 +2,8 @@
 
 from fastapi import Depends, Request
 
+from src.ska_src_maltopuft_backend.core.config import settings
+
 from .exceptions import PermissionDeniedError
 
 
@@ -27,5 +29,8 @@ class AuthorizationChecker:
         If required permissions is a subset of user's permissions, then the
         user is authorized to make the request.
         """
+        if not settings.AUTH_ENABLED:
+            return
+
         if not self.required_permissions.issubset(permissions):
             raise PermissionDeniedError
