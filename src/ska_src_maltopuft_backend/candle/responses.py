@@ -1,15 +1,14 @@
 """Candidate response schemas."""
 
-import datetime as dt
-from typing import Annotated
+from pydantic import BaseModel, ConfigDict, Field, PastDatetime
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
-
-from .extras import DEC_PATTERN, RA_PATTERN
+from .extras import DecStr, RaStr
 
 
 class Candidate(BaseModel):
     """Response model for Candidate HTTP GET/POST requests."""
+
+    # pylint: disable=R0801
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -17,26 +16,10 @@ class Candidate(BaseModel):
     dm: float = Field(gt=0)
     snr: float = Field(gt=0)
     width: float = Field(gt=0)
-    ra: Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True,
-            min_length=10,
-            max_length=10,
-            pattern=RA_PATTERN,
-        ),
-    ]
-    dec: Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True,
-            min_length=10,
-            max_length=12,
-            pattern=DEC_PATTERN,
-        ),
-    ]
-    created_at: dt.datetime
-    updated_at: dt.datetime
+    ra: RaStr
+    dec: DecStr
+    created_at: PastDatetime
+    updated_at: PastDatetime
 
 
 class SPCandidate(BaseModel):
@@ -46,10 +29,10 @@ class SPCandidate(BaseModel):
 
     id: int = Field(gt=0)
     data_path: str
-    observed_at: dt.datetime
+    observed_at: PastDatetime
     candidate_id: int = Field(gt=0)
-    created_at: dt.datetime
-    updated_at: dt.datetime
+    created_at: PastDatetime
+    updated_at: PastDatetime
 
 
 class CandidateNested(Candidate):

@@ -44,3 +44,60 @@ Feature: Candidate handler
         | a:cd:fg.ij  | None     |
         | 3:31:46.23  | None     |
         | 5:00:57.54  | None     |
+
+    Scenario Outline: Valid RaStr type
+        Given valid input value <value> is provided
+        Then validation with RaStr type is successful
+
+        Examples:
+        | value       |
+        | 3:31:46.23  |
+        | 5:00:57.54  |
+
+    Scenario Outline: Valid DecStr type
+        Given valid input value <value> is provided
+        Then validation with DecStr type is successful
+
+        Examples:
+        | value       |
+        | -27:49:16.8 |
+        | -25:55:03.5 |
+
+    Scenario Outline: Invalid RaStr type
+        Given invalid input value <value> is provided
+        Then validation with RaStr type raises a ValidationError
+
+        Examples:
+        | value       |
+        | 5000057054  |
+        | a:00:57.54  |
+        | 5?00:57.54  |
+        | 5:a0:57.54  |
+        | 5:00:57.aa  |
+        | 5:00:57:54  |
+        | 5.00.57.54  |
+        | abcdefghij  |
+        | £%?a"2l;2'  |
+        | a:cd:fg.ij  |
+        | -27:49:16.8 |
+        | -25:55:03.5 |
+
+    Scenario Outline: Invalid DecStr type
+        Given invalid input value <value> is provided
+        Then validation with DecStr type raises a ValidationError
+
+        Examples:
+        | value       |
+        | ?25:55:03.5 |
+        | 5000057054  |
+        | a:00:57.54  |
+        | 5?00:57.54  |
+        | 5:a0:57.54  |
+        | 5:00:57.aa  |
+        | 5:00:57:54  |
+        | 5.00.57.54  |
+        | abcdefghij  |
+        | £%?a"2l;2'  |
+        | a:cd:fg.ij  |
+        | 3:31:46.23  |
+        | 5:00:57.54  |

@@ -10,7 +10,7 @@ from src.ska_src_maltopuft_backend.core.database import get_db
 from src.ska_src_maltopuft_backend.user.controller import user_controller
 from src.ska_src_maltopuft_backend.user.requests import (
     CreateUser,
-    UserQueryParams,
+    GetUserQueryParams,
 )
 from src.ska_src_maltopuft_backend.user.responses import User
 
@@ -20,7 +20,7 @@ user_router = APIRouter()
 
 @user_router.get("/", response_model=list[User])
 async def get_users(
-    q: UserQueryParams = Depends(),
+    q: GetUserQueryParams = Depends(),
     db: Session = Depends(get_db),
 ) -> Any:
     """Get all users."""

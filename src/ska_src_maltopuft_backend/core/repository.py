@@ -37,32 +37,32 @@ class BaseRepository(Generic[ModelT]):
         db.add(model)
         return model
 
-    async def get_all(  # noqa: PLR0913
+    async def get_all(
         self,
         db: Session,
-        skip: int = 0,
-        limit: int = 100,
         join_: set[str] | None = None,
         order_: dict[str, dict[str, str]] | None = None,
         *,
-        q: Mapping[str, Any],
+        q: dict[str, Any],
     ) -> Sequence[Row[ModelT]]:
         """Returns a list of model instances.
 
         :param db: The database session.
-        :param skip: The number of records to skip.
-        :param limit: The number of records to return.
         :param join_: The joins to make.
         :param order_: The order of the results. (e.g desc, asc)
         :param q: The query parameters.
         :return: A list of model instances.
         """
+        # Pop skip and limit from query parameters dict so they are
+        # not considered as predicates in _where()
+        skip, limit = q.pop("skip"), q.pop("limit")
+
         query = self._query(join_=join_, order_=order_)
         query = self._where(query=query, q=q)
         query = query.offset(skip).limit(limit)
         return await self._all(db=db, query=query)
 
-    async def get_by(
+    async def get_by(  # pylint: disable=R0913 # noqa: PLR0913
         self,
         db: Session,
         field: str,
@@ -83,7 +83,7 @@ class BaseRepository(Generic[ModelT]):
         query = await self._get_by(query=query, field=field, value=value)
         return await self._all(db=db, query=query)
 
-    async def get_unique_by(
+    async def get_unique_by(  # pylint: disable=R0913 # noqa: PLR0913
         self,
         db: Session,
         field: str,
@@ -100,7 +100,7 @@ class BaseRepository(Generic[ModelT]):
         :param order_: The order of the results. (e.g desc, asc)
         :return: The model instance.
         """
-        query = self._query(join_=join_, order=order_)
+        query = self._query(join_=join_, order_=order_)
         query = await self._get_by(query=query, field=field, value=value)
         return await self._one(db=db, query=query)
 
@@ -262,7 +262,9 @@ class BaseRepository(Generic[ModelT]):
             table.__tablename__: table for table in Base.__subclasses__()
         }
         for table_name in join_:
-            query = query.join(table_names.get(table_name))
+            query = query.join(
+                table_names.get(table_name),  # type: ignore[arg-type]
+            )
         return query
 
     def _where(self, query: Select, q: Mapping[str, Any]) -> Select:
@@ -282,8 +284,8 @@ class BaseRepository(Generic[ModelT]):
                 # https://github.com/tiangolo/fastapi/discussions/9595
                 continue
             if isinstance(v, list):
-                LEN_FOR_RANGE = 2  # noqa: N806
-                if len(v) == LEN_FOR_RANGE and k != "id":
+                len_for_range = 2
+                if len(v) == len_for_range and k != "id":
                     # Interpret element 0 min and element 1 as max
                     v.sort()
                     query = query.where(

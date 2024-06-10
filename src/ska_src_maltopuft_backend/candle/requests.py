@@ -1,51 +1,24 @@
 """Candidate request schemas."""
 
-import datetime as dt
 from typing import Annotated
 
 from fastapi import Query
-from pydantic import BaseModel, Field, StringConstraints
+from pydantic import BaseModel, Field, PastDatetime, StringConstraints
 
-from .extras import DEC_PATTERN, RA_PATTERN
+from src.ska_src_maltopuft_backend.core.extras import PositiveList
+from src.ska_src_maltopuft_backend.core.schemas import CommonQueryParams
+
+from .extras import DecStr, RaStr
 
 
-class GetCandidateQueryParams(BaseModel):
+class GetCandidateQueryParams(CommonQueryParams):
     """Query parameters for Candidate model HTTP GET requests."""
 
-    id: list[Annotated[int, None]] = Field(Query(default=[]))
-    dm: list[Annotated[float, None]] = Field(Query(default=[]))
-    snr: list[Annotated[float, None]] = Field(Query(default=[]))
-    width: list[Annotated[float, None]] = Field(Query(default=[]))
-    ra: list[
-        (
-            Annotated[
-                str,
-                StringConstraints(
-                    strip_whitespace=True,
-                    min_length=10,
-                    max_length=10,
-                    pattern=RA_PATTERN,
-                ),
-            ]
-            | None
-        )
-    ] = Field(Query(default=[]))
-    dec: list[
-        (
-            Annotated[
-                str,
-                StringConstraints(
-                    strip_whitespace=True,
-                    min_length=10,
-                    max_length=10,
-                    pattern=DEC_PATTERN,
-                ),
-            ]
-            | None
-        )
-    ] = Field(Query(default=[]))
-    created_at: list[Annotated[dt.datetime, None]] = Field(Query(default=[]))
-    updated_at: list[Annotated[dt.datetime, None]] = Field(Query(default=[]))
+    dm: Annotated[PositiveList[float], None] = Field(Query(default=[]))
+    snr: Annotated[PositiveList[float], None] = Field(Query(default=[]))
+    width: Annotated[PositiveList[float], None] = Field(Query(default=[]))
+    ra: list[RaStr | None] = Field(Query(default=[]))
+    dec: list[DecStr | None] = Field(Query(default=[]))
 
 
 class CreateCandidate(BaseModel):
@@ -54,44 +27,25 @@ class CreateCandidate(BaseModel):
     dm: float = Field(gt=0)
     snr: float = Field(gt=0)
     width: float = Field(gt=0)
-    ra: Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True,
-            min_length=10,
-            max_length=10,
-            pattern=RA_PATTERN,
-        ),
-    ]
-    dec: Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True,
-            min_length=10,
-            max_length=12,
-            pattern=DEC_PATTERN,
-        ),
-    ]
+    ra: RaStr
+    dec: DecStr
 
 
-class GetSPCandidateQueryParams(BaseModel):
+class GetSPCandidateQueryParams(CommonQueryParams):
     """Query parameters for SPCandidate model HTTP Get requests."""
 
-    id: list[Annotated[int, None]] = Field(Query(default=[]))
     data_path: list[
         (Annotated[str, StringConstraints(strip_whitespace=True)] | None)
     ] = Field(Query(default=[]))
-    observed_at: list[Annotated[dt.datetime, None]] = Field(Query(default=[]))
-    created_at: list[Annotated[dt.datetime, None]] = Field(Query(default=[]))
-    updated_at: list[Annotated[dt.datetime, None]] = Field(Query(default=[]))
+    observed_at: list[Annotated[PastDatetime, None]] = Field(Query(default=[]))
 
-    candidate_id: list[Annotated[int, None]] = Field(Query(default=[]))
+    candidate_id: Annotated[PositiveList[int], None] = Field(Query(default=[]))
 
 
 class CreateSPCandidate(BaseModel):
     """Schema for SPCandidate model HTTP POST requests."""
 
     data_path: Annotated[str, StringConstraints(strip_whitespace=True)]
-    observed_at: dt.datetime
+    observed_at: PastDatetime
 
     candidate_id: int = Field(gt=0)

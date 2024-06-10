@@ -4,6 +4,7 @@ import logging
 from typing import Any
 
 from fastapi import APIRouter, Depends
+from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
 from src.ska_src_maltopuft_backend.core.database import get_db
@@ -34,7 +35,7 @@ async def get_entities(
 
 @label_router.get("/entity/{entity_id}")
 async def get_entity(
-    entity_id: int,
+    entity_id: PositiveInt,
     db: Session = Depends(get_db),
 ) -> Entity:
     """Get candle by id."""
@@ -64,7 +65,7 @@ async def get_labels(
 
 @label_router.get("/{label_id}")
 async def get_label(
-    label_id: int,
+    label_id: PositiveInt,
     db: Session = Depends(get_db),
 ) -> Label:
     """Get label by id."""

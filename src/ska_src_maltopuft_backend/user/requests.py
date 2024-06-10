@@ -6,6 +6,8 @@ from uuid import uuid4
 from fastapi import Query
 from pydantic import UUID4, BaseModel, EmailStr, Field, StringConstraints
 
+from src.ska_src_maltopuft_backend.core.schemas import CommonQueryParams
+
 
 class GetUser(BaseModel):
     """Attributes for User model GET requests."""
@@ -28,10 +30,9 @@ class CreateUser(BaseModel):
     is_admin: bool = False
 
 
-class UserQueryParams(BaseModel):
+class GetUserQueryParams(CommonQueryParams):
     """Query parameters for User model GET requests."""
 
-    id: list[Annotated[int, None]] = Field(Query(default=[]))
     uuid: list[Annotated[UUID4, None]] = Field(Query(default=[]))
     email: list[Annotated[EmailStr, None]] = Field(Query(default=[]))
     username: list[

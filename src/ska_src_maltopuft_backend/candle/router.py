@@ -4,6 +4,7 @@ import logging
 from typing import Any
 
 from fastapi import APIRouter, Depends
+from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
 from src.ska_src_maltopuft_backend.candle.controller import (
@@ -37,7 +38,7 @@ async def get_sp_candidates(
 
 @candle_router.get("/sp/{sp_candidate_id}")
 async def get_sp_candidate(
-    sp_candidate_id: int,
+    sp_candidate_id: PositiveInt,
     db: Session = Depends(get_db),
 ) -> Candidate:
     """Get candle by id."""
@@ -58,7 +59,7 @@ async def post_sp_candidate(
 
 @candle_router.delete("/sp/{sp_candidate_id}")
 async def delete_sp_candidate(
-    sp_candidate_id: int,
+    sp_candidate_id: PositiveInt,
     db: Session = Depends(get_db),
 ) -> None:
     """Delete single pulse candidate by id."""
@@ -76,7 +77,7 @@ async def get_candidates(
 
 @candle_router.get("/{candidate_id}")
 async def get_candidate(
-    candidate_id: int,
+    candidate_id: PositiveInt,
     db: Session = Depends(get_db),
 ) -> Candidate:
     """Get candle by id."""
@@ -97,7 +98,7 @@ async def post_candidate(
 
 @candle_router.delete("/{candidate_id}")
 async def delete_candidate(
-    candidate_id: int,
+    candidate_id: PositiveInt,
     db: Session = Depends(get_db),
 ) -> None:
     """Delete candidate by id."""

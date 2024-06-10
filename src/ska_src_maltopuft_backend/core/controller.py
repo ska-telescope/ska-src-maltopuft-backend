@@ -58,11 +58,9 @@ class BaseController(Generic[ModelT]):
 
         return db_obj[0]
 
-    async def get_all(  # noqa: PLR0913
+    async def get_all(
         self,
         db: Session,
-        skip: int = 0,
-        limit: int = 100,
         join_: set[str] | None = None,
         order_: dict[str, dict[str, str]] | None = None,
         *,
@@ -78,8 +76,6 @@ class BaseController(Generic[ModelT]):
         """
         rows: Sequence[Row[ModelT]] = await self.repository.get_all(
             db=db,
-            skip=skip,
-            limit=limit,
             join_=join_,
             order_=order_,
             q=q.model_dump(exclude_unset=True),

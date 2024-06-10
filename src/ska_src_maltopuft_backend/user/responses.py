@@ -1,6 +1,5 @@
 """User response schemas."""
 
-import datetime as dt
 from typing import Annotated
 
 from pydantic import (
@@ -9,6 +8,7 @@ from pydantic import (
     ConfigDict,
     EmailStr,
     Field,
+    PastDatetime,
     StringConstraints,
 )
 
@@ -23,5 +23,5 @@ class User(BaseModel):
     email: EmailStr
     username: Annotated[str, StringConstraints(strip_whitespace=True)]
     is_admin: bool
-    created_at: dt.datetime
-    updated_at: dt.datetime
+    created_at: PastDatetime
+    updated_at: PastDatetime

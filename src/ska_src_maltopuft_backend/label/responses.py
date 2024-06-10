@@ -1,12 +1,11 @@
 """Label service response schemas."""
 
-import datetime as dt
-
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, PastDatetime
 
 from src.ska_src_maltopuft_backend.candle.responses import CandidateNested
 from src.ska_src_maltopuft_backend.user.responses import User
 
+from .css_color import CssColorStr
 from .entity import EntityNames
 
 
@@ -15,11 +14,11 @@ class Entity(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    id: int = Field(gt=0)
+    id: int = Field(..., gt=0)
     type: EntityNames
-    css_color: str
-    created_at: dt.datetime
-    updated_at: dt.datetime
+    css_color: CssColorStr
+    created_at: PastDatetime
+    updated_at: PastDatetime
 
 
 class Label(BaseModel):
@@ -31,8 +30,8 @@ class Label(BaseModel):
     labeller_id: int = Field(gt=0)
     candidate_id: int = Field(gt=0)
     entity_id: int = Field(gt=0)
-    created_at: dt.datetime
-    updated_at: dt.datetime
+    created_at: PastDatetime
+    updated_at: PastDatetime
 
     candidate: CandidateNested
     entity: Entity
