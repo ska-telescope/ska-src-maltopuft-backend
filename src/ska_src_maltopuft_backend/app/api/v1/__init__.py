@@ -2,15 +2,36 @@
 
 from fastapi import APIRouter
 
+from src.ska_src_maltopuft_backend.app.api.responses import api_responses
 from src.ska_src_maltopuft_backend.candle.router import candle_router
 from src.ska_src_maltopuft_backend.health.router import health_router
 from src.ska_src_maltopuft_backend.label.router import label_router
 from src.ska_src_maltopuft_backend.user.router import user_router
 
 v1_router = APIRouter()
-v1_router.include_router(health_router, tags=["Health check"])
-v1_router.include_router(user_router, prefix="/users", tags=["User"])
+
 v1_router.include_router(
-    candle_router, prefix="/candle", tags=["Candidate Handler"]
+    health_router,
+    tags=["Health check"],
+    responses={
+        404: {"description": "Not found."},
+    },
 )
-v1_router.include_router(label_router, prefix="/label", tags=["Label"])
+v1_router.include_router(
+    user_router,
+    prefix="/users",
+    tags=["User"],
+    responses=api_responses,  # type: ignore[arg-type]
+)
+v1_router.include_router(
+    candle_router,
+    prefix="/candle",
+    tags=["Candidate Handler"],
+    responses=api_responses,  # type: ignore[arg-type]
+)
+v1_router.include_router(
+    label_router,
+    prefix="/label",
+    tags=["Label"],
+    responses=api_responses,  # type: ignore[arg-type]
+)

@@ -18,7 +18,7 @@ from src.ska_src_maltopuft_backend.health.responses import Status, StatusEnum
 health_router = APIRouter()
 
 
-@health_router.get("/ping")
+@health_router.get("/ping", status_code=status.HTTP_204_NO_CONTENT)
 async def ping() -> Response:
     """Return an empty 'ok' response to clients.
 

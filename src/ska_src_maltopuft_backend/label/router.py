@@ -3,7 +3,7 @@
 import logging
 from typing import Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
@@ -42,7 +42,7 @@ async def get_entity(
     return await entity_controller.get_by_id(db=db, id_=entity_id)
 
 
-@label_router.post("/entity")
+@label_router.post("/entity", status_code=status.HTTP_201_CREATED)
 async def post_entity(
     entity: CreateEntity,
     db: Session = Depends(get_db),
