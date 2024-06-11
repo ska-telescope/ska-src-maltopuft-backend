@@ -68,3 +68,12 @@ class SPCandidate(Base, TimestampMixin):
     candidate: Mapped["Candidate"] = relationship(
         back_populates="sp_candidate",
     )
+
+    def __repr__(self) -> str:
+        """SPCandidate repr."""
+        return (
+            f"<SPCandidate: id={self.id},"
+            f"data_path={self.data_path},"
+            f"observed_at={self.observed_at},"
+            f"candidate_id={self.candidate_id}"
+        )

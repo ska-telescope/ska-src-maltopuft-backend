@@ -13,6 +13,7 @@ PYTHON_SWITCHES_FOR_PYLINT = --disable=R0903,W1203
 
 # Run pre-commit checks
 pre-commit:
+	@black -l 79 {docs,src,tests}
 	@ruff check . --fix
 	@python -m mypy {src,tests}
 	make python-format

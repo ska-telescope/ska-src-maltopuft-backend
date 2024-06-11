@@ -27,7 +27,7 @@ class CreateUser(BaseModel):
     uuid: UUID4 = Field(default_factory=uuid4)
     email: EmailStr
     username: Annotated[str, StringConstraints(strip_whitespace=True)]
-    is_admin: bool = False
+    is_admin: bool | None = False
 
 
 class GetUserQueryParams(CommonQueryParams):

@@ -1,6 +1,7 @@
 """Base class for data repositories."""
 
-from collections.abc import Mapping, Sequence
+import logging
+from collections.abc import Sequence
 from typing import Any, Generic, TypeVar
 
 from sqlalchemy import Row, Select
@@ -10,6 +11,7 @@ from sqlalchemy.sql.expression import select
 from src.ska_src_maltopuft_backend.core.database import Base
 
 ModelT = TypeVar("ModelT", bound=Base)
+logger = logging.getLogger(__name__)
 
 
 class BaseRepository(Generic[ModelT]):
@@ -22,7 +24,7 @@ class BaseRepository(Generic[ModelT]):
     async def create(
         self,
         db: Session,
-        attributes: dict[str, Any] | None = None,
+        attributes: dict[str, Any],
     ) -> ModelT:
         """Creates the model instance.
 
@@ -30,9 +32,6 @@ class BaseRepository(Generic[ModelT]):
         :param attributes: The attributes to create the model with.
         :return: The created model instance.
         """
-        if attributes is None:
-            attributes = {}
-
         model = self.model_class(**attributes)
         db.add(model)
         return model
@@ -41,9 +40,9 @@ class BaseRepository(Generic[ModelT]):
         self,
         db: Session,
         join_: set[str] | None = None,
-        order_: dict[str, dict[str, str]] | None = None,
+        order_: dict[str, list[str]] | None = None,
         *,
-        q: dict[str, Any],
+        q: dict[str, Any] | None = None,
     ) -> Sequence[Row[ModelT]]:
         """Returns a list of model instances.
 
@@ -53,13 +52,10 @@ class BaseRepository(Generic[ModelT]):
         :param q: The query parameters.
         :return: A list of model instances.
         """
-        # Pop skip and limit from query parameters dict so they are
-        # not considered as predicates in _where()
-        skip, limit = q.pop("skip"), q.pop("limit")
-
         query = self._query(join_=join_, order_=order_)
-        query = self._where(query=query, q=q)
-        query = query.offset(skip).limit(limit)
+        if q is not None:
+            query = self._where(query=query, q=q)
+            query = self._paginate(query=query, q=q)
         return await self._all(db=db, query=query)
 
     async def get_by(  # pylint: disable=R0913 # noqa: PLR0913
@@ -80,7 +76,7 @@ class BaseRepository(Generic[ModelT]):
         :return: The model instance.
         """
         query = self._query(join_=join_, order_=order_)
-        query = await self._get_by(query=query, field=field, value=value)
+        query = self._get_by(query=query, field=field, value=value)
         return await self._all(db=db, query=query)
 
     async def get_unique_by(  # pylint: disable=R0913 # noqa: PLR0913
@@ -101,7 +97,7 @@ class BaseRepository(Generic[ModelT]):
         :return: The model instance.
         """
         query = self._query(join_=join_, order_=order_)
-        query = await self._get_by(query=query, field=field, value=value)
+        query = self._get_by(query=query, field=field, value=value)
         return await self._one(db=db, query=query)
 
     async def delete(self, db: Session, db_obj: ModelT) -> ModelT:
@@ -142,20 +138,6 @@ class BaseRepository(Generic[ModelT]):
         """
         return db.execute(query).all()
 
-    async def _all_unique(
-        self,
-        db: Session,
-        query: Select,
-    ) -> Sequence[Row[ModelT]]:
-        """Returns all unique results from the query.
-
-        :param db: The database session.
-        :param query: The query to execute.
-        :return: A list of unique model instances.
-        """
-        result = db.execute(query)
-        return result.unique().scalars().all()
-
     async def _one(self, db: Session, query: Select) -> Row[ModelT] | None:
         """Returns the first result from the query if it exists.
 
@@ -164,31 +146,7 @@ class BaseRepository(Generic[ModelT]):
         """
         return db.execute(query).first()
 
-    async def _sort_by(
-        self,
-        query: Select,
-        sort_by: str,
-        order: str | None = "asc",
-        model: type[ModelT] | None = None,
-    ) -> Select:
-        """Returns the query sorted by the given column.
-
-        :param db: The database session.
-        :param query: The query to sort.
-        :param sort_by: The column to sort by.
-        :param order: The order to sort by.
-        :param model: The model to sort.
-        :return: The sorted query.
-        """
-        model = model or self.model_class
-        order_column = getattr(model, sort_by)
-
-        if order == "desc":
-            return query.order_by(order_column.desc())
-
-        return query.order_by(order_column.asc())
-
-    async def _get_by(
+    def _get_by(
         self,
         query: Select,
         field: str,
@@ -234,21 +192,22 @@ class BaseRepository(Generic[ModelT]):
         :param order_: The order to make.
         :return: The query ordered by the given column.
         """
-        if order_:
-            asc = order_.get("asc")
-            if asc is not None:
-                for order in asc:
-                    query = query.order_by(
-                        getattr(self.model_class, order).asc(),
-                    )
+        if not order_:
+            return query
 
-            desc = order_.get("desc")
-            if desc is not None:
-                for order in desc:
-                    query = query.order_by(
-                        getattr(self.model_class, order).desc(),
-                    )
+        asc = order_.get("asc")
+        desc = order_.get("desc")
 
+        if asc is not None:
+            for order in asc:
+                query = query.order_by(
+                    getattr(self.model_class, order).asc(),
+                )
+        if desc is not None:
+            for order in desc:
+                query = query.order_by(
+                    getattr(self.model_class, order).desc(),
+                )
         return query
 
     def _add_join_to_query(self, query: Select, join_: set[str]) -> Select:
@@ -267,14 +226,20 @@ class BaseRepository(Generic[ModelT]):
             )
         return query
 
-    def _where(self, query: Select, q: Mapping[str, Any]) -> Select:
+    def _where(self, query: Select, q: dict[str, Any] | None) -> Select:
         """Apply predicates from query parameters to query string.
 
         :param query: The query to predicate.
         :param q: The query parameters.
         :return: The query with predicate clauses.
         """
+        if q is None or q == {}:
+            return query
+
         for k, v in q.items():
+            if k in ("skip", "limit"):
+                # Skip pagination parameters
+                continue
             if v is None:
                 # Checking for v = None is not strictly required because
                 # the QueryParam base model is passed to from the controller
@@ -285,15 +250,30 @@ class BaseRepository(Generic[ModelT]):
                 continue
             if isinstance(v, list):
                 len_for_range = 2
-                if len(v) == len_for_range and k != "id":
+                if v == []:
+                    continue
+
+                if len(v) == len_for_range and isinstance(v[0], float):
                     # Interpret element 0 min and element 1 as max
                     v.sort()
                     query = query.where(
                         getattr(self.model_class, k) >= v[0],
                         getattr(self.model_class, k) <= v[1],
                     )
-                elif v != []:
+                else:
                     query = query.where(getattr(self.model_class, k).in_(v))
             else:
-                query = query.where(getattr(self.model_class, k) == v)
+                query = self._get_by(
+                    query=query,
+                    field=k,
+                    value=v,
+                )
         return query
+
+    def _paginate(self, query: Select, q: dict[str, Any]) -> Select:
+        try:
+            skip, limit = q.pop("skip"), q.pop("limit")
+        except KeyError:
+            skip, limit = 0, 100
+
+        return query.offset(skip).limit(limit)

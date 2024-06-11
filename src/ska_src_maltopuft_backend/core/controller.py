@@ -1,8 +1,10 @@
 """Base class for data controllers."""
 
+import logging
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
+from psycopg import errors as psycopgexc
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -11,6 +13,7 @@ from src.ska_src_maltopuft_backend.core.database import Base
 from src.ska_src_maltopuft_backend.core.exceptions import (
     AlreadyExistsError,
     NotFoundError,
+    ParentNotFoundError,
 )
 from src.ska_src_maltopuft_backend.core.repository import BaseRepository
 
@@ -18,6 +21,7 @@ if TYPE_CHECKING:
     from sqlalchemy import Row
 
 ModelT = TypeVar("ModelT", bound=Base)
+logger = logging.getLogger(__name__)
 
 
 class BaseController(Generic[ModelT]):
@@ -51,6 +55,7 @@ class BaseController(Generic[ModelT]):
             value=id_,
             join_=join_,
         )
+        logger.debug(f"Database returned object: {db_obj}")
 
         if not db_obj:
             msg = f"{self._type} with id={id_} does not exist"
@@ -62,7 +67,7 @@ class BaseController(Generic[ModelT]):
         self,
         db: Session,
         join_: set[str] | None = None,
-        order_: dict[str, dict[str, str]] | None = None,
+        order_: dict[str, list[str]] | None = None,
         *,
         q: BaseModel,
     ) -> Sequence[ModelT]:
@@ -71,6 +76,8 @@ class BaseController(Generic[ModelT]):
         :param skip: The number of records to skip.
         :param limit: The number of records to return.
         :param join_: The joins to make.
+        :param order_: Dict whose keys are sort order and values are lists of
+            fields
         :param q: The query parameters.
         :return: A list of records.
         """
@@ -80,7 +87,9 @@ class BaseController(Generic[ModelT]):
             order_=order_,
             q=q.model_dump(exclude_unset=True),
         )
-
+        logger.info(
+            f"Database returned {len(rows)} {self.model_class} objects.",
+        )
         return [row[0] for row in rows]
 
     async def create(
@@ -101,8 +110,19 @@ class BaseController(Generic[ModelT]):
         try:
             db.commit()
         except IntegrityError as exc:
-            msg = f"{self._type} already exists"
-            raise AlreadyExistsError(msg) from exc
+            logger.exception("Error encountered:")
+            if isinstance(exc.orig, psycopgexc.ForeignKeyViolation):
+                msg = (
+                    f"Can't create object {self._type} with non-existent"
+                    "parent."
+                )
+                raise ParentNotFoundError(msg) from exc
+            if isinstance(exc.orig, psycopgexc.UniqueViolation):
+                msg = (
+                    f"Can't create object {self._type} with duplicate"
+                    "attribute."
+                )
+                raise AlreadyExistsError(msg) from exc
         return created_user
 
     async def delete(self, db: Session, id_: int) -> None:
@@ -111,6 +131,6 @@ class BaseController(Generic[ModelT]):
         :param model: The model to delete.
         :return: True if the object was deleted, False otherwise.
         """
-        db_obj: Row[ModelT] = await self.get_by_id(db=db, id_=id_)
+        db_obj: ModelT = await self.get_by_id(db=db, id_=id_)
         await self.repository.delete(db=db, db_obj=db_obj)
         db.commit()

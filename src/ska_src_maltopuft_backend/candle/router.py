@@ -76,7 +76,8 @@ async def post_sp_candidate(
 
 
 @candle_router.delete(
-    "/sp/{sp_candidate_id}", status_code=status.HTTP_204_NO_CONTENT
+    "/sp/{sp_candidate_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_sp_candidate(
     sp_candidate_id: PositiveInt,
@@ -131,7 +132,8 @@ async def post_candidate(
 
 
 @candle_router.delete(
-    "/{candidate_id}", status_code=status.HTTP_204_NO_CONTENT
+    "/{candidate_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_candidate(
     candidate_id: PositiveInt,

@@ -24,6 +24,13 @@ class AlreadyExistsError(MaltopuftError):
     message = "Can't create duplicate object."
 
 
+class ParentNotFoundError(MaltopuftError):
+    """Parent record id not found."""
+
+    status_code = status.HTTP_404_NOT_FOUND
+    message = "Parent id not found."
+
+
 class NotFoundError(MaltopuftError):
     """HTTP 404 (not found) error."""
 

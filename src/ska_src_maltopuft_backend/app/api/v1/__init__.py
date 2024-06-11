@@ -31,7 +31,7 @@ v1_router.include_router(
 )
 v1_router.include_router(
     label_router,
-    prefix="/label",
+    prefix="/labels",
     tags=["Label"],
     responses=api_responses,  # type: ignore[arg-type]
 )

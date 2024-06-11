@@ -1,5 +1,5 @@
-@unit @label
-Feature: Label service
+@unit @label @entity 
+Feature: Label service unit tests
     Scenario Outline: Valid css color string parsing
         Given input value <value> is provided
         Then validation with CssColorStr type is successful

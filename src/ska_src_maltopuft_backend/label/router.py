@@ -24,7 +24,10 @@ logger = logging.getLogger(__name__)
 label_router = APIRouter()
 
 
-@label_router.get("/entity", response_model=list[Entity])
+@label_router.get(
+    "/entity",
+    response_model=list[Entity],
+)
 async def get_entities(
     q: GetEntityQueryParams = Depends(),
     db: Session = Depends(get_db),
@@ -33,16 +36,23 @@ async def get_entities(
     return await entity_controller.get_all(db=db, q=q)
 
 
-@label_router.get("/entity/{entity_id}")
+@label_router.get(
+    "/entity/{entity_id}",
+    response_model=Entity,
+)
 async def get_entity(
     entity_id: PositiveInt,
     db: Session = Depends(get_db),
 ) -> Entity:
-    """Get candle by id."""
+    """Get entity by id."""
     return await entity_controller.get_by_id(db=db, id_=entity_id)
 
 
-@label_router.post("/entity", status_code=status.HTTP_201_CREATED)
+@label_router.post(
+    "/entity",
+    response_model=Entity,
+    status_code=status.HTTP_201_CREATED,
+)
 async def post_entity(
     entity: CreateEntity,
     db: Session = Depends(get_db),
@@ -54,7 +64,10 @@ async def post_entity(
     )
 
 
-@label_router.get("/", response_model=list[Label])
+@label_router.get(
+    "/",
+    response_model=list[Label],
+)
 async def get_labels(
     q: GetLabelQueryParams = Depends(),
     db: Session = Depends(get_db),
@@ -63,7 +76,10 @@ async def get_labels(
     return await label_controller.get_all(db=db, q=q)
 
 
-@label_router.get("/{label_id}")
+@label_router.get(
+    "/{label_id}",
+    response_model=Label,
+)
 async def get_label(
     label_id: PositiveInt,
     db: Session = Depends(get_db),
@@ -72,7 +88,11 @@ async def get_label(
     return await label_controller.get_by_id(db=db, id_=label_id)
 
 
-@label_router.post("/")
+@label_router.post(
+    "/",
+    response_model=Label,
+    status_code=status.HTTP_201_CREATED,
+)
 async def post_label(
     label: CreateLabel,
     db: Session = Depends(get_db),
