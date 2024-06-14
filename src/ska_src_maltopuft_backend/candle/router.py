@@ -7,21 +7,16 @@ from fastapi import APIRouter, Depends, status
 from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
-from src.ska_src_maltopuft_backend.candle.controller import (
-    candidate_controller,
-    sp_candidate_controller,
-)
-from src.ska_src_maltopuft_backend.candle.requests import (
+from src.ska_src_maltopuft_backend.core.database import get_db
+
+from .controller import candidate_controller, sp_candidate_controller
+from .requests import (
     CreateCandidate,
     CreateSPCandidate,
     GetCandidateQueryParams,
     GetSPCandidateQueryParams,
 )
-from src.ska_src_maltopuft_backend.candle.responses import (
-    Candidate,
-    SPCandidate,
-)
-from src.ska_src_maltopuft_backend.core.database import get_db
+from .responses import Candidate, SPCandidate
 
 logger = logging.getLogger(__name__)
 candle_router = APIRouter()

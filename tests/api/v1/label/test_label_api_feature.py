@@ -9,7 +9,7 @@ from pytest_bdd import given, scenarios, then, when
 
 from src.ska_src_maltopuft_backend.label.responses import Label
 
-scenarios("./label.feature")
+scenarios("./label_api.feature")
 
 
 @given("parent entity is None")

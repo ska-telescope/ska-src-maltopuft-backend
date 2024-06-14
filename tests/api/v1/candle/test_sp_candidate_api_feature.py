@@ -7,10 +7,10 @@ from typing import Any
 from fastapi.testclient import TestClient
 from pytest_bdd import given, scenarios, then, when
 
-from src.ska_src_maltopuft_backend.candle.responses import SPCandidate
+from src.ska_src_maltopuft_backend.app.schemas.responses import SPCandidate
 from tests.api.v1.datagen import sp_candidate_data_generator
 
-scenarios("./sp_candidate.feature")
+scenarios("./sp_candidate_api.feature")
 
 
 @given("a sp candidate with null parent candidate attribute")

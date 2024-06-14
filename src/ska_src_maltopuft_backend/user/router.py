@@ -8,12 +8,10 @@ from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
 from src.ska_src_maltopuft_backend.core.database import get_db
-from src.ska_src_maltopuft_backend.user.controller import user_controller
-from src.ska_src_maltopuft_backend.user.requests import (
-    CreateUser,
-    GetUserQueryParams,
-)
-from src.ska_src_maltopuft_backend.user.responses import User
+
+from .controller import user_controller
+from .requests import CreateUser, GetUserQueryParams
+from .responses import User
 
 logger = logging.getLogger(__name__)
 user_router = APIRouter()

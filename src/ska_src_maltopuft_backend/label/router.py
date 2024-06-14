@@ -8,17 +8,15 @@ from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
 from src.ska_src_maltopuft_backend.core.database import get_db
-from src.ska_src_maltopuft_backend.label.controller import (
-    entity_controller,
-    label_controller,
-)
-from src.ska_src_maltopuft_backend.label.requests import (
+
+from .controller import entity_controller, label_controller
+from .requests import (
     CreateEntity,
     CreateLabel,
     GetEntityQueryParams,
     GetLabelQueryParams,
 )
-from src.ska_src_maltopuft_backend.label.responses import Entity, Label
+from .responses import Entity, Label
 
 logger = logging.getLogger(__name__)
 label_router = APIRouter()

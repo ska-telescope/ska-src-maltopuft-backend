@@ -10,7 +10,7 @@ from pytest_bdd import given, scenarios, then, when
 from src.ska_src_maltopuft_backend.user.responses import User
 from tests.api.v1.datagen import user_data_generator
 
-scenarios("./user.feature")
+scenarios("./user_api.feature")
 
 
 @given("a user with username 'test_user'")

@@ -1,4 +1,4 @@
-"""Entit service API tests."""
+"""Entity service API tests."""
 
 # ruff: noqa: D103
 
@@ -7,11 +7,13 @@ from typing import Any
 from fastapi.testclient import TestClient
 from pytest_bdd import given, scenarios, then, when
 
-from src.ska_src_maltopuft_backend.label.entity import EntityNames
-from src.ska_src_maltopuft_backend.label.responses import Entity
+from src.ska_src_maltopuft_backend.app.schemas.responses import (
+    Entity,
+    EntityNames,
+)
 from tests.api.v1.datagen import entity_data_generator
 
-scenarios("./entity.feature")
+scenarios("./entity_api.feature")
 
 
 @given("an entity with css_color 'cccccc'")

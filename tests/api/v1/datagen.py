@@ -7,12 +7,12 @@ from typing import Any
 from faker import Faker
 from polyfactory.factories.pydantic_factory import ModelFactory
 
-from src.ska_src_maltopuft_backend.candle.requests import (
+from src.ska_src_maltopuft_backend.app.schemas.requests import (
     CreateCandidate,
+    CreateLabel,
     CreateSPCandidate,
+    CreateUser,
 )
-from src.ska_src_maltopuft_backend.label.requests import CreateLabel
-from src.ska_src_maltopuft_backend.user.requests import CreateUser
 
 fake = Faker()
 
