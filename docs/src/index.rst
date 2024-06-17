@@ -39,4 +39,5 @@ MALTOPUFT documentation
   pages/project-structure.rst
   pages/account.rst
   pages/auth.rst
+  pages/crud.rst
   autoapi/index.rst
