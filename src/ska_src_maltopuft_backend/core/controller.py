@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from ska_src_maltopuft_backend.core.database import Base
+from ska_src_maltopuft_backend.core.database.base import Base
 from ska_src_maltopuft_backend.core.exceptions import (
     AlreadyExistsError,
     NotFoundError,

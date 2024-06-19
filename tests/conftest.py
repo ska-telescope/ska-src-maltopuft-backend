@@ -17,8 +17,8 @@ from ska_src_maltopuft_backend.core.auth import (
     BearerTokenAuthBackend,
     UserGroups,
 )
-from ska_src_maltopuft_backend.core.database import (
-    Base,
+from ska_src_maltopuft_backend.core.database.base import Base
+from ska_src_maltopuft_backend.core.database.database import (
     get_db,
     init_engine,
 )

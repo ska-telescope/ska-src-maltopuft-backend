@@ -11,7 +11,7 @@ from httpx import Response
 from pytest_bdd import given, scenarios, then, when
 from ska_src_maltopuft_backend.app.schemas.responses import Status
 from ska_src_maltopuft_backend.core.config import settings
-from ska_src_maltopuft_backend.core.database import ping_db
+from ska_src_maltopuft_backend.core.database.database import ping_db
 
 scenarios("./health_api.feature")
 

@@ -6,7 +6,7 @@ from collections.abc import Generator
 import sqlalchemy as sa
 from fastapi import HTTPException
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
 from ska_src_maltopuft_backend.core.config import settings
 
@@ -78,16 +78,3 @@ def ping_db_from_pool(db: Session) -> sa.engine.cursor.Result:
             status_code=503,
             detail="Database unavailable.",
         ) from e
-
-
-POSTGRES_NAMING_CONVENTION = {
-    "pk": "%(table_name)s_pkey",
-    "fk": "%(table_name)s_%(column_0_name)s_fkey",
-    "ix": "%(column_0_label)s_idx",
-    "ck": "%(table_name)s_%(constraint_name)s_check",
-    "uq": "%(table_name)s_%(column_0_name)s_key",
-}
-
-Base = declarative_base(
-    metadata=sa.MetaData(naming_convention=POSTGRES_NAMING_CONVENTION),
-)

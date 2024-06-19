@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, status
 from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
-from ska_src_maltopuft_backend.core.database import get_db
+from ska_src_maltopuft_backend.core.database.database import get_db
 
 from .controller import entity_controller, label_controller
 from .requests import (

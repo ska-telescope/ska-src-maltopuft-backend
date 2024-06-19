@@ -9,7 +9,7 @@ from ska_src_maltopuft_backend.core.auth import (
     UserGroups,
 )
 from ska_src_maltopuft_backend.core.config import settings
-from ska_src_maltopuft_backend.core.database import (
+from ska_src_maltopuft_backend.core.database.database import (
     get_db,
     ping_db_from_pool,
 )
