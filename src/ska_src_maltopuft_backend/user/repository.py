@@ -1,7 +1,7 @@
 """Database CRUD operations for the User model."""
 
-from src.ska_src_maltopuft_backend.app.models import User
-from src.ska_src_maltopuft_backend.core.repository import BaseRepository
+from ska_src_maltopuft_backend.app.models import User
+from ska_src_maltopuft_backend.core.repository import BaseRepository
 
 
 class UserRepository(BaseRepository[User]):

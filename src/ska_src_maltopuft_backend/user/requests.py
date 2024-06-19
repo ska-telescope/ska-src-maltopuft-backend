@@ -6,7 +6,7 @@ from uuid import uuid4
 from fastapi import Query
 from pydantic import UUID4, BaseModel, EmailStr, Field, StringConstraints
 
-from src.ska_src_maltopuft_backend.core.schemas import CommonQueryParams
+from ska_src_maltopuft_backend.core.schemas import CommonQueryParams
 
 
 class GetUser(BaseModel):

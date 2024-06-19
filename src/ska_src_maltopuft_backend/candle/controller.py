@@ -1,13 +1,13 @@
 """Data controller for the Candle models."""
 
-from src.ska_src_maltopuft_backend.app.models import Candidate, SPCandidate
-from src.ska_src_maltopuft_backend.candle.repository import (
+from ska_src_maltopuft_backend.app.models import Candidate, SPCandidate
+from ska_src_maltopuft_backend.candle.repository import (
     CandidateRepository,
     SPCandidateRepository,
     candidate_repository,
     sp_candidate_repository,
 )
-from src.ska_src_maltopuft_backend.core.controller import BaseController
+from ska_src_maltopuft_backend.core.controller import BaseController
 
 
 class CandidateController(BaseController[Candidate]):

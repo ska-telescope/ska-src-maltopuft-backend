@@ -8,7 +8,7 @@ from fastapi import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-from src.ska_src_maltopuft_backend.core.config import settings
+from ska_src_maltopuft_backend.core.config import settings
 
 logger = logging.getLogger(__name__)
 

@@ -9,10 +9,10 @@ import pytest
 from fastapi import status
 from fastapi.responses import JSONResponse
 from pytest_bdd import given, scenarios, then, when
+from ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
+from ska_src_maltopuft_backend.core.config import settings
 from starlette.authentication import AuthenticationError
 
-from src.ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
-from src.ska_src_maltopuft_backend.core.config import settings
 from tests.extras import build_request
 
 scenarios("./auth.feature")

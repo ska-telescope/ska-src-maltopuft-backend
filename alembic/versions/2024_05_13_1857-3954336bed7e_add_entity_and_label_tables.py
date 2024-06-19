@@ -9,9 +9,9 @@ Create Date: 2024-05-13 18:57:13.638194
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+from ska_src_maltopuft_backend.label.entity import EntityNamesDBEnum
 
 from alembic import op
-from src.ska_src_maltopuft_backend.label.entity import EntityNamesDBEnum
 
 # revision identifiers, used by Alembic.
 revision: str = "3954336bed7e"
