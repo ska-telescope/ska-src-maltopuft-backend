@@ -51,7 +51,7 @@ The code sample below provides a minimal working example for using auth in MALTO
 .. code-block:: python
 
     from fastapi import APIRouter, Depends
-    from src.ska_src_maltopuft_backend.core.auth import (
+    from ska_src_maltopuft_backend.core.auth import (
         Authenticated,
         AuthorizationChecker,
         UserGroups,

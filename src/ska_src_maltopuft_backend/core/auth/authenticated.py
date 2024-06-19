@@ -5,7 +5,7 @@ import logging
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from src.ska_src_maltopuft_backend.core.config import settings
+from ska_src_maltopuft_backend.core.config import settings
 
 from .exceptions import AuthenticationRequiredError
 

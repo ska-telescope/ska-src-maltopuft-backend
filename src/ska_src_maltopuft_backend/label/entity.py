@@ -4,7 +4,7 @@ from enum import Enum
 
 import sqlalchemy as sa
 
-from src.ska_src_maltopuft_backend.core.database import Base
+from ska_src_maltopuft_backend.core.database import Base
 
 
 class EntityNames(str, Enum):

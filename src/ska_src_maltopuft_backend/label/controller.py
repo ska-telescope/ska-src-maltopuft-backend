@@ -1,8 +1,8 @@
 """Data controller for the Label service models."""
 
-from src.ska_src_maltopuft_backend.app.models import Entity, Label
-from src.ska_src_maltopuft_backend.core.controller import BaseController
-from src.ska_src_maltopuft_backend.label.repository import (
+from ska_src_maltopuft_backend.app.models import Entity, Label
+from ska_src_maltopuft_backend.core.controller import BaseController
+from ska_src_maltopuft_backend.label.repository import (
     EntityRepository,
     LabelRepository,
     entity_repository,

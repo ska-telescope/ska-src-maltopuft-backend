@@ -2,4 +2,4 @@
 python -m alembic upgrade head
 
 # Start MALTOPUFT backend
-python main.py
+python src/main.py

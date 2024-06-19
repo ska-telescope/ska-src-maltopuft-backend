@@ -9,13 +9,13 @@ from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from src.ska_src_maltopuft_backend.core.database import Base
-from src.ska_src_maltopuft_backend.core.exceptions import (
+from ska_src_maltopuft_backend.core.database import Base
+from ska_src_maltopuft_backend.core.exceptions import (
     AlreadyExistsError,
     NotFoundError,
     ParentNotFoundError,
 )
-from src.ska_src_maltopuft_backend.core.repository import BaseRepository
+from ska_src_maltopuft_backend.core.repository import BaseRepository
 
 if TYPE_CHECKING:
     from sqlalchemy import Row
