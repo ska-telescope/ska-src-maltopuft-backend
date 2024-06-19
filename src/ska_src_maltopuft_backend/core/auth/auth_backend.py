@@ -13,8 +13,8 @@ from starlette.authentication import (
 )
 from starlette.requests import HTTPConnection
 
-from src.ska_src_maltopuft_backend.core.config import settings
-from src.ska_src_maltopuft_backend.core.exceptions import MaltopuftError
+from ska_src_maltopuft_backend.core.config import settings
+from ska_src_maltopuft_backend.core.exceptions import MaltopuftError
 
 from .exceptions import InvalidAudienceError
 from .schemas import AccessToken, AuthenticatedUser

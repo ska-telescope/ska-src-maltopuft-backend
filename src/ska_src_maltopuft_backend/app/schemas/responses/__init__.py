@@ -1,16 +1,16 @@
 """API response models and associated types."""
 
-from src.ska_src_maltopuft_backend.candle.responses import (
+from ska_src_maltopuft_backend.candle.responses import (
     Candidate,
     SPCandidate,
 )
-from src.ska_src_maltopuft_backend.health.responses import Status, StatusEnum
-from src.ska_src_maltopuft_backend.label.responses import (
+from ska_src_maltopuft_backend.health.responses import Status, StatusEnum
+from ska_src_maltopuft_backend.label.responses import (
     Entity,
     EntityNames,
     Label,
 )
-from src.ska_src_maltopuft_backend.user.responses import User
+from ska_src_maltopuft_backend.user.responses import User
 
 __all__ = [
     "User",

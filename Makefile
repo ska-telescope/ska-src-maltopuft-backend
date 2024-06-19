@@ -4,7 +4,7 @@ include .make/docs.mk
 include .make/python.mk
 
 # Define variables
-PYTHON_LINT_TARGET := ./src ./main.py
+PYTHON_LINT_TARGET := ./src
 PYTHON_SWITCHES_FOR_PYLINT = --disable=R0903,W1203
 
 # Note:

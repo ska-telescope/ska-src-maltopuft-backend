@@ -13,20 +13,19 @@ RUN apt update && \
 ARG APP_PATH=/ska-src-maltopuft-backend
 WORKDIR ${APP_PATH}
 
-# Copy poetry.lock* in case it doesn't exist in the repo
-COPY pyproject.toml poetry.lock* ./
-
-# Create virtual environment and install runtime dependencies
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-root
-
 ARG PORT=8000
 EXPOSE ${PORT}
 
-COPY alembic.ini ./alembic.ini
-COPY main.py ./
-COPY entrypoint.sh ./
-COPY alembic ./alembic
-COPY ./src ./src/
+COPY pyproject.toml poetry.lock* ./
+
+# Install project dependencies in virtual environment with poetry
+ENV PATH="$APP_PATH/.venv/bin:$PATH"
+RUN poetry config virtualenvs.in-project true --local \
+    && python -m venv .venv \
+    && poetry install --only main --no-root
+
+# Copy source code and install main package
+COPY . .
+RUN poetry install --only main
 
 CMD [ "/bin/sh", "entrypoint.sh" ]

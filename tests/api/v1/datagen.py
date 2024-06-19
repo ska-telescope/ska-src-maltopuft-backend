@@ -6,8 +6,7 @@ from typing import Any
 
 from faker import Faker
 from polyfactory.factories.pydantic_factory import ModelFactory
-
-from src.ska_src_maltopuft_backend.app.schemas.requests import (
+from ska_src_maltopuft_backend.app.schemas.requests import (
     CreateCandidate,
     CreateLabel,
     CreateSPCandidate,

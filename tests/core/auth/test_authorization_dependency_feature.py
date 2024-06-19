@@ -6,12 +6,11 @@ from typing import Any
 
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
-
-from src.ska_src_maltopuft_backend.core.auth import (
+from ska_src_maltopuft_backend.core.auth import (
     AuthorizationChecker,
     PermissionDeniedError,
 )
-from src.ska_src_maltopuft_backend.core.config import settings
+from ska_src_maltopuft_backend.core.config import settings
 
 scenarios("./authorization_dependency.feature")
 

@@ -5,8 +5,8 @@ from typing import Annotated
 from fastapi import Query
 from pydantic import BaseModel, Field, PastDatetime, StringConstraints
 
-from src.ska_src_maltopuft_backend.core.extras import PositiveList
-from src.ska_src_maltopuft_backend.core.schemas import CommonQueryParams
+from ska_src_maltopuft_backend.core.extras import PositiveList
+from ska_src_maltopuft_backend.core.schemas import CommonQueryParams
 
 from .extras import DecStr, RaStr
 

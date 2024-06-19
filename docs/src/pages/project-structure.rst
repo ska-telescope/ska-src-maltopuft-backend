@@ -8,18 +8,19 @@ An outline of the repository structure is given below:
     ska-src-maltopuft-backend/
     ├─ docs/
     ├─ src/
-    │  ├─ app/
-    │  │  ├─ api/
-    │  │  ├─ models/
-    │  │  ├─ schemas/
-    │  ├─ candle/
-    │  ├─ core/
-    │  ├─ health/
-    │  ├─ label/
-    │  ├─ user/
+    │  ├─ ska-src-maltopuft-backend/
+    │  │  ├─ app/
+    │  │  │  ├─ api/
+    │  │  │  ├─ models/
+    │  │  │  ├─ schemas/
+    │  │  ├─ candle/
+    │  │  ├─ core/
+    │  │  ├─ health/
+    │  │  ├─ label/
+    │  │  ├─ user/
+    │  │  ├─ main.py
     ├─ tests/
     ├─ entrypoint.sh
-    ├─ main.py
 
 .. note::
     The directory structure is subject to change during early prototyping. 
@@ -35,6 +36,7 @@ An outline of the repository structure is given below:
     * `health/`: Health check feature.
     * `label/`: Candidate labelling feature.
     * `user/`: User feature.
+    * `main.py`: The FastAPI application entrypoint.
 * `tests`: Unit and integration tests.
 * `entrypoint.sh`: The Dockerfile entrypoint shell script. Runs database migrations and starts the FastAPI application.
-* `main.py`: The FastAPI application entrypoint.
+

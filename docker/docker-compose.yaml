@@ -14,7 +14,7 @@ services:
       POSTGRES_DB: "maltopuftdb"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 30s
+      interval: 3s
       timeout: 3s
       retries: 5
 
@@ -26,7 +26,7 @@ services:
     environment:
       - PORT=8000
     volumes:
-      - ../:/ska-src-maltopuft-backend
+      - ../src/ska_src_maltopuft_backend:/ska-src-maltopuft-backend/src/ska_src_maltopuft_backend
     env_file:
       - path: ../.env.docker
     ports:
@@ -36,7 +36,7 @@ services:
         condition: service_healthy
     healthcheck:
       test: curl --fail http://ska-src-maltopuft-backend:8000/v1/ping || exit 1
-      interval: 30s
+      interval: 3s
       timeout: 3s
       retries: 5
 

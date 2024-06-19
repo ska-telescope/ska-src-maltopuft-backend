@@ -1,0 +1,6 @@
+# Ignore all 'hidden' files in same directory level as .dockerignore
+**/.*
+
+# Explicitly ignore .venv/ and .env 
+.venv/
+.env*

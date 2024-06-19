@@ -1,8 +1,8 @@
 """Data controller for the User model."""
 
-from src.ska_src_maltopuft_backend.app.models import User
-from src.ska_src_maltopuft_backend.core.controller import BaseController
-from src.ska_src_maltopuft_backend.user.repository import (
+from ska_src_maltopuft_backend.app.models import User
+from ska_src_maltopuft_backend.core.controller import BaseController
+from ska_src_maltopuft_backend.user.repository import (
     UserRepository,
     user_repository,
 )

@@ -5,12 +5,12 @@
 
 import pytest
 import pytest_asyncio
+from ska_src_maltopuft_backend.app.models import User
+from ska_src_maltopuft_backend.core.repository import BaseRepository
 from sqlalchemy import Select
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import ObjectDeletedError
 
-from src.ska_src_maltopuft_backend.app.models import User
-from src.ska_src_maltopuft_backend.core.repository import BaseRepository
 from tests.api.v1.datagen import user_data_generator
 
 

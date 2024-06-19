@@ -5,13 +5,13 @@ from typing import TYPE_CHECKING
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.ska_src_maltopuft_backend.core.database import Base
-from src.ska_src_maltopuft_backend.core.mixins import TimestampMixin
+from ska_src_maltopuft_backend.core.database import Base
+from ska_src_maltopuft_backend.core.mixins import TimestampMixin
 
 from .entity import EntityNames, EntityNamesDBEnum
 
 if TYPE_CHECKING:
-    from src.ska_src_maltopuft_backend.app.models import Candidate, User
+    from ska_src_maltopuft_backend.app.models import Candidate, User
 
 
 class Label(Base, TimestampMixin):

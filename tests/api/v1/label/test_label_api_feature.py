@@ -6,8 +6,7 @@ from typing import Any
 
 from fastapi.testclient import TestClient
 from pytest_bdd import given, scenarios, then, when
-
-from src.ska_src_maltopuft_backend.label.responses import Label
+from ska_src_maltopuft_backend.label.responses import Label
 
 scenarios("./label_api.feature")
 

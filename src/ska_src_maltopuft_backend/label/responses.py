@@ -2,8 +2,8 @@
 
 from pydantic import BaseModel, ConfigDict, Field, PastDatetime
 
-from src.ska_src_maltopuft_backend.candle.responses import CandidateNested
-from src.ska_src_maltopuft_backend.user.responses import User
+from ska_src_maltopuft_backend.candle.responses import CandidateNested
+from ska_src_maltopuft_backend.user.responses import User
 
 from .css_color import CssColorStr
 from .entity import EntityNames
