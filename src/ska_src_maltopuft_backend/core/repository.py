@@ -8,7 +8,7 @@ from sqlalchemy import Row, Select
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import select
 
-from ska_src_maltopuft_backend.core.database import Base
+from ska_src_maltopuft_backend.core.database.base import Base
 
 ModelT = TypeVar("ModelT", bound=Base)
 logger = logging.getLogger(__name__)
