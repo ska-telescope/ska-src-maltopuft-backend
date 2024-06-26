@@ -3,6 +3,7 @@
 from pydantic import BaseModel, ConfigDict, Field, PastDatetime
 
 from ska_src_maltopuft_backend.candle.responses import CandidateNested
+from ska_src_maltopuft_backend.core.extras import PositiveList
 from ska_src_maltopuft_backend.user.responses import User
 
 from .css_color import CssColorStr
@@ -36,3 +37,11 @@ class Label(BaseModel):
     candidate: CandidateNested
     entity: Entity
     labeller: User
+
+
+class LabelBulk(BaseModel):
+    """Response model for bulk create Label requests."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    ids: PositiveList[int]

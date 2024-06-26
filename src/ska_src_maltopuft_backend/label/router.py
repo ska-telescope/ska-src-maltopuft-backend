@@ -16,7 +16,7 @@ from .requests import (
     GetEntityQueryParams,
     GetLabelQueryParams,
 )
-from .responses import Entity, Label
+from .responses import Entity, Label, LabelBulk
 
 logger = logging.getLogger(__name__)
 label_router = APIRouter()
@@ -31,6 +31,7 @@ async def get_entities(
     db: Session = Depends(get_db),
 ) -> Any:
     """Get all entities."""
+    logger.info(f"Getting all Entities with query parameters {q}")
     return await entity_controller.get_all(db=db, q=q)
 
 
@@ -43,6 +44,7 @@ async def get_entity(
     db: Session = Depends(get_db),
 ) -> Entity:
     """Get entity by id."""
+    logger.info(f"Getting Entity with id={entity_id}")
     return await entity_controller.get_by_id(db=db, id_=entity_id)
 
 
@@ -56,6 +58,7 @@ async def post_entity(
     db: Session = Depends(get_db),
 ) -> Entity:
     """Create a new entity."""
+    logger.info(f"Creating Entity with type={entity.type}")
     return await entity_controller.create(
         db=db,
         attributes=entity.model_dump(),
@@ -71,6 +74,7 @@ async def get_labels(
     db: Session = Depends(get_db),
 ) -> Any:
     """Get all labels."""
+    logger.info(f"Getting all Labels with query parameters {q}")
     return await label_controller.get_all(db=db, q=q)
 
 
@@ -83,20 +87,30 @@ async def get_label(
     db: Session = Depends(get_db),
 ) -> Label:
     """Get label by id."""
+    logger.info(f"Getting Label with id={label_id}")
     return await label_controller.get_by_id(db=db, id_=label_id)
 
 
 @label_router.post(
     "/",
-    response_model=Label,
+    response_model=Label | LabelBulk,
     status_code=status.HTTP_201_CREATED,
 )
-async def post_label(
-    label: CreateLabel,
+async def post_labels(
+    labels: CreateLabel | list[CreateLabel],
     db: Session = Depends(get_db),
-) -> Label:
-    """Create a new label."""
+) -> Label | LabelBulk:
+    """Create a new label(s)."""
+    if isinstance(labels, list):
+        logger.info(f"Creating {len(labels)} Labels")
+        created_label_ids = await label_controller.create_many(
+            db=db,
+            objects=labels,
+        )
+        return LabelBulk(ids=created_label_ids)
+
+    logger.info(f"Creating Label with candidate_id={labels.candidate_id}")
     return await label_controller.create(
         db=db,
-        attributes=label.model_dump(),
+        attributes=labels.model_dump(),
     )
