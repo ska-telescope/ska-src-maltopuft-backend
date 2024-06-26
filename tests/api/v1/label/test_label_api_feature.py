@@ -6,7 +6,7 @@ from typing import Any
 
 from fastapi.testclient import TestClient
 from pytest_bdd import given, scenarios, then, when
-from ska_src_maltopuft_backend.label.responses import Label
+from ska_src_maltopuft_backend.app.schemas.responses import Label, LabelBulk
 
 scenarios("./label_api.feature")
 
@@ -59,6 +59,20 @@ def label_non_existent_parent_candidate(result: dict[str, Any]) -> None:
     label["candidate_id"] = 999
 
 
+@given("the labels are combined into one list")
+def combine_labels(result: dict[str, Any]) -> None:
+    """Combine labels."""
+    label = result.get("label")
+    assert isinstance(label, dict)
+    if result.get("labels") is None:
+        result["labels"] = [label]
+    else:
+        labels = result.get("labels")
+        assert isinstance(labels, list)
+        labels.append(label)
+        result["labels"] = labels
+
+
 @when("labels are retrieved from the database")
 def do_get_sp_candidates(
     client: TestClient,
@@ -75,6 +89,17 @@ def do_create_label(
     result["result"] = client.post(
         url="/v1/labels",
         json=result.get("label"),
+    )
+
+
+@when("an attempt is made to create the labels")
+def do_create_labels(
+    client: TestClient,
+    result: dict[str, Any],
+) -> None:
+    result["result"] = client.post(
+        url="/v1/labels",
+        json=result.get("labels"),
     )
 
 
@@ -105,3 +130,12 @@ def response_data_has_3_labels(result: dict[str, Any]) -> None:
     assert len(data) == 3  # noqa: PLR2004
     for d in data:
         Label(**d)
+
+
+@then("the response data should contain three label ids")
+def response_data_has_3_label_ids(result: dict[str, Any]) -> None:
+    response = result.get("response")
+    assert response is not None
+    data = response.json()
+    data = LabelBulk(**data)
+    assert len(data.ids) == 3  # noqa: PLR2004

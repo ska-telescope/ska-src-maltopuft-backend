@@ -16,7 +16,12 @@ from .requests import (
     GetCandidateQueryParams,
     GetSPCandidateQueryParams,
 )
-from .responses import Candidate, CandidateNested, SPCandidate, SPCandidateNested
+from .responses import (
+    Candidate,
+    CandidateNested,
+    SPCandidate,
+    SPCandidateNested,
+)
 
 logger = logging.getLogger(__name__)
 candle_router = APIRouter()
