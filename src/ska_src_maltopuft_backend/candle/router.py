@@ -16,7 +16,7 @@ from .requests import (
     GetCandidateQueryParams,
     GetSPCandidateQueryParams,
 )
-from .responses import Candidate, SPCandidate
+from .responses import Candidate, CandidateNested, SPCandidate, SPCandidateNested
 
 logger = logging.getLogger(__name__)
 candle_router = APIRouter()
@@ -24,7 +24,7 @@ candle_router = APIRouter()
 
 @candle_router.get(
     "/sp",
-    response_model=list[SPCandidate],
+    response_model=list[SPCandidateNested],
 )
 async def get_sp_candidates(
     q: GetSPCandidateQueryParams = Depends(),
@@ -85,7 +85,7 @@ async def delete_sp_candidate(
 
 @candle_router.get(
     "/",
-    response_model=list[Candidate],
+    response_model=list[CandidateNested],
 )
 async def get_candidates(
     q: GetCandidateQueryParams = Depends(),
