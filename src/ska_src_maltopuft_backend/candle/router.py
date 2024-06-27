@@ -35,11 +35,17 @@ async def get_sp_candidates(
     q: GetSPCandidateQueryParams = Depends(),
     db: Session = Depends(get_db),
 ) -> Any:
-    """Get all single pulse candidates."""
+    """Get all single pulse candidates ordered by descending observeration
+    time.
+    """
     logger.info(
         f"Getting all single pulse candidates with query parameters {q}",
     )
-    return await sp_candidate_controller.get_all(db=db, q=q)
+    return await sp_candidate_controller.get_all(
+        db=db,
+        order_={"desc": ["observed_at"]},
+        q=q,
+    )
 
 
 @candle_router.get(
