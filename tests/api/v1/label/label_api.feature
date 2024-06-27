@@ -93,3 +93,12 @@ Feature: Label service
         When the label is retrieved from the database by id
         Then an error response should be returned
         And the status code should be HTTP 404
+
+    Scenario: Create duplicate label
+        Given a label
+        And the label exists in the database
+        And a label
+        And the label is for a candidate which the labeller has already labelled
+        When an attempt is made to create the label
+        Then an error response should be returned
+        And the status code should be HTTP 409

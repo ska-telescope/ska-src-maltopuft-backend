@@ -119,13 +119,13 @@ class BaseController(Generic[ModelT, CreateModelT]):
             logger.exception("Error encountered:")
             if isinstance(exc.orig, psycopgexc.ForeignKeyViolation):
                 msg = (
-                    f"Can't create object {self._type} with non-existent"
+                    f"Can't create object {self._type} with non-existent "
                     "parent."
                 )
                 raise ParentNotFoundError(msg) from exc
             if isinstance(exc.orig, psycopgexc.UniqueViolation):
                 msg = (
-                    f"Can't create object {self._type} with duplicate"
+                    f"Can't create object {self._type} with duplicate "
                     "attribute."
                 )
                 raise AlreadyExistsError(msg) from exc
@@ -148,13 +148,13 @@ class BaseController(Generic[ModelT, CreateModelT]):
             logger.exception("Error encountered:")
             if isinstance(exc.orig, psycopgexc.ForeignKeyViolation):
                 msg = (
-                    f"Can't create object {self._type} with non-existent"
+                    f"Can't create object {self._type} with non-existent "
                     "parent."
                 )
                 raise ParentNotFoundError(msg) from exc
             if isinstance(exc.orig, psycopgexc.UniqueViolation):
                 msg = (
-                    f"Can't create object {self._type} with duplicate"
+                    f"Can't create object {self._type} with duplicate "
                     "attribute."
                 )
                 raise AlreadyExistsError(msg) from exc

@@ -73,6 +73,20 @@ def combine_labels(result: dict[str, Any]) -> None:
         result["labels"] = labels
 
 
+@given("the label is for a candidate which the labeller has already labelled")
+def labeller_duplicate_label(
+    result: dict[str, Any],
+    client: TestClient,
+) -> None:
+    """Generate a duplicate label."""
+    label = result.get("label")
+    assert isinstance(label, dict)
+
+    existing_label = client.get(url="/v1/labels/1").json()
+    label["candidate_id"] = existing_label.get("candidate_id")
+    label["labeller_id"] = existing_label.get("labeller_id")
+
+
 @when("labels are retrieved from the database")
 def do_get_sp_candidates(
     client: TestClient,
