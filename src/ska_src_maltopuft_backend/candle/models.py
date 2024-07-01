@@ -41,6 +41,17 @@ class Candidate(Base, TimestampMixin):
     )
     labels: Mapped[list["Label"]] = relationship(back_populates="candidate")
 
+    def __repr__(self) -> str:
+        """Candidate repr."""
+        return (
+            f"<Candidate: id={self.id},"
+            f"dm={self.dm},"
+            f"snr={self.snr},"
+            f"width={self.width},"
+            f"ra={self.ra},"
+            f"dec={self.dec},"
+        )
+
 
 class SPCandidate(Base, TimestampMixin):
     """Single-pulse candidate database model.
@@ -54,7 +65,7 @@ class SPCandidate(Base, TimestampMixin):
     __tablename__ = "sp_candidate"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    data_path: Mapped[str] = mapped_column(nullable=False)
+    plot_path: Mapped[str] = mapped_column(nullable=False)
     observed_at: Mapped[dt.datetime] = mapped_column(nullable=False)
 
     # Foreign keys
@@ -73,7 +84,7 @@ class SPCandidate(Base, TimestampMixin):
         """SPCandidate repr."""
         return (
             f"<SPCandidate: id={self.id},"
-            f"data_path={self.data_path},"
+            f"plot_path={self.plot_path},"
             f"observed_at={self.observed_at},"
             f"candidate_id={self.candidate_id}"
         )
