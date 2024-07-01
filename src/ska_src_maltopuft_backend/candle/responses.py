@@ -28,7 +28,7 @@ class SPCandidate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int = Field(gt=0)
-    data_path: str
+    plot_path: str
     observed_at: PastDatetime
     candidate_id: int = Field(gt=0)
     created_at: PastDatetime
