@@ -88,6 +88,11 @@ class CoherentBeamConfig(Base, TimestampMixin):
     x: Mapped[float] = mapped_column(nullable=False)
     y: Mapped[float] = mapped_column(nullable=False)
 
+    # Relationships
+    observations: Mapped[list["Observation"]] = relationship(
+        back_populates="coherent_beam_config",
+    )
+
     __table_args__ = (
         sa.UniqueConstraint("angle", "fraction_overlap", "x", "y"),
     )
@@ -103,3 +108,28 @@ class CoherentBeamConfig(Base, TimestampMixin):
             f"y={self.y},"
         )
 
+
+class Observation(Base, TimestampMixin):
+    """Observation metadata."""
+
+    __tablename__ = "observation"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    # Foreign keys
+    coherent_beam_config_id: Mapped[int] = mapped_column(
+        sa.ForeignKey("coherent_beam_config.id"),
+        nullable=False,
+    )
+    schedule_block_id: Mapped[int] = mapped_column(
+        sa.ForeignKey("schedule_block.id"),
+        nullable=False,
+    )
+
+    # Relationships
+    coherent_beam_config: Mapped["CoherentBeamConfig"] = relationship(
+        back_populates="observations",
+    )
+    schedule_block: Mapped["ScheduleBlock"] = relationship(
+        back_populates="observations",
+    )
