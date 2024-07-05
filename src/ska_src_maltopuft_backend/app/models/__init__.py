@@ -3,7 +3,10 @@
 from ska_src_maltopuft_backend.candle.models import Candidate, SPCandidate
 from ska_src_maltopuft_backend.core.database.base import Base
 from ska_src_maltopuft_backend.label.models import Entity, Label
-from ska_src_maltopuft_backend.observation.models import ScheduleBlock
+from ska_src_maltopuft_backend.observation.models import (
+    MeerkatScheduleBlock,
+    ScheduleBlock,
+)
 from ska_src_maltopuft_backend.user.models import User
 
 __all__ = [
@@ -14,4 +17,5 @@ __all__ = [
     "Entity",
     "Label",
     "ScheduleBlock",
+    "MeerkatScheduleBlock",
 ]
