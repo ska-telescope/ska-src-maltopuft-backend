@@ -6,8 +6,8 @@ from typing import Any
 
 from fastapi.testclient import TestClient
 from pytest_bdd import given, scenarios, then, when
+from ska_src_maltopuft_backend.user.responses import User
 
-from src.ska_src_maltopuft_backend.user.responses import User
 from tests.api.v1.datagen import user_data_generator
 
 scenarios("./user_api.feature")

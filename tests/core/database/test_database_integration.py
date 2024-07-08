@@ -6,9 +6,8 @@ import fastapi
 import pytest
 import sqlalchemy
 from pytest_bdd import given, scenarios, then
-
-from src.ska_src_maltopuft_backend.core.config import settings
-from src.ska_src_maltopuft_backend.core.database import (
+from ska_src_maltopuft_backend.core.config import settings
+from ska_src_maltopuft_backend.core.database.database import (
     init_engine,
     ping_db,
 )

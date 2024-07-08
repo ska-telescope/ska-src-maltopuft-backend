@@ -5,10 +5,11 @@ Mostly boilerplate generated with `alembic init alembic` command.
 
 from logging.config import fileConfig
 
+from ska_src_maltopuft_backend.app import models
+from ska_src_maltopuft_backend.core.config import settings
+from ska_src_maltopuft_backend.core.database.database import engine
+
 from alembic import context
-from src.ska_src_maltopuft_backend.app import models
-from src.ska_src_maltopuft_backend.core.config import settings
-from src.ska_src_maltopuft_backend.core.database import engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

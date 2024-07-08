@@ -2,7 +2,7 @@
 
 from fastapi import status
 
-from src.ska_src_maltopuft_backend.core.exceptions import MaltopuftError
+from ska_src_maltopuft_backend.core.exceptions import MaltopuftError
 
 
 class InvalidAudienceError(MaltopuftError):

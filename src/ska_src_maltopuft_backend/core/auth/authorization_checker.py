@@ -2,7 +2,7 @@
 
 from fastapi import Depends, Request
 
-from src.ska_src_maltopuft_backend.core.config import settings
+from ska_src_maltopuft_backend.core.config import settings
 
 from .exceptions import PermissionDeniedError
 

@@ -6,9 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.authentication import AuthenticationMiddleware
 
-from src.ska_src_maltopuft_backend.app.api import router
-from src.ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
-from src.ska_src_maltopuft_backend.core.exceptions import MaltopuftError
+from ska_src_maltopuft_backend.app.api import router
+from ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
+from ska_src_maltopuft_backend.core.exceptions import MaltopuftError
 
 
 def init_routers(app_: FastAPI) -> None:

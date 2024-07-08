@@ -7,11 +7,11 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID as SA_UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.ska_src_maltopuft_backend.core.database import Base
-from src.ska_src_maltopuft_backend.core.mixins import TimestampMixin
+from ska_src_maltopuft_backend.core.database.base import Base
+from ska_src_maltopuft_backend.core.mixins import TimestampMixin
 
 if TYPE_CHECKING:
-    from src.ska_src_maltopuft_backend.app.models import Label
+    from ska_src_maltopuft_backend.app.models import Label
 
 
 class User(Base, TimestampMixin):

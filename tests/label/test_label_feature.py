@@ -8,8 +8,7 @@ import pytest
 from pydantic import ValidationError
 from pydantic.type_adapter import TypeAdapter
 from pytest_bdd import given, parsers, scenarios, then
-
-from src.ska_src_maltopuft_backend.label.css_color import CssColorStr
+from ska_src_maltopuft_backend.label.css_color import CssColorStr
 
 scenarios("./label.feature")
 

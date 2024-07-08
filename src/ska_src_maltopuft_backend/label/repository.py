@@ -1,7 +1,7 @@
 """Database CRUD operations for the Label service."""
 
-from src.ska_src_maltopuft_backend.app.models import Entity, Label
-from src.ska_src_maltopuft_backend.core.repository import BaseRepository
+from ska_src_maltopuft_backend.app.models import Entity, Label
+from ska_src_maltopuft_backend.core.repository import BaseRepository
 
 
 class LabelRepository(BaseRepository[Label]):
