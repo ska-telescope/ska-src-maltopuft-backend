@@ -4,7 +4,10 @@
 Authentication and Authorization
 ================================
 
-This documentation outlines MALTOPUFT authentication and authorization.
+This documentation outlines the authentication and authorization process in the MALTOPUFT application.
+
+.. tip::
+    Authentication can be toggled on/off with the `AUTH_ENABLED` environment variable. Authentication is enabled by default and can be disabled by setting `AUTH_ENABLED` to 0. 
 
 Introduction
 ============
@@ -20,7 +23,7 @@ Logging in via SKA-IAM redirects the user to the `/callback` route on the MALTOP
 
 After verifying the login, a `JWT <https://auth0.com/learn/json-web-tokens#!>`_ (referred to as the 'token') is returned and stored on the user's browser.
 
-The token is embedded in the headers of every HTTP request sent to the backend service.
+The token is embedded in the Authorization header of every HTTP request sent to the backend service.
 
 Authorization
 -------------
@@ -65,6 +68,6 @@ The code sample below provides a minimal working example for using auth in MALTO
     async def authenticated_route() -> None:
         print("All authenticated users can access this route, no matter which security groups they are a member of.")
 
-    @router.get("/user-only" Depends(AuthorizationChecker([UserGroups.MALTOPUFT_USER])))
+    @router.get("/user-only", Depends(AuthorizationChecker([UserGroups.MALTOPUFT_USER])))
     async def authenticated_route() -> None:
         print("Only users who are members of the `src/maltopuft/user` group can access this route.")

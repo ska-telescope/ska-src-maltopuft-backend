@@ -5,7 +5,6 @@
 import fastapi
 import pytest
 import sqlalchemy
-from _pytest.monkeypatch import MonkeyPatch
 from pytest_bdd import given, scenarios, then
 
 from src.ska_src_maltopuft_backend.core.config import settings
@@ -27,7 +26,9 @@ def valid_database_conn_string() -> None:
 
 
 @given("an invalid database hostname in the connection string")
-def invalid_database_hostname_in_conn_string(monkeypatch: MonkeyPatch) -> None:
+def invalid_database_hostname_in_conn_string(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.setattr(
         settings,
         "MALTOPUFT_POSTGRES_HOST",
@@ -36,7 +37,9 @@ def invalid_database_hostname_in_conn_string(monkeypatch: MonkeyPatch) -> None:
 
 
 @given("an invalid database port in the connection string")
-def invalid_database_port_in_conn_string(monkeypatch: MonkeyPatch) -> None:
+def invalid_database_port_in_conn_string(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.setattr(
         settings,
         "MALTOPUFT_POSTGRES_PORT",
@@ -45,7 +48,9 @@ def invalid_database_port_in_conn_string(monkeypatch: MonkeyPatch) -> None:
 
 
 @given("an invalid database user in the connection string")
-def invalid_database_user_in_conn_string(monkeypatch: MonkeyPatch) -> None:
+def invalid_database_user_in_conn_string(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.setattr(
         settings,
         "MALTOPUFT_POSTGRES_USER",

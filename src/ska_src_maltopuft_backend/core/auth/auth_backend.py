@@ -112,6 +112,9 @@ class BearerTokenAuthBackend(AuthenticationBackend):
             is injected into the request.
 
         """
+        if not settings.AUTH_ENABLED:
+            return None
+
         auth_header = conn.headers.get("Authorization")
 
         if auth_header is None:

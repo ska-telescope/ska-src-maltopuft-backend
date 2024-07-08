@@ -13,6 +13,7 @@ from src.ska_src_maltopuft_backend.core.auth import (
     AuthenticatedUser,
     AuthenticationRequiredError,
 )
+from src.ska_src_maltopuft_backend.core.config import settings
 from tests.extras import build_request
 
 scenarios("./authentication_dependency.feature")
@@ -42,6 +43,16 @@ def context() -> dict[str, Any]:
         "request": None,
         "token": None,
     }
+
+
+@given("authentication is enabled")
+def auth_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Enable auth
+    monkeypatch.setattr(
+        settings,
+        "AUTH_ENABLED",
+        "1",
+    )
 
 
 @given("an authenticated token")

@@ -39,6 +39,7 @@ def invalid_auth_header(context: dict[str, Any]) -> None:
         },
     )
 
+
 @given("an authentication header with an invalid authentication scheme")
 def invalid_auth_scheme(context: dict[str, Any]) -> None:
     context["request"] = build_request(

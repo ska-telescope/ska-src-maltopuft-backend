@@ -1,9 +1,27 @@
-"""User response models."""
+"""User response schemas."""
 
-from pydantic import BaseModel
+from typing import Annotated
+
+from pydantic import (
+    UUID4,
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    PastDatetime,
+    StringConstraints,
+)
 
 
 class User(BaseModel):
-    """Response containing information shared by all User responses."""
+    """Response model for HTTP GET/POST requests."""
 
-    name: str
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int = Field(gt=0)
+    uuid: UUID4
+    email: EmailStr
+    username: Annotated[str, StringConstraints(strip_whitespace=True)]
+    is_admin: bool
+    created_at: PastDatetime
+    updated_at: PastDatetime

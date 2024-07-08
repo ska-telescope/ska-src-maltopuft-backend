@@ -36,7 +36,7 @@ As discussed in :ref:`auth-docs`, access to MALTOPUFT is provided based on which
 Members of the following groups are authorised to access MALTOPUFT:
 
 1. `src`
-2. `src/maltpuft`
+2. `src/maltopuft`
 3. `src/maltopuft/user`
 4. `services/maltopuft-api`
 

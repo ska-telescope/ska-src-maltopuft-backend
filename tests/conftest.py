@@ -28,7 +28,7 @@ from src.ska_src_maltopuft_backend.core.database import (
 from src.ska_src_maltopuft_backend.core.server import app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def engine() -> Generator[sqlalchemy.engine.base.Engine, None, None]:
     """Create a test database engine.
 
@@ -52,7 +52,7 @@ def engine() -> Generator[sqlalchemy.engine.base.Engine, None, None]:
         engine.dispose()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def db(
     engine: sqlalchemy.engine.base.Engine,
 ) -> Generator[Session, None, None]:

@@ -5,6 +5,8 @@ import logging
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from src.ska_src_maltopuft_backend.core.config import settings
+
 from .exceptions import AuthenticationRequiredError
 
 log = logging.getLogger(__name__)
@@ -21,6 +23,9 @@ class Authenticated:
         ),
     ) -> None:
         """Initialisation only succeeds if a user is authenticated."""
+        if not settings.AUTH_ENABLED:
+            return
+
         if not token:
             raise AuthenticationRequiredError
 
