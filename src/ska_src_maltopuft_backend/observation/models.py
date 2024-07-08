@@ -116,6 +116,27 @@ class Observation(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
+    dataproduct_type: Mapped[str] = mapped_column(nullable=True)
+    dataproduct_subtype: Mapped[str] = mapped_column(nullable=True)
+    calib_level: Mapped[int] = mapped_column(nullable=True)
+    obs_id: Mapped[str] = mapped_column(nullable=True)
+    s_ra: Mapped[str] = mapped_column(nullable=True)
+    s_dec: Mapped[str] = mapped_column(nullable=True)
+    t_min: Mapped[dt.datetime] = mapped_column(nullable=True)
+    t_max: Mapped[dt.datetime] = mapped_column(nullable=True)
+    t_exptime: Mapped[dt.timedelta] = mapped_column(nullable=True)
+    t_resolution: Mapped[float] = mapped_column(nullable=True)
+    em_min: Mapped[float] = mapped_column(nullable=True)
+    em_max: Mapped[float] = mapped_column(nullable=True)
+    em_resolution: Mapped[float] = mapped_column(nullable=True)
+    em_xel: Mapped[int] = mapped_column(nullable=True)
+    pol_states: Mapped[str] = mapped_column(nullable=True)
+    pol_xel: Mapped[int] = mapped_column(nullable=True)
+    facility_name: Mapped[str] = mapped_column(nullable=True)
+    instrument_name: Mapped[str] = mapped_column(nullable=True)
+    target_name: Mapped[str] = mapped_column(nullable=True)
+    target_class: Mapped[str] = mapped_column(nullable=True)
+
     # Foreign keys
     coherent_beam_config_id: Mapped[int] = mapped_column(
         sa.ForeignKey("coherent_beam_config.id"),
