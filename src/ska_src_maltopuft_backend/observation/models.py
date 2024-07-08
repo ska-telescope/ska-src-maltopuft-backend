@@ -154,3 +154,37 @@ class Observation(Base, TimestampMixin):
     schedule_block: Mapped["ScheduleBlock"] = relationship(
         back_populates="observations",
     )
+    tiling_config: Mapped["TilingConfig"] = relationship(
+        back_populates="observation",
+    )
+
+
+class TilingConfig(Base, TimestampMixin):
+    """Observation tiling configurations."""
+
+    __tablename__ = "tiling_config"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    coordinate_type: Mapped[str] = mapped_column(nullable=False)
+    epoch: Mapped[float] = mapped_column(nullable=False)
+    epoch_offset: Mapped[float] = mapped_column(nullable=False)
+    method: Mapped[str] = mapped_column(nullable=False)
+    nbeams: Mapped[int] = mapped_column(nullable=False)
+    overlap: Mapped[float] = mapped_column(nullable=False)
+    reference_frequency: Mapped[int] = mapped_column(nullable=False)
+    shape: Mapped[str] = mapped_column(nullable=False)
+    target: Mapped[str] = mapped_column(nullable=False)
+    ra: Mapped[str] = mapped_column(nullable=False)
+    dec: Mapped[str] = mapped_column(nullable=False)
+
+    # Foreign keys
+    observation_id: Mapped[int] = mapped_column(
+        sa.ForeignKey("observation.id"),
+        nullable=False,
+    )
+
+    # Relationships
+    observation: Mapped["Observation"] = relationship(
+        back_populates="tiling_config",
+    )
