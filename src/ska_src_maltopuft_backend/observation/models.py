@@ -148,6 +148,9 @@ class Observation(Base, TimestampMixin):
     )
 
     # Relationships
+    beams: Mapped["Beam"] = relationship(
+        back_populates="observation",
+    )
     coherent_beam_config: Mapped["CoherentBeamConfig"] = relationship(
         back_populates="observations",
     )
@@ -157,6 +160,14 @@ class Observation(Base, TimestampMixin):
     tiling_config: Mapped["TilingConfig"] = relationship(
         back_populates="observation",
     )
+
+    def __repr__(self) -> str:
+        """Observation repr."""
+        return (
+            "<Observation: "
+            f"id={self.id},"
+            f"schedule_block_id={self.schedule_block_id},"
+        )
 
 
 class TilingConfig(Base, TimestampMixin):
@@ -172,7 +183,7 @@ class TilingConfig(Base, TimestampMixin):
     method: Mapped[str] = mapped_column(nullable=False)
     nbeams: Mapped[int] = mapped_column(nullable=False)
     overlap: Mapped[float] = mapped_column(nullable=False)
-    reference_frequency: Mapped[int] = mapped_column(nullable=False)
+    reference_frequency: Mapped[float] = mapped_column(nullable=False)
     shape: Mapped[str] = mapped_column(nullable=False)
     target: Mapped[str] = mapped_column(nullable=False)
     ra: Mapped[str] = mapped_column(nullable=False)
@@ -187,4 +198,76 @@ class TilingConfig(Base, TimestampMixin):
     # Relationships
     observation: Mapped["Observation"] = relationship(
         back_populates="tiling_config",
+    )
+
+    def __repr__(self) -> str:
+        """TilingConfig repr."""
+        return (
+            "<TilingConfig: "
+            f"id={self.id},"
+            f"observation_id={self.observation_id},"
+        )
+
+
+class Beam(Base, TimestampMixin):
+    """Observation beam list."""
+
+    __tablename__ = "beam"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    number: Mapped[int] = mapped_column(nullable=False)
+    coherent: Mapped[bool] = mapped_column(nullable=False)
+    ra: Mapped[str] = mapped_column(nullable=False)
+    dec: Mapped[str] = mapped_column(nullable=False)
+
+    # Foreign keys
+    host_id: Mapped[int] = mapped_column(
+        sa.ForeignKey("host.id"),
+        nullable=False,
+    )
+    observation_id: Mapped[int] = mapped_column(
+        sa.ForeignKey("observation.id"),
+        nullable=False,
+    )
+
+    # Relationships
+    candidates: Mapped["Candidate"] = relationship(
+        back_populates="beam",
+    )
+    host: Mapped["Host"] = relationship(
+        back_populates="beams",
+    )
+    observation: Mapped["Observation"] = relationship(
+        back_populates="beams",
+    )
+
+    def __repr__(self) -> str:
+        """Beam repr."""
+        return (
+            "<Beam: "
+            f"id={self.id},"
+            f"number={self.number},"
+            f"coherent={self.coherent},"
+            f"ra={self.ra},"
+            f"dec={self.dec},"
+            f"host_id={self.host_id},"
+            f"observation_id={self.observation_id},"
+        )
+
+
+class Host(Base, TimestampMixin):
+    """Observation servers."""
+
+    __tablename__ = "host"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    ip_address: Mapped[str] = mapped_column(nullable=False)
+    hostname: Mapped[str] = mapped_column(nullable=True)
+    port: Mapped[int] = mapped_column(nullable=False)
+
+    # Relationships
+    beams: Mapped["Beam"] = relationship(
+        back_populates="host",
     )
