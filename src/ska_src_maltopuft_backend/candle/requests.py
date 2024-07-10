@@ -3,7 +3,13 @@
 from typing import Annotated
 
 from fastapi import Query
-from pydantic import BaseModel, Field, PastDatetime, StringConstraints
+from pydantic import (
+    BaseModel,
+    Field,
+    PastDatetime,
+    PositiveInt,
+    StringConstraints,
+)
 
 from ska_src_maltopuft_backend.core.extras import PositiveList
 from ska_src_maltopuft_backend.core.schemas import CommonQueryParams
@@ -19,6 +25,7 @@ class GetCandidateQueryParams(CommonQueryParams):
     width: Annotated[PositiveList[float], None] = Field(Query(default=[]))
     ra: list[RaStr | None] = Field(Query(default=[]))
     dec: list[DecStr | None] = Field(Query(default=[]))
+    beam_id: Annotated[PositiveList[int], None] = Field(Query(default=[]))
 
 
 class CreateCandidate(BaseModel):
@@ -29,6 +36,7 @@ class CreateCandidate(BaseModel):
     width: float = Field(gt=0)
     ra: RaStr
     dec: DecStr
+    beam_id: PositiveInt
 
 
 class GetSPCandidateQueryParams(CommonQueryParams):

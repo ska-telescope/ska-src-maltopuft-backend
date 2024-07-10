@@ -2,12 +2,16 @@
 
 import datetime as dt
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ska_src_maltopuft_backend.core.database.base import Base
 from ska_src_maltopuft_backend.core.mixins import TimestampMixin
+
+if TYPE_CHECKING:
+    from ska_src_maltopuft_backend.app.models import Candidate
 
 
 class ScheduleBlock(Base, TimestampMixin):

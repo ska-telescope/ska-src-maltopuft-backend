@@ -10,7 +10,7 @@ from ska_src_maltopuft_backend.core.database.base import Base
 from ska_src_maltopuft_backend.core.mixins import TimestampMixin
 
 if TYPE_CHECKING:
-    from ska_src_maltopuft_backend.app.models import Label
+    from ska_src_maltopuft_backend.app.models import Beam, Label
 
 
 class Candidate(Base, TimestampMixin):
@@ -35,7 +35,14 @@ class Candidate(Base, TimestampMixin):
     ra: Mapped[str] = mapped_column(sa.Unicode(12), nullable=False)
     dec: Mapped[str] = mapped_column(sa.Unicode(12), nullable=False)
 
+    # Foreign keys
+    beam_id: Mapped[int] = mapped_column(
+        sa.ForeignKey("beam.id"),
+        nullable=False,
+    )
+
     # Relationships
+    beam: Mapped["Beam"] = relationship(back_populates="candidates")
     sp_candidate: Mapped["SPCandidate"] = relationship(
         back_populates="candidate",
     )
