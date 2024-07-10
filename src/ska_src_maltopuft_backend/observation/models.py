@@ -275,3 +275,13 @@ class Host(Base, TimestampMixin):
     beams: Mapped["Beam"] = relationship(
         back_populates="host",
     )
+
+    def __repr__(self) -> str:
+        """Host repr."""
+        return (
+            "<Host: "
+            f"id={self.id},"
+            f"ip_address={self.ip_address},"
+            f"hostname={self.hostname},"
+            f"port={self.port},"
+        )
