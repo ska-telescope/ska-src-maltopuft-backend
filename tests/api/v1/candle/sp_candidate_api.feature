@@ -65,3 +65,43 @@ Feature: Single pulse candidate service
         When the sp candidate is retrieved from the database by id
         Then an error response should be returned
         And the status code should be HTTP 404
+
+    Scenario: Count sp candidate
+        Given a sp candidate
+        And the sp candidate exists in the database
+        And a sp candidate
+        And the sp candidate exists in the database
+        When an attempt is made to count the sp candidates
+        Then a response should be returned
+        And the status code should be HTTP 200
+        And the response should equal 2
+
+    Scenario: Count sp candidate after deletion
+        Given a sp candidate
+        And the sp candidate exists in the database
+        And a sp candidate
+        And the sp candidate exists in the database
+        When an attempt is made to delete the sp candidate from the database
+        And an attempt is made to count the sp candidates
+        Then a response should be returned
+        And the status code should be HTTP 200
+        And the response should equal 1
+
+    Scenario: Count sp candidates with empty database
+        Given an empty database
+        When an attempt is made to count the sp candidates
+        Then a response should be returned
+        And the status code should be HTTP 200
+        And the response should equal 0
+
+    Scenario: Count sp candidate with query parameters
+        Given a sp candidate
+        And the sp candidate exists in the database
+        When an attempt is made to count the sp candidates
+        Then a response should be returned
+        And the status code should be HTTP 200
+        And the response should equal 1
+        When an attempt is made to count the sp candidates with non-existent query parameters
+        Then a response should be returned
+        And the status code should be HTTP 200
+        And the response should equal 0

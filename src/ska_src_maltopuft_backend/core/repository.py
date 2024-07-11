@@ -6,7 +6,7 @@ from typing import Any, Generic, TypeVar
 
 from sqlalchemy import Row, Select
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import insert, select
+from sqlalchemy.sql.expression import func, insert, select
 
 from ska_src_maltopuft_backend.core.database.base import Base
 
@@ -51,6 +51,31 @@ class BaseRepository(Generic[ModelT]):
             self.model_class.id,
         )
         return db.execute(bulk_insert_stmt, params=objects).fetchall()
+
+    async def count(
+        self,
+        db: Session,
+        join_: set[str] | None = None,
+        *,
+        q: dict[str, Any] | None = None,
+    ) -> int | None:
+        """Returns the count of model instances.
+
+        :param db: The database session.
+        :param join_: The joins to make.
+        :param q: The query parameters.
+        :return: The count of model instances.
+        """
+        query = select(
+            func.count(self.model_class.id),  # pylint: disable=E1102
+        )
+
+        if q is not None:
+            query = self._where(query=query, q=q)
+
+        query = query.select_from(self.model_class)
+        query = self._maybe_join(query=query, join_=join_)
+        return db.execute(query).scalar()
 
     async def get_all(
         self,

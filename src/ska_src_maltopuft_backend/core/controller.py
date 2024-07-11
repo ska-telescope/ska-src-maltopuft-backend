@@ -69,6 +69,23 @@ class BaseController(Generic[ModelT, CreateModelT]):
 
         return db_obj[0]
 
+    async def count(
+        self,
+        db: Session,
+        join_: set[str] | None = None,
+        *,
+        q: BaseModel,
+    ) -> int:
+        """Return count of objects matching given query parameters."""
+        count = await self.repository.count(
+            db=db,
+            join_=join_,
+            q=q.model_dump(exclude_unset=True),
+        )
+        if count is None:
+            return 0
+        return count
+
     async def get_all(
         self,
         db: Session,

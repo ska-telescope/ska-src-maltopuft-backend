@@ -49,6 +49,20 @@ async def get_sp_candidates(
 
 
 @candle_router.get(
+    "/sp/count",
+)
+async def get_sp_candidates_count(
+    q: GetSPCandidateQueryParams = Depends(),
+    db: Session = Depends(get_db),
+) -> Any:
+    """Count single pulse candidates."""
+    return await sp_candidate_controller.count(
+        db=db,
+        q=q,
+    )
+
+
+@candle_router.get(
     "/sp/{sp_candidate_id}",
     response_model=SPCandidate,
 )
