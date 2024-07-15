@@ -1,10 +1,5 @@
 """Data controller for the Label service models."""
 
-from ska_src_maltopuft_backend.app.models import Entity, Label
-from ska_src_maltopuft_backend.app.schemas.requests import (
-    CreateEntity,
-    CreateLabel,
-)
 from ska_src_maltopuft_backend.core.controller import BaseController
 from ska_src_maltopuft_backend.label.repository import (
     EntityRepository,
@@ -13,8 +8,15 @@ from ska_src_maltopuft_backend.label.repository import (
     label_repository,
 )
 
+from .models import Entity, Label
+from .requests import (
+    CreateEntity,
+    CreateLabel,
+    UpdateLabel,
+)
 
-class LabelController(BaseController[Label, CreateLabel]):
+
+class LabelController(BaseController[Label, CreateLabel, UpdateLabel]):
     """Data controller for the Label model."""
 
     def __init__(self, repository: LabelRepository) -> None:
@@ -26,7 +28,7 @@ class LabelController(BaseController[Label, CreateLabel]):
         self.repository = repository
 
 
-class EntityController(BaseController[Entity, CreateEntity]):
+class EntityController(BaseController[Entity, CreateEntity, None]):
     """Data controller for the Entity model."""
 
     def __init__(self, repository: EntityRepository) -> None:

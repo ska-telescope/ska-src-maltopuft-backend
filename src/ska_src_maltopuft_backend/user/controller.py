@@ -9,7 +9,7 @@ from ska_src_maltopuft_backend.user.repository import (
 )
 
 
-class UserController(BaseController[User, CreateUser]):
+class UserController(BaseController[User, CreateUser, None]):
     """Data controller for the User model."""
 
     def __init__(self, user_repository_: UserRepository) -> None:
