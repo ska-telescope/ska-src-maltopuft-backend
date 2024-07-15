@@ -24,6 +24,13 @@ class AlreadyExistsError(MaltopuftError):
     message = "Can't create duplicate object."
 
 
+class MissingRequiredAttributeError(MaltopuftError):
+    """Mising required attribute error."""
+
+    status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+    message = "Can't create object with missing required attributes."
+
+
 class ParentNotFoundError(MaltopuftError):
     """Parent record id not found."""
 
