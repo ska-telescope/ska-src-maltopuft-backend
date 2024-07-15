@@ -15,6 +15,7 @@ from .requests import (
     CreateLabel,
     GetEntityQueryParams,
     GetLabelQueryParams,
+    UpdateLabel,
 )
 from .responses import Entity, Label, LabelBulk
 
@@ -113,4 +114,19 @@ async def post_labels(
     return await label_controller.create(
         db=db,
         attributes=labels.model_dump(),
+    )
+
+
+@label_router.put("/{label_id}", response_model=Label)
+async def update_item(
+    label_id: PositiveInt,
+    label: UpdateLabel,
+    db: Session = Depends(get_db),
+) -> Any:
+    """Update a label."""
+    existing_label = await label_controller.get_by_id(db=db, id_=label_id)
+    return await label_controller.update(
+        db=db,
+        db_obj=existing_label,
+        update_obj=label,
     )

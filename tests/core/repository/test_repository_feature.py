@@ -6,6 +6,7 @@
 import pytest
 import pytest_asyncio
 from ska_src_maltopuft_backend.app.models import User
+from ska_src_maltopuft_backend.app.schemas.requests import CreateUser
 from ska_src_maltopuft_backend.core.repository import BaseRepository
 from sqlalchemy import Select
 from sqlalchemy.orm import Session
@@ -408,3 +409,34 @@ async def test_where_with_str_param_list(repository: BaseRepository) -> None:
     query: Select = Select(User)
     query = repository._where(query=query, q={"username": ["a", "b", "c"]})
     assert 'WHERE "user".username IN' in str(query)
+
+
+@pytest.mark.asyncio()
+async def test_update(db: Session, repository: BaseRepository) -> None:
+    """Given an object exists in the database,
+    When the object is updated,
+    Then the object should contain the updated data.
+    """
+    # Create an object
+    obj = await repository.create(
+        db=db,
+        attributes=user_data_generator(is_admin=True),
+    )
+
+    db.commit()
+    id_ = obj.id
+
+    # Generate updated data
+    update_data = user_data_generator(is_admin=False)
+    updated_model = CreateUser(**update_data)
+
+    # Do the update
+    updated_obj = await repository.update(
+        db=db,
+        db_obj=obj,
+        update_obj=updated_model.model_dump(exclude_unset=True),
+    )
+
+    assert updated_obj.id == id_
+    for k, v in updated_model.model_dump().items():
+        assert getattr(updated_obj, k) == v

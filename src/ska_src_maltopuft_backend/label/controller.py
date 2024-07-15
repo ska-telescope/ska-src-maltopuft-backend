@@ -9,11 +9,7 @@ from ska_src_maltopuft_backend.label.repository import (
 )
 
 from .models import Entity, Label
-from .requests import (
-    CreateEntity,
-    CreateLabel,
-    UpdateLabel,
-)
+from .requests import CreateEntity, CreateLabel, UpdateLabel
 
 
 class LabelController(BaseController[Label, CreateLabel, UpdateLabel]):

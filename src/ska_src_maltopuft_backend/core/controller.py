@@ -184,7 +184,7 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         """Deletes the Object from the DB.
 
         :param db: The database session.
-        :param id_: The primary key/id of the object to delete from the database.
+        :param id_: The id of the object to delete from the database.
         :return: True if the object was deleted, False otherwise.
         """
         db_obj: ModelT = await self.get_by_id(db=db, id_=id_)
@@ -207,6 +207,9 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         :param update_obj: The attributes to update the object with.
         :return: The updated object.
         """
+        if not isinstance(update_obj, BaseModel):
+            raise NotImplementedError
+
         updated_object = await self.repository.update(
             db=db,
             db_obj=db_obj,

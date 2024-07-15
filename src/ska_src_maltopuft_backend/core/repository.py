@@ -40,7 +40,7 @@ class BaseRepository(Generic[ModelT]):
     async def create_many(
         self,
         db: Session,
-        objects: list[CreateModelT],
+        objects: list[ModelT],
     ) -> Sequence[Row[tuple[int]]]:
         """Creates the model instances.
 

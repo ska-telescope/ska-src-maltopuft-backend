@@ -102,3 +102,21 @@ Feature: Label service
         When an attempt is made to create the label
         Then an error response should be returned
         And the status code should be HTTP 409
+
+    Scenario: Update label
+        Given an 'RFI' entity
+        And the entity exists in the database
+        And a 'SINGLE_PULSE' entity
+        And the entity exists in the database
+        And a 'PERIODIC_PULSE' entity
+        And the entity exists in the database
+        And a label
+        And the label exists in the database
+        And an updated label
+        When an attempt is made to update the label
+        Then a response should be returned
+        And the response data should contain a label
+        And the status code should be HTTP 200
+        When the label is retrieved from the database by id
+        Then a response should be returned
+        And the response data should contain the updated data
