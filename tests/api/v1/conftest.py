@@ -6,6 +6,9 @@ import pytest
 from fastapi import status
 from httpx import Response
 from pytest_bdd import given, then
+from sqlalchemy.orm import Session
+
+from tests.observation import datagen
 
 
 @pytest.fixture()
@@ -18,6 +21,27 @@ def result() -> dict[str, Any]:
 def db_is_empty() -> None:
     """Nothing exists in the database."""
     return
+
+
+@given("observation metadata exists in the database")
+def observation_metadata(db: Session, result: dict[str, Any]) -> None:
+    """Create observation metadata in the database."""
+    args = {
+        "id": 1,
+        "schedule_block_id": 1,
+        "observation_id": 1,
+        "coherent_beam_config_id": 1,
+        "host_id": 1,
+        "beam_id": 1,
+    }
+    db.add(datagen.sb_data_generator(**args))
+    db.add(datagen.obs_data_generator(**args))
+    db.add(datagen.cb_config_data_generator(**args))
+    db.add(datagen.host_data_generator(**args))
+    beam_data = datagen.beam_data_generator(**args)
+    db.add(beam_data)
+    db.commit()
+    result["beam_id"] = beam_data.id
 
 
 @then("a response should be returned")
