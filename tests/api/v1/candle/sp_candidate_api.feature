@@ -112,3 +112,20 @@ Feature: Single pulse candidate service
         Then a response should be returned
         And the status code should be HTTP 200
         And the response should equal 0
+
+    Scenario: Get sp candidates with observation metadata filter
+        Given observation metadata exists in the database
+        And a sp candidate
+        And the sp candidate exists in the database
+        When sp candidates are retrieved from the database by schedule block id
+        Then a response should be returned
+        And the status code should be HTTP 200
+
+    Scenario: Get sp candidates with invalid observation metadata filter
+        Given observation metadata exists in the database
+        And a sp candidate
+        And the sp candidate exists in the database
+        When sp candidates are retrieved from the database by invalid schedule block id
+        Then a response should be returned
+        And the response data should contain an empty list
+        And the status code should be HTTP 200

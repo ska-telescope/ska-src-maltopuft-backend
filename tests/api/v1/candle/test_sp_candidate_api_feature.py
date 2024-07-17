@@ -78,6 +78,24 @@ def do_count_sp_candidate_with_missing_id(
     result["result"] = client.get(url="/v1/candle/sp/count/?id=2")
 
 
+@when("sp candidates are retrieved from the database by schedule block id")
+def do_get_sp_by_sb_id(
+    client: TestClient,
+    result: dict[str, Any],
+) -> None:
+    result["result"] = client.get(url="/v1/candle/sp/?schedule_block_id=1")
+
+
+@when(
+    "sp candidates are retrieved from the database by invalid schedule block id",
+)
+def do_get_sp_by_invalid_sb_id(
+    client: TestClient,
+    result: dict[str, Any],
+) -> None:
+    result["result"] = client.get(url="/v1/candle/sp/?schedule_block_id=2")
+
+
 @then("the response data should contain a sp candidate")
 def response_data_is_sp_scandidate(result: dict[str, Any]) -> None:
     response = result.get("response")

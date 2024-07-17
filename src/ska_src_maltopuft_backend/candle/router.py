@@ -8,6 +8,7 @@ from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
 from ska_src_maltopuft_backend.core.database.database import get_db
+from ska_src_maltopuft_backend.core.schemas import ForeignKeyQueryParams
 
 from .controller import candidate_controller, sp_candidate_controller
 from .requests import (
@@ -33,19 +34,21 @@ candle_router = APIRouter()
 )
 async def get_sp_candidates(
     q: GetSPCandidateQueryParams = Depends(),
+    q_foreign_key: ForeignKeyQueryParams = Depends(),
     db: Session = Depends(get_db),
 ) -> Any:
     """Get all single pulse candidates ordered by descending observeration
     time.
     """
+    params = [q, q_foreign_key]
     logger.info(
-        f"Getting all single pulse candidates with query parameters {q}",
+        f"Getting all single pulse candidates with query parameters {params}",
     )
     return await sp_candidate_controller.get_all(
         db=db,
-        join_=["candidate", "beam", "observation", "schedule_block"],
+        join_=["candidate", "beam", "host", "observation", "schedule_block"],
         order_={"desc": ["observed_at"]},
-        q=[q],
+        q=params,
     )
 
 
