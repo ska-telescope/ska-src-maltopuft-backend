@@ -78,22 +78,44 @@ def do_count_sp_candidate_with_missing_id(
     result["result"] = client.get(url="/v1/candle/sp/count/?id=2")
 
 
-@when("sp candidates are retrieved from the database by schedule block id")
-def do_get_sp_by_sb_id(
+@when("an attempt is made to count the sp candidates by observation id")
+def do_count_sp_by_obs_id(
     client: TestClient,
     result: dict[str, Any],
 ) -> None:
-    result["result"] = client.get(url="/v1/candle/sp/?schedule_block_id=1")
+    result["result"] = client.get(
+        url="/v1/candle/sp/count/?observation_id=1",
+    )
 
 
 @when(
-    "sp candidates are retrieved from the database by invalid schedule block id",
+    "an attempt is made to count the sp candidates by invalid observation id",
 )
-def do_get_sp_by_invalid_sb_id(
+def do_count_sp_by_invalid_obs_id(
     client: TestClient,
     result: dict[str, Any],
 ) -> None:
-    result["result"] = client.get(url="/v1/candle/sp/?schedule_block_id=2")
+    result["result"] = client.get(
+        url="/v1/candle/sp/count/?observation_id=2",
+    )
+
+
+@when("sp candidates are retrieved from the database by observation id")
+def do_get_sp_by_obs_id(
+    client: TestClient,
+    result: dict[str, Any],
+) -> None:
+    result["result"] = client.get(url="/v1/candle/sp/?observation_id=1")
+
+
+@when(
+    "sp candidates are retrieved from the database by invalid observation id",
+)
+def do_get_sp_by_invalid_obs_id(
+    client: TestClient,
+    result: dict[str, Any],
+) -> None:
+    result["result"] = client.get(url="/v1/candle/sp/?observation_id=2")
 
 
 @then("the response data should contain a sp candidate")

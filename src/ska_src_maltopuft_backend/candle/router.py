@@ -57,12 +57,14 @@ async def get_sp_candidates(
 )
 async def get_sp_candidates_count(
     q: GetSPCandidateQueryParams = Depends(),
+    q_foreign_key: ForeignKeyQueryParams = Depends(),
     db: Session = Depends(get_db),
 ) -> Any:
     """Count single pulse candidates."""
     return await sp_candidate_controller.count(
         db=db,
-        q=q,
+        join_=["candidate", "beam", "host", "observation", "schedule_block"],
+        q=[q, q_foreign_key],
     )
 
 

@@ -46,6 +46,19 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
     ) -> list[int]:
         return [id_[0] for id_ in returned_ids]
 
+    def _merge_query_parameters(
+        self,
+        params: list[BaseModel],
+    ) -> dict[str, Any] | None:
+        if len(params) == 0:
+            return None
+
+        params_ = [q.model_dump(exclude_unset=True) for q in params]
+        merged_params: dict[str, Any] = {}
+        for obj in params_:
+            merged_params.update(obj)
+        return merged_params
+
     async def get_by_id(
         self,
         db: Session,
@@ -77,17 +90,17 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         db: Session,
         join_: list[str] | None = None,
         *,
-        q: BaseModel,
+        q: list[BaseModel],
     ) -> int:
         """Return count of objects matching given query parameters."""
-        count = await self.repository.count(
-            db=db,
-            join_=join_,
-            q=q.model_dump(exclude_unset=True),
+        return (
+            await self.repository.count(
+                db=db,
+                join_=join_,
+                q=self._merge_query_parameters(params=q),
+            )
+            or 0
         )
-        if count is None:
-            return 0
-        return count
 
     async def get_all(
         self,
@@ -107,21 +120,11 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         :param q: The query parameters.
         :return: A list of records.
         """
-        qs = [qs.model_dump(exclude_unset=True) for qs in q]
-        flattened_qs = {}
-        for obj in qs:
-            flattened_qs.update(obj)
-
-        qs = [qs.model_dump(exclude_unset=True) for qs in q]
-        flattened_qs = {}
-        for obj in qs:
-            flattened_qs.update(obj)
-
         rows: Sequence[Row[ModelT]] = await self.repository.get_all(
             db=db,
             join_=join_,
             order_=order_,
-            q=flattened_qs,
+            q=self._merge_query_parameters(params=q),
         )
         logger.info(
             f"Database returned {len(rows)} {self.model_class} objects.",
