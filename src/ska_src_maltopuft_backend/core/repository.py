@@ -22,6 +22,11 @@ class BaseRepository(Generic[ModelT]):
         table.__tablename__: table for table in Base.__subclasses__()
     }
 
+    foreign_key_map: ClassVar = {
+        f"{table_name}_id": (table_class, "id")
+        for table_name, table_class in table_name_class_map.items()
+    }
+
     def __init__(self, model: type[ModelT]) -> None:
         """Initialise a BaseRepository instance."""
         self.model_class: type[ModelT] = model
@@ -302,7 +307,7 @@ class BaseRepository(Generic[ModelT]):
         :param q: The query parameters.
         :return: The query with predicate clauses.
         """
-        if q is None or q == {}:
+        if q is None or not q:
             return query
 
         for k, v in q.items():
@@ -317,14 +322,9 @@ class BaseRepository(Generic[ModelT]):
                 # However this condition is kept for safety in case of e.g.
                 # https://github.com/tiangolo/fastapi/discussions/9595
                 continue
-            if "_id" in k and k != "id":
-                split_key = k.split("_")
-                attribute = split_key[-1]
-                table = "_".join(split_key[:-1])
-                table_class = self.table_name_class_map.get(table)
-                query = query.where(getattr(table_class, attribute).in_(v))
-                continue
-            if isinstance(v, list):
+            if self._is_foreign_key_filter(k):
+                query = self._apply_foreign_key_filter(query, k, v)
+            elif isinstance(v, list):
                 len_for_range = 2
                 if (
                     len(v) == len_for_range
@@ -351,3 +351,19 @@ class BaseRepository(Generic[ModelT]):
         skip = q.pop("skip", 0)
         limit = q.pop("limit", 100)
         return query.offset(skip).limit(limit)
+
+    def _is_foreign_key_filter(self, key: str) -> bool:
+        """Check if the key is a foreign key filter."""
+        return key in self.foreign_key_map
+
+    def _apply_foreign_key_filter(
+        self,
+        query: Select,
+        key: str,
+        value: Any,
+    ) -> Select:
+        """Apply a foreign key filter to the query."""
+        related_table_class, related_attr = self.foreign_key_map[key]
+        return query.where(
+            getattr(related_table_class, related_attr).in_(value),
+        )
