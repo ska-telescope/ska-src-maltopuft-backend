@@ -2,21 +2,25 @@
 
 import logging
 from collections.abc import Sequence
-from typing import Any, Generic
+from typing import Any, ClassVar, Generic
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import Row, Select
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func, insert, select
 
-from ska_src_maltopuft_backend.core.database.base import Base
-from ska_src_maltopuft_backend.core.extras import ModelT
+from .database.base import Base
+from .extras import ModelT
 
 logger = logging.getLogger(__name__)
 
 
 class BaseRepository(Generic[ModelT]):
     """Base class for data repositories."""
+
+    table_name_class_map: ClassVar = {
+        table.__tablename__: table for table in Base.__subclasses__()
+    }
 
     def __init__(self, model: type[ModelT]) -> None:
         """Initialise a BaseRepository instance."""
@@ -56,7 +60,7 @@ class BaseRepository(Generic[ModelT]):
     async def count(
         self,
         db: Session,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
         *,
         q: dict[str, Any] | None = None,
     ) -> int | None:
@@ -81,7 +85,7 @@ class BaseRepository(Generic[ModelT]):
     async def get_all(
         self,
         db: Session,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
         order_: dict[str, list[str]] | None = None,
         *,
         q: dict[str, Any] | None = None,
@@ -105,7 +109,7 @@ class BaseRepository(Generic[ModelT]):
         db: Session,
         field: str,
         value: Any,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
         order_: dict[str, dict[str, str]] | None = None,
     ) -> Sequence[Row[ModelT]]:
         """Returns the model instance matching the field and value.
@@ -126,7 +130,7 @@ class BaseRepository(Generic[ModelT]):
         db: Session,
         field: str,
         value: Any,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
         order_: dict[str, dict[str, str]] | None = None,
     ) -> Row[ModelT] | None:
         """Returns the model instance matching the field and value.
@@ -175,7 +179,7 @@ class BaseRepository(Generic[ModelT]):
 
     def _query(
         self,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
         order_: dict | None = None,
     ) -> Select:
         """Returns a callable that can be used to query the model.
@@ -227,7 +231,7 @@ class BaseRepository(Generic[ModelT]):
     def _maybe_join(
         self,
         query: Select,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
     ) -> Select:
         """Returns the query with the given joins.
 
@@ -237,11 +241,16 @@ class BaseRepository(Generic[ModelT]):
         """
         if not join_:
             return query
-
-        if not isinstance(join_, set):
-            msg = "join_ must be a set"
+        if not isinstance(join_, list):
+            msg = f"join_ parameter should be a list, found {type(join_)}"
             raise TypeError(msg)
-
+        if join_ is not None and len(list(set(join_))) != len(join_):
+            msg = "Duplicate table found in list of joins"
+            raise ValueError(msg)
+        for join in join_:
+            if join not in self.table_name_class_map:
+                msg = f"Invalid table name '{join}' provided"
+                raise ValueError(msg)
         return self._add_join_to_query(query=query, join_=join_)
 
     def _maybe_ordered(
@@ -273,20 +282,17 @@ class BaseRepository(Generic[ModelT]):
                 )
         return query
 
-    def _add_join_to_query(self, query: Select, join_: set[str]) -> Select:
+    def _add_join_to_query(self, query: Select, join_: list[str]) -> Select:
         """Returns the query with the given join.
 
         :param query: The query to join.
         :param join_: The join to make.
         :return: The query with the given join.
         """
-        table_names = {
-            table.__tablename__: table for table in Base.__subclasses__()
-        }
         for table_name in join_:
-            query = query.join(
-                table_names.get(table_name),  # type: ignore[arg-type]
-            )
+            table_class = self.table_name_class_map.get(table_name)
+            if table_class is not None:
+                query = query.join(table_class)
         return query
 
     def _where(self, query: Select, q: dict[str, Any] | None) -> Select:
@@ -303,7 +309,7 @@ class BaseRepository(Generic[ModelT]):
             if k in ("skip", "limit"):
                 # Skip pagination parameters
                 continue
-            if v is None:
+            if v is None or (isinstance(v, list) and len(v) == 0):
                 # Checking for v = None is not strictly required because
                 # the QueryParam base model is passed to from the controller
                 # with exclude_unset=True.
@@ -311,12 +317,20 @@ class BaseRepository(Generic[ModelT]):
                 # However this condition is kept for safety in case of e.g.
                 # https://github.com/tiangolo/fastapi/discussions/9595
                 continue
+            if "_id" in k and k != "id":
+                split_key = k.split("_")
+                attribute = split_key[-1]
+                table = "_".join(split_key[:-1])
+                table_class = self.table_name_class_map.get(table)
+                query = query.where(getattr(table_class, attribute).in_(v))
+                continue
             if isinstance(v, list):
                 len_for_range = 2
-                if v == []:
-                    continue
-
-                if len(v) == len_for_range and isinstance(v[0], float):
+                if (
+                    len(v) == len_for_range
+                    and isinstance(v[0], float)
+                    and isinstance(v[0], float)
+                ):
                     # Interpret element 0 min and element 1 as max
                     v.sort()
                     query = query.where(
@@ -334,9 +348,6 @@ class BaseRepository(Generic[ModelT]):
         return query
 
     def _paginate(self, query: Select, q: dict[str, Any]) -> Select:
-        try:
-            skip, limit = q.pop("skip"), q.pop("limit")
-        except KeyError:
-            skip, limit = 0, 100
-
+        skip = q.pop("skip", 0)
+        limit = q.pop("limit", 100)
         return query.offset(skip).limit(limit)

@@ -291,7 +291,7 @@ async def test_add_join_to_query(repository: BaseRepository) -> None:
     Then the joins should be present in the query.
     """
     query: Select = Select(User)
-    join_ = {"label", "entity"}
+    join_ = ["label", "entity"]
 
     query = repository._maybe_join(query=query, join_=join_)
     query_joins = [j[0].description for j in query._setup_joins]  # type: ignore[attr-defined]
@@ -311,14 +311,36 @@ async def test_add_no_join_to_query(repository: BaseRepository) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_add_invalid_join_to_query(repository: BaseRepository) -> None:
+async def test_add_invalid_table_to_join(repository: BaseRepository) -> None:
     """Given a query,
-    When joins are specified in a list rather than a set,
+    When list of joins contains an invalid table,
+    Then a ValueError should be raised.
+    """
+    query: Select = Select(User)
+    invalid_table_name = "this_table_doesnt_exist"
+    join_ = [invalid_table_name]
+    with pytest.raises(
+        ValueError,
+        match=f"Invalid table name '{invalid_table_name}' provided",
+    ):
+        repository._maybe_join(query=query, join_=join_)  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio()
+async def test_add_invalid_join_type_to_query(
+    repository: BaseRepository,
+) -> None:
+    """Given a query,
+    When joins are specified in a set rather than a list,
     Then a TypeError should be raised.
     """
     query: Select = Select(User)
-    join_ = ["label"]
-    with pytest.raises(TypeError):
+    join_ = {"label"}
+    join_type = type(join_)
+    with pytest.raises(
+        TypeError,
+        match=f"join_ parameter should be a list, found {join_type}",
+    ):
         repository._maybe_join(query=query, join_=join_)  # type: ignore[arg-type]
 
 

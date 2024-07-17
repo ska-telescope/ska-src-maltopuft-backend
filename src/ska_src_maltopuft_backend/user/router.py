@@ -27,7 +27,7 @@ async def get_users(
 ) -> Any:
     """Get all users."""
     logger.debug("This is an example log statement.")
-    return await user_controller.get_all(db=db, q=q)
+    return await user_controller.get_all(db=db, q=[q])
 
 
 @user_router.get("/{user_id}", response_model=User)

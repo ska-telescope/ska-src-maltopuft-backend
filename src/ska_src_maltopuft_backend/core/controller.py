@@ -50,7 +50,7 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         self,
         db: Session,
         id_: int,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
     ) -> ModelT:
         """Returns the model instance matching the id.
 
@@ -75,7 +75,7 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
     async def count(
         self,
         db: Session,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
         *,
         q: BaseModel,
     ) -> int:
@@ -92,10 +92,10 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
     async def get_all(
         self,
         db: Session,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
         order_: dict[str, list[str]] | None = None,
         *,
-        q: BaseModel,
+        q: list[BaseModel],
     ) -> Sequence[ModelT]:
         """Returns a list of records based on pagination params.
 
@@ -107,11 +107,21 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         :param q: The query parameters.
         :return: A list of records.
         """
+        qs = [qs.model_dump(exclude_unset=True) for qs in q]
+        flattened_qs = {}
+        for obj in qs:
+            flattened_qs.update(obj)
+
+        qs = [qs.model_dump(exclude_unset=True) for qs in q]
+        flattened_qs = {}
+        for obj in qs:
+            flattened_qs.update(obj)
+
         rows: Sequence[Row[ModelT]] = await self.repository.get_all(
             db=db,
             join_=join_,
             order_=order_,
-            q=q.model_dump(exclude_unset=True),
+            q=flattened_qs,
         )
         logger.info(
             f"Database returned {len(rows)} {self.model_class} objects.",

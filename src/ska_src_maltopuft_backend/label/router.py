@@ -33,7 +33,7 @@ async def get_entities(
 ) -> Any:
     """Get all entities."""
     logger.info(f"Getting all Entities with query parameters {q}")
-    return await entity_controller.get_all(db=db, q=q)
+    return await entity_controller.get_all(db=db, q=[q])
 
 
 @label_router.get(
@@ -76,7 +76,7 @@ async def get_labels(
 ) -> Any:
     """Get all labels."""
     logger.info(f"Getting all Labels with query parameters {q}")
-    return await label_controller.get_all(db=db, q=q)
+    return await label_controller.get_all(db=db, q=[q])
 
 
 @label_router.get(

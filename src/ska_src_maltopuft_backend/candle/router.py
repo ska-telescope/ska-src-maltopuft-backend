@@ -43,8 +43,9 @@ async def get_sp_candidates(
     )
     return await sp_candidate_controller.get_all(
         db=db,
+        join_=["candidate", "beam", "observation", "schedule_block"],
         order_={"desc": ["observed_at"]},
-        q=q,
+        q=[q],
     )
 
 
@@ -118,7 +119,7 @@ async def get_candidates(
 ) -> Any:
     """Get all candidates."""
     logger.info(f"Getting all candidates with query parameters {q}")
-    return await candidate_controller.get_all(db=db, q=q)
+    return await candidate_controller.get_all(db=db, q=[q])
 
 
 @candle_router.get(
