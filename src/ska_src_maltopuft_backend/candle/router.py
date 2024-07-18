@@ -41,8 +41,15 @@ async def get_sp_candidates(
         Factory().get_sp_candidate_controller,
     ),
 ) -> Any:
-    """Get all single pulse candidates ordered by descending observeration
-    time.
+    """Get all single pulse candidates.
+
+    When no query parameters are specified, the default behaviour is to fetch
+    single pulse candidates from the latest observation in ascending time
+    order.
+
+    If query parameters are specified, those single pulse candidates are
+    selected and ordered by descending observeration time in order to return
+    the *most recent* candidates to users by default.
     """
     params = [q, q_foreign_key]
     logger.info(
@@ -51,14 +58,12 @@ async def get_sp_candidates(
     return await sp_candidate_controller.get_all(
         db=db,
         join_=["candidate", "beam", "host", "observation", "schedule_block"],
-        order_={"desc": ["observed_at"]},
+        order_={"asc": ["observed_at"]},
         q=params,
     )
 
 
-@candle_router.get(
-    "/sp/count",
-)
+@candle_router.get("/sp/count", response_model=int)
 async def get_sp_candidates_count(
     q: GetSPCandidateQueryParams = Depends(),
     q_foreign_key: ForeignKeyQueryParams = Depends(),
@@ -66,7 +71,7 @@ async def get_sp_candidates_count(
     sp_candidate_controller: SPCandidateController = Depends(
         Factory().get_sp_candidate_controller,
     ),
-) -> Any:
+) -> int:
     """Count single pulse candidates."""
     return await sp_candidate_controller.count(
         db=db,

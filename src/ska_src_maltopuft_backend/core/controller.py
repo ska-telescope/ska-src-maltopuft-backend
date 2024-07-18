@@ -49,9 +49,9 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
     def _merge_query_parameters(
         self,
         params: list[BaseModel] | None = None,
-    ) -> dict[str, Any] | None:
+    ) -> dict[str, Any]:
         if params is None:
-            return None
+            return {}
         if not isinstance(params, list):
             msg = (
                 "Parameter 'params' expected type list[BaseModel], "
@@ -95,8 +95,7 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         self,
         db: Session,
         join_: list[str] | None = None,
-        *,
-        q: list[BaseModel],
+        q: list[BaseModel] | None = None,
     ) -> int:
         """Return count of objects matching given query parameters."""
         return (
@@ -115,7 +114,7 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         order_: dict[str, list[str]] | None = None,
         q: list[BaseModel] | None = None,
     ) -> Sequence[ModelT]:
-        """Returns a list of records based on pagination params.
+        """Returns a list of records based on query params.
 
         :param skip: The number of records to skip.
         :param limit: The number of records to return.

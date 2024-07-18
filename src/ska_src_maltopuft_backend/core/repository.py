@@ -66,7 +66,6 @@ class BaseRepository(Generic[ModelT]):
         self,
         db: Session,
         join_: list[str] | None = None,
-        *,
         q: dict[str, Any] | None = None,
     ) -> int | None:
         """Returns the count of model instances.
