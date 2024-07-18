@@ -92,7 +92,6 @@ class BaseRepository(Generic[ModelT]):
         db: Session,
         join_: list[str] | None = None,
         order_: dict[str, list[str]] | None = None,
-        *,
         q: dict[str, Any] | None = None,
     ) -> Sequence[Row[ModelT]]:
         """Returns a list of model instances.

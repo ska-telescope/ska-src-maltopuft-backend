@@ -4,8 +4,6 @@ from ska_src_maltopuft_backend.core.controller import BaseController
 from ska_src_maltopuft_backend.label.repository import (
     EntityRepository,
     LabelRepository,
-    entity_repository,
-    label_repository,
 )
 
 from .models import Entity, Label
@@ -34,7 +32,3 @@ class EntityController(BaseController[Entity, CreateEntity, None]):
             repository=repository,
         )
         self.repository = repository
-
-
-label_controller = LabelController(repository=label_repository)
-entity_controller = EntityController(repository=entity_repository)

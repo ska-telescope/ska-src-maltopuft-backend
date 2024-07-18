@@ -5,7 +5,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, deferred, mapped_column, relationship
 
 from ska_src_maltopuft_backend.core.database.base import Base
 from ska_src_maltopuft_backend.core.mixins import TimestampMixin
@@ -236,8 +236,10 @@ class Beam(Base, TimestampMixin):
     )
 
     # Relationships
-    candidates: Mapped["Candidate"] = relationship(
-        back_populates="beam",
+    candidates: Mapped["Candidate"] = deferred(
+        relationship(
+            back_populates="beam",
+        ),
     )
     host: Mapped["Host"] = relationship(
         back_populates="beams",

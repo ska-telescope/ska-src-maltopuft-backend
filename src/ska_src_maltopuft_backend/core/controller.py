@@ -48,10 +48,16 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
 
     def _merge_query_parameters(
         self,
-        params: list[BaseModel],
+        params: list[BaseModel] | None = None,
     ) -> dict[str, Any] | None:
-        if len(params) == 0:
+        if params is None:
             return None
+        if not isinstance(params, list):
+            msg = (
+                "Parameter 'params' expected type list[BaseModel], "
+                f"received {type(params)}"
+            )
+            raise TypeError(msg)
 
         params_ = [q.model_dump(exclude_unset=True) for q in params]
         merged_params: dict[str, Any] = {}
@@ -107,8 +113,7 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         db: Session,
         join_: list[str] | None = None,
         order_: dict[str, list[str]] | None = None,
-        *,
-        q: list[BaseModel],
+        q: list[BaseModel] | None = None,
     ) -> Sequence[ModelT]:
         """Returns a list of records based on pagination params.
 
