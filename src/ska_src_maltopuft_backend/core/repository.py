@@ -51,7 +51,7 @@ class BaseRepository(Generic[ModelT]):
         db: Session,
         objects: list[ModelT],
     ) -> Sequence[Row[tuple[int]]]:
-        """Creates the model instances.
+        """Create multiple model instances.
 
         :param db: The database session.
         :param objects: The models to create.
@@ -81,10 +81,10 @@ class BaseRepository(Generic[ModelT]):
         )
 
         if q is not None:
-            query = self._where(query=query, q=q)
+            query = self._apply_filters(query=query, q=q)
 
         query = query.select_from(self.model_class)
-        query = self._maybe_join(query=query, join_=join_)
+        query = self._apply_joins(query=query, join_=join_)
         return db.execute(query).scalar()
 
     async def get_all(
@@ -103,11 +103,11 @@ class BaseRepository(Generic[ModelT]):
         :param q: The query parameters.
         :return: A list of model instances.
         """
-        query = self._query(join_=join_, order_=order_)
+        query = self._build_query(join_=join_, order_=order_)
         if q is not None:
-            query = self._where(query=query, q=q)
-            query = self._paginate(query=query, q=q)
-        return await self._all(db=db, query=query)
+            query = self._apply_filters(query=query, q=q)
+            query = self._apply_pagination(query=query, q=q)
+        return await self._execute_all(db=db, query=query)
 
     async def get_by(  # pylint: disable=R0913 # noqa: PLR0913
         self,
@@ -126,9 +126,9 @@ class BaseRepository(Generic[ModelT]):
         :param order_: The order of the results. (e.g desc, asc)
         :return: The model instance.
         """
-        query = self._query(join_=join_, order_=order_)
-        query = self._get_by(query=query, field=field, value=value)
-        return await self._all(db=db, query=query)
+        query = self._build_query(join_=join_, order_=order_)
+        query = self._filter_by(query=query, field=field, value=value)
+        return await self._execute_all(db=db, query=query)
 
     async def get_unique_by(  # pylint: disable=R0913 # noqa: PLR0913
         self,
@@ -147,9 +147,9 @@ class BaseRepository(Generic[ModelT]):
         :param order_: The order of the results. (e.g desc, asc)
         :return: The model instance.
         """
-        query = self._query(join_=join_, order_=order_)
-        query = self._get_by(query=query, field=field, value=value)
-        return await self._one(db=db, query=query)
+        query = self._build_query(join_=join_, order_=order_)
+        query = self._filter_by(query=query, field=field, value=value)
+        return await self._execute_one(db=db, query=query)
 
     async def delete(self, db: Session, db_obj: ModelT) -> ModelT:
         """Deletes the model.
@@ -182,58 +182,42 @@ class BaseRepository(Generic[ModelT]):
         db.add(db_obj)
         return db_obj
 
-    def _query(
-        self,
-        join_: list[str] | None = None,
-        order_: dict | None = None,
-    ) -> Select:
-        """Returns a callable that can be used to query the model.
+    def _add_joins_to_query(self, query: Select, join_: list[str]) -> Select:
+        """Add the given joins to a query.
 
-        :param join_: The joins to make.
-        :param order_: The order of the results. (e.g desc, asc)
-        :return: A callable that can be used to query the model.
+        :param query: The query that joins are added to.
+        :param join_: The list of table names to join.
+        :return: The query with the given joins applied.
         """
-        query = select(self.model_class)
-        query = self._maybe_join(query=query, join_=join_)
-        return self._maybe_ordered(query=query, order_=order_)
+        for table_name in join_:
+            table_class = self.table_name_class_map.get(table_name)
+            if table_class is not None:
+                query = query.join(table_class)
+        return query
 
-    async def _all(
-        self,
-        db: Session,
-        query: Select,
-    ) -> Sequence[Row[ModelT]]:
-        """Returns all results from the query.
+    def _validate_joins(self, join_: list[str]) -> None:
+        """Validate the join_ parameter to ensure it's a list of unique, valid
+        table names.
 
-        :param db: The database session.
-        :param query: The query to execute.
-        :return: A list of model instances.
+        :param join_: The list of table names to validate.
+        :raises TypeError: If join_ is not a list.
+        :raises ValueError: If there are duplicate or invalid table names in
+            join_.
         """
-        return db.execute(query).all()
+        if not isinstance(join_, list):
+            msg = f"join_ parameter should be a list, found {type(join_)}"
+            raise TypeError(msg)
 
-    async def _one(self, db: Session, query: Select) -> Row[ModelT] | None:
-        """Returns the first result from the query if it exists.
+        if len(join_) != len(set(join_)):
+            msg = "Duplicate table found in list of joins"
+            raise ValueError(msg)
 
-        :param query: The query to execute.
-        :return: The first model instance.
-        """
-        return db.execute(query).first()
+        for join in join_:
+            if join not in self.table_name_class_map:
+                msg = f"Invalid table name '{join}' provided"
+                raise ValueError(msg)
 
-    def _get_by(
-        self,
-        query: Select,
-        field: str,
-        value: Any,
-    ) -> Select:
-        """Returns the query filtered by the given column.
-
-        :param query: The query to filter.
-        :param field: The column to filter by.
-        :param value: The value to filter by.
-        :return: The filtered query.
-        """
-        return query.where(getattr(self.model_class, field) == value)
-
-    def _maybe_join(
+    def _apply_joins(
         self,
         query: Select,
         join_: list[str] | None = None,
@@ -246,19 +230,12 @@ class BaseRepository(Generic[ModelT]):
         """
         if not join_:
             return query
-        if not isinstance(join_, list):
-            msg = f"join_ parameter should be a list, found {type(join_)}"
-            raise TypeError(msg)
-        if join_ is not None and len(list(set(join_))) != len(join_):
-            msg = "Duplicate table found in list of joins"
-            raise ValueError(msg)
-        for join in join_:
-            if join not in self.table_name_class_map:
-                msg = f"Invalid table name '{join}' provided"
-                raise ValueError(msg)
-        return self._add_join_to_query(query=query, join_=join_)
 
-    def _maybe_ordered(
+        self._validate_joins(join_=join_)
+
+        return self._add_joins_to_query(query=query, join_=join_)
+
+    def _apply_ordering(
         self,
         query: Select,
         order_: dict | None = None,
@@ -287,20 +264,26 @@ class BaseRepository(Generic[ModelT]):
                 )
         return query
 
-    def _add_join_to_query(self, query: Select, join_: list[str]) -> Select:
-        """Returns the query with the given join.
+    def _filter_by(
+        self,
+        query: Select,
+        field: str,
+        value: Any,
+    ) -> Select:
+        """Returns the query filtered by the given column.
 
-        :param query: The query to join.
-        :param join_: The join to make.
-        :return: The query with the given join.
+        :param query: The query to filter.
+        :param field: The column to filter by.
+        :param value: The value to filter by.
+        :return: The filtered query.
         """
-        for table_name in join_:
-            table_class = self.table_name_class_map.get(table_name)
-            if table_class is not None:
-                query = query.join(table_class)
-        return query
+        return query.where(getattr(self.model_class, field) == value)
 
-    def _where(self, query: Select, q: dict[str, Any] | None) -> Select:
+    def _apply_filters(
+        self,
+        query: Select,
+        q: dict[str, Any] | None,
+    ) -> Select:
         """Apply predicates from query parameters to query string.
 
         :param query: The query to predicate.
@@ -311,46 +294,70 @@ class BaseRepository(Generic[ModelT]):
             return query
 
         for k, v in q.items():
-            if k in ("skip", "limit"):
-                # Skip pagination parameters
+            if self._is_pagination_param(k):
                 continue
-            if v is None or (isinstance(v, list) and len(v) == 0):
-                # Checking for v = None is not strictly required because
-                # the QueryParam base model is passed to from the controller
-                # with exclude_unset=True.
-                #
-                # However this condition is kept for safety in case of e.g.
-                # https://github.com/tiangolo/fastapi/discussions/9595
+            if self._is_invalid_filter(v):
                 continue
             if self._is_foreign_key_filter(k):
                 query = self._apply_foreign_key_filter(query, k, v)
             elif isinstance(v, list):
-                len_for_range = 2
-                if (
-                    len(v) == len_for_range
-                    and isinstance(v[0], float)
-                    and isinstance(v[0], float)
-                ):
-                    # Interpret element 0 min and element 1 as max
-                    v.sort()
-                    query = query.where(
-                        getattr(self.model_class, k) >= v[0],
-                        getattr(self.model_class, k) <= v[1],
-                    )
-                else:
-                    query = query.where(getattr(self.model_class, k).in_(v))
+                query = self._apply_list_filter(query, k, v)
             else:
-                query = self._get_by(
-                    query=query,
-                    field=k,
-                    value=v,
-                )
+                query = self._filter_by(query, k, v)
         return query
 
-    def _paginate(self, query: Select, q: dict[str, Any]) -> Select:
+    def _apply_pagination(self, query: Select, q: dict[str, Any]) -> Select:
         skip = q.pop("skip", 0)
         limit = q.pop("limit", 100)
         return query.offset(skip).limit(limit)
+
+    def _build_query(
+        self,
+        join_: list[str] | None = None,
+        order_: dict | None = None,
+    ) -> Select:
+        """Returns a callable that can be used to query the model.
+
+        :param join_: The joins to make.
+        :param order_: The order of the results. (e.g desc, asc)
+        :return: A callable that can be used to query the model.
+        """
+        query = select(self.model_class)
+        query = self._apply_joins(query=query, join_=join_)
+        return self._apply_ordering(query=query, order_=order_)
+
+    async def _execute_all(
+        self,
+        db: Session,
+        query: Select,
+    ) -> Sequence[Row[ModelT]]:
+        """Returns all results from the query.
+
+        :param db: The database session.
+        :param query: The query to execute.
+        :return: A list of model instances.
+        """
+        return db.execute(query).all()
+
+    async def _execute_one(
+        self,
+        db: Session,
+        query: Select,
+    ) -> Row[ModelT] | None:
+        """Returns the first result from the query if it exists.
+
+        :param query: The query to execute.
+        :return: The first model instance.
+        """
+        return db.execute(query).first()
+
+    def _is_pagination_param(self, key: str) -> bool:
+        """Check if the key is a pagination parameter."""
+        return key in {"skip", "limit"}
+
+    def _is_invalid_filter(self, value: Any) -> bool:
+        """Check if the filter value is invalid (None or empty list)."""
+        return value is None or (isinstance(value, list) and not value)
 
     def _is_foreign_key_filter(self, key: str) -> bool:
         """Check if the key is a foreign key filter."""
@@ -367,3 +374,24 @@ class BaseRepository(Generic[ModelT]):
         return query.where(
             getattr(related_table_class, related_attr).in_(value),
         )
+
+    def _apply_list_filter(
+        self,
+        query: Select,
+        key: str,
+        value: list,
+    ) -> Select:
+        """Apply a list filter to the query."""
+        len_for_range = 2
+        if len(value) == len_for_range and all(
+            isinstance(item, int | float) for item in value
+        ):
+            # Interpret list as a range of continuous values to search between
+            value.sort()
+            return query.where(
+                getattr(self.model_class, key) >= value[0],
+                getattr(self.model_class, key) <= value[1],
+            )
+
+        # Treat list as discrete values
+        return query.where(getattr(self.model_class, key).in_(value))
