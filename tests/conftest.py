@@ -7,7 +7,7 @@ from collections.abc import Generator
 from unittest.mock import AsyncMock
 
 import pytest
-import sqlalchemy
+import sqlalchemy as sa
 from fastapi.testclient import TestClient
 from pytest_mock import MockerFixture
 from ska_src_maltopuft_backend.core.auth import (
@@ -28,7 +28,7 @@ from starlette.authentication import AuthCredentials
 
 
 @pytest.fixture()
-def engine() -> Generator[sqlalchemy.engine.base.Engine, None, None]:
+def engine() -> Generator[sa.engine.base.Engine, None, None]:
     """Create a test database engine.
 
     After initialising a database engine a 'drop all' statement is issued to
@@ -41,19 +41,25 @@ def engine() -> Generator[sqlalchemy.engine.base.Engine, None, None]:
     """
     engine = init_engine()
 
+    with engine.connect() as connection:
+        connection.execute(sa.text("DROP TABLE IF EXISTS alembic_revision"))
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
     try:
         yield engine
     finally:
+        with engine.connect() as connection:
+            connection.execute(
+                sa.text("DROP TABLE IF EXISTS alembic_revision"),
+            )
         Base.metadata.drop_all(bind=engine)
         engine.dispose()
 
 
 @pytest.fixture()
 def db(
-    engine: sqlalchemy.engine.base.Engine,
+    engine: sa.engine.base.Engine,
 ) -> Generator[Session, None, None]:
     """Create a database session with transaction rollback.
 

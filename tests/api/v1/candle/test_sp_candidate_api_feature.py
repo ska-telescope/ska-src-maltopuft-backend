@@ -1,6 +1,6 @@
 """Single pulse candidate service API tests."""
 
-# ruff: noqa: D103
+# ruff: noqa: D103, PLR2004
 
 from typing import Any
 
@@ -60,6 +60,24 @@ def do_delete_sp_candidate(
     result["result"] = client.delete(url="/v1/candle/sp/1")
 
 
+@when("an attempt is made to count the sp candidates")
+def do_count_sp_candidate(
+    client: TestClient,
+    result: dict[str, Any],
+) -> None:
+    result["result"] = client.get(url="/v1/candle/sp/count")
+
+
+@when(
+    "an attempt is made to count the sp candidates with non-existent query parameters",
+)
+def do_count_sp_candidate_with_missing_id(
+    client: TestClient,
+    result: dict[str, Any],
+) -> None:
+    result["result"] = client.get(url="/v1/candle/sp/count/?id=2")
+
+
 @then("the response data should contain a sp candidate")
 def response_data_is_sp_scandidate(result: dict[str, Any]) -> None:
     response = result.get("response")
@@ -76,6 +94,30 @@ def response_data_has_3_sp_candidates(result: dict[str, Any]) -> None:
     assert response is not None
     data = response.json()
     assert data is not None
-    assert len(data) == 3  # noqa: PLR2004
+    assert len(data) == 3
     for d in data:
         SPCandidate(**d)
+
+
+@then("the response should equal 0")
+def response_data_is_0(result: dict[str, Any]) -> None:
+    response = result.get("response")
+    assert response is not None
+    data = response.json()
+    assert data == 0
+
+
+@then("the response should equal 1")
+def response_data_is_1(result: dict[str, Any]) -> None:
+    response = result.get("response")
+    assert response is not None
+    data = response.json()
+    assert data == 1
+
+
+@then("the response should equal 2")
+def response_data_is_2(result: dict[str, Any]) -> None:
+    response = result.get("response")
+    assert response is not None
+    data = response.json()
+    assert data == 2
