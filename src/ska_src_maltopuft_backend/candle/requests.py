@@ -34,7 +34,7 @@ class CreateCandidate(BaseModel):
 class GetSPCandidateQueryParams(CommonQueryParams):
     """Query parameters for SPCandidate model HTTP Get requests."""
 
-    data_path: list[
+    plot_path: list[
         (Annotated[str, StringConstraints(strip_whitespace=True)] | None)
     ] = Field(Query(default=[]))
     observed_at: list[Annotated[PastDatetime, None]] = Field(Query(default=[]))
@@ -45,7 +45,7 @@ class GetSPCandidateQueryParams(CommonQueryParams):
 class CreateSPCandidate(BaseModel):
     """Schema for SPCandidate model HTTP POST requests."""
 
-    data_path: Annotated[str, StringConstraints(strip_whitespace=True)]
+    plot_path: Annotated[str, StringConstraints(strip_whitespace=True)]
     observed_at: PastDatetime
 
     candidate_id: int = Field(gt=0)

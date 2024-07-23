@@ -6,7 +6,7 @@ from typing import Any, Generic, TypeVar
 
 from sqlalchemy import Row, Select
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import select
+from sqlalchemy.sql.expression import insert, select
 
 from ska_src_maltopuft_backend.core.database.base import Base
 
@@ -35,6 +35,22 @@ class BaseRepository(Generic[ModelT]):
         model = self.model_class(**attributes)
         db.add(model)
         return model
+
+    async def create_many(
+        self,
+        db: Session,
+        objects: list[ModelT],
+    ) -> Sequence[Row[tuple[int]]]:
+        """Creates the model instances.
+
+        :param db: The database session.
+        :param objects: The models to create.
+        :return: The created model instance ids.
+        """
+        bulk_insert_stmt = insert(self.model_class).returning(
+            self.model_class.id,
+        )
+        return db.execute(bulk_insert_stmt, params=objects).fetchall()
 
     async def get_all(
         self,

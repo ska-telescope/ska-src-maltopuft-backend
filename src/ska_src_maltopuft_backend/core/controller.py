@@ -2,10 +2,12 @@
 
 import logging
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
+from fastapi.encoders import jsonable_encoder
 from psycopg import errors as psycopgexc
 from pydantic import BaseModel
+from sqlalchemy import Row
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -17,14 +19,12 @@ from ska_src_maltopuft_backend.core.exceptions import (
 )
 from ska_src_maltopuft_backend.core.repository import BaseRepository
 
-if TYPE_CHECKING:
-    from sqlalchemy import Row
-
 ModelT = TypeVar("ModelT", bound=Base)
+CreateModelT = TypeVar("CreateModelT", bound=Base)
 logger = logging.getLogger(__name__)
 
 
-class BaseController(Generic[ModelT]):
+class BaseController(Generic[ModelT, CreateModelT]):
     """Base class for data controllers."""
 
     def __init__(
@@ -36,6 +36,12 @@ class BaseController(Generic[ModelT]):
         self.model_class = model
         self.repository = repository
         self._type = self.model_class.__tablename__.title()
+
+    def _flatten_ids(
+        self,
+        returned_ids: Sequence[Row[tuple[int]]],
+    ) -> list[int]:
+        return [id_[0] for id_ in returned_ids]
 
     async def get_by_id(
         self,
@@ -102,7 +108,7 @@ class BaseController(Generic[ModelT]):
         :param attributes: The attributes to create the object with.
         :return: The created object.
         """
-        created_user = await self.repository.create(
+        created_object = await self.repository.create(
             db=db,
             attributes=attributes,
         )
@@ -113,17 +119,47 @@ class BaseController(Generic[ModelT]):
             logger.exception("Error encountered:")
             if isinstance(exc.orig, psycopgexc.ForeignKeyViolation):
                 msg = (
-                    f"Can't create object {self._type} with non-existent"
+                    f"Can't create object {self._type} with non-existent "
                     "parent."
                 )
                 raise ParentNotFoundError(msg) from exc
             if isinstance(exc.orig, psycopgexc.UniqueViolation):
                 msg = (
-                    f"Can't create object {self._type} with duplicate"
+                    f"Can't create object {self._type} with duplicate "
                     "attribute."
                 )
                 raise AlreadyExistsError(msg) from exc
-        return created_user
+        return created_object
+
+    async def create_many(
+        self,
+        db: Session,
+        objects: list[CreateModelT],
+    ) -> list[int]:
+        """Create a list of objects."""
+        objects = [jsonable_encoder(obj) for obj in objects]
+        try:
+            created_ids = await self.repository.create_many(
+                db=db,
+                objects=objects,
+            )
+            db.commit()
+        except IntegrityError as exc:
+            logger.exception("Error encountered:")
+            if isinstance(exc.orig, psycopgexc.ForeignKeyViolation):
+                msg = (
+                    f"Can't create object {self._type} with non-existent "
+                    "parent."
+                )
+                raise ParentNotFoundError(msg) from exc
+            if isinstance(exc.orig, psycopgexc.UniqueViolation):
+                msg = (
+                    f"Can't create object {self._type} with duplicate "
+                    "attribute."
+                )
+                raise AlreadyExistsError(msg) from exc
+        logger.info(f"Created {len(created_ids)} {self.model_class} objects")
+        return self._flatten_ids(created_ids)
 
     async def delete(self, db: Session, id_: int) -> None:
         """Deletes the Object from the DB.

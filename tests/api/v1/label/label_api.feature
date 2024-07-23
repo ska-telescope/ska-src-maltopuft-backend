@@ -16,6 +16,18 @@ Feature: Label service
         And the response data should contain a label
         And the status code should be HTTP 201
 
+    Scenario: Create many labels
+        Given a label
+        And the labels are combined into one list
+        And a label
+        And the labels are combined into one list
+        And a label
+        And the labels are combined into one list
+        When an attempt is made to create the labels
+        Then a response should be returned
+        And the response data should contain three label ids
+        And the status code should be HTTP 201
+
     Scenario: Create label with null parent entity fails
         Given an empty database
         And a label
@@ -81,3 +93,12 @@ Feature: Label service
         When the label is retrieved from the database by id
         Then an error response should be returned
         And the status code should be HTTP 404
+
+    Scenario: Create duplicate label
+        Given a label
+        And the label exists in the database
+        And a label
+        And the label is for a candidate which the labeller has already labelled
+        When an attempt is made to create the label
+        Then an error response should be returned
+        And the status code should be HTTP 409

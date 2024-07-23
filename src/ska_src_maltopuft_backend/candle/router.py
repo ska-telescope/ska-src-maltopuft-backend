@@ -16,7 +16,12 @@ from .requests import (
     GetCandidateQueryParams,
     GetSPCandidateQueryParams,
 )
-from .responses import Candidate, SPCandidate
+from .responses import (
+    Candidate,
+    CandidateNested,
+    SPCandidate,
+    SPCandidateNested,
+)
 
 logger = logging.getLogger(__name__)
 candle_router = APIRouter()
@@ -24,17 +29,23 @@ candle_router = APIRouter()
 
 @candle_router.get(
     "/sp",
-    response_model=list[SPCandidate],
+    response_model=list[SPCandidateNested],
 )
 async def get_sp_candidates(
     q: GetSPCandidateQueryParams = Depends(),
     db: Session = Depends(get_db),
 ) -> Any:
-    """Get all single pulse candidates."""
+    """Get all single pulse candidates ordered by descending observeration
+    time.
+    """
     logger.info(
         f"Getting all single pulse candidates with query parameters {q}",
     )
-    return await sp_candidate_controller.get_all(db=db, q=q)
+    return await sp_candidate_controller.get_all(
+        db=db,
+        order_={"desc": ["observed_at"]},
+        q=q,
+    )
 
 
 @candle_router.get(
@@ -85,7 +96,7 @@ async def delete_sp_candidate(
 
 @candle_router.get(
     "/",
-    response_model=list[Candidate],
+    response_model=list[CandidateNested],
 )
 async def get_candidates(
     q: GetCandidateQueryParams = Depends(),

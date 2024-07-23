@@ -6,6 +6,7 @@ from ska_src_maltopuft_backend.label.responses import (
     Entity,
     EntityNames,
     Label,
+    LabelBulk,
 )
 from ska_src_maltopuft_backend.user.responses import User
 
@@ -16,6 +17,7 @@ __all__ = [
     "Entity",
     "EntityNames",
     "Label",
+    "LabelBulk",
     "Status",
     "StatusEnum",
 ]

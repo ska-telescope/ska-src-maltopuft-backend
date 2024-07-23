@@ -40,6 +40,17 @@ class Label(Base, TimestampMixin):
     candidate: Mapped["Candidate"] = relationship(back_populates="labels")
     entity: Mapped["Entity"] = relationship(back_populates="labels")
 
+    __table_args__ = (sa.UniqueConstraint("labeller_id", "candidate_id"),)
+
+    def __repr__(self) -> str:
+        """Label repr."""
+        return (
+            f"<Label: id={self.id},"
+            f"entity_id={self.entity_id},"
+            f"labeller_id={self.labeller_id},"
+            f"candidate_id={self.candidate_id}"
+        )
+
 
 class Entity(Base, TimestampMixin):
     """Label entity database model."""
@@ -60,3 +71,11 @@ class Entity(Base, TimestampMixin):
 
     # Relationships
     labels: Mapped[list["Label"]] = relationship()
+
+    def __repr__(self) -> str:
+        """Entity repr."""
+        return (
+            f"<Entity: id={self.id},"
+            f"type={self.type},"
+            f"css_color={self.css_color}"
+        )
