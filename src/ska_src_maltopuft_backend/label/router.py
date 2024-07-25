@@ -89,7 +89,7 @@ async def get_labels(
 ) -> Any:
     """Get all labels."""
     logger.info(f"Getting all Labels with query parameters {q}")
-    return await label_controller.get_all(db=db, q=[q])
+    return await label_controller.get_all(db=db, join_=["candidate"], q=[q])
 
 
 @label_router.get(
