@@ -59,6 +59,9 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
             )
             raise TypeError(msg)
 
+        if len(params) == 1:
+            return params[0].model_dump(exclude_unset=True)
+
         params_ = [q.model_dump(exclude_unset=True) for q in params]
         merged_params: dict[str, Any] = {}
         for obj in params_:

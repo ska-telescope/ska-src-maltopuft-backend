@@ -1,5 +1,6 @@
 """Base class for data repositories."""
 
+import datetime as dt
 import logging
 from collections.abc import Sequence
 from typing import Any, ClassVar, Generic
@@ -298,6 +299,8 @@ class BaseRepository(Generic[ModelT]):
                 continue
             if self._is_foreign_key_filter(k):
                 query = self._apply_foreign_key_filter(query, k, v)
+            elif isinstance(v, dt.datetime):
+                query = self._apply_date_range_filter(query, k, v)
             elif isinstance(v, list):
                 query = self._apply_list_filter(query, k, v)
             else:
@@ -372,6 +375,22 @@ class BaseRepository(Generic[ModelT]):
         return query.where(
             getattr(related_table_class, related_attr).in_(value),
         )
+
+    def _apply_date_range_filter(
+        self,
+        query: Select,
+        key: str,
+        value: dt.datetime,
+    ) -> Select:
+        if "min" in key:
+            return query.where(
+                getattr(self.model_class, key) >= value,
+            )
+        if "max" in key:
+            return query.where(
+                getattr(self.model_class, key) <= value,
+            )
+        return query
 
     def _apply_list_filter(
         self,
