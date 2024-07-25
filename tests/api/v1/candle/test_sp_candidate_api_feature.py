@@ -30,7 +30,7 @@ def do_get_sp_candidates(
     client: TestClient,
     result: dict[str, Any],
 ) -> None:
-    result["result"] = client.get(url="/v1/candle/sp")
+    result["result"] = client.get(url="/v1/candle/sp", params=result.get("q"))
 
 
 @when("an attempt is made to create the sp candidate")

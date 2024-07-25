@@ -36,7 +36,10 @@ def do_get_entities(
     client: TestClient,
     result: dict[str, Any],
 ) -> None:
-    result["result"] = client.get(url="/v1/labels/entity")
+    result["result"] = client.get(
+        url="/v1/labels/entity",
+        params=result.get("q"),
+    )
 
 
 @when("an attempt is made to create the entity")

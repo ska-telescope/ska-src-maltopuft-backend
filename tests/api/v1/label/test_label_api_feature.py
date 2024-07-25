@@ -111,7 +111,7 @@ def do_get_sp_candidates(
     client: TestClient,
     result: dict[str, Any],
 ) -> None:
-    result["result"] = client.get(url="/v1/labels")
+    result["result"] = client.get(url="/v1/labels", params=result.get("q"))
 
 
 @when("an attempt is made to create the label")

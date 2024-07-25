@@ -67,7 +67,7 @@ def do_get_users(
     client: TestClient,
     result: dict[str, Any],
 ) -> None:
-    result["result"] = client.get(url="/v1/users")
+    result["result"] = client.get(url="/v1/users", params=result.get("q"))
 
 
 @when("an attempt is made to create the user")

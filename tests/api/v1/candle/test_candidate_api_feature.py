@@ -32,7 +32,7 @@ def do_get_candidates(
     client: TestClient,
     result: dict[str, Any],
 ) -> None:
-    result["result"] = client.get(url="/v1/candle")
+    result["result"] = client.get(url="/v1/candle", params=result.get("q"))
 
 
 @when("an attempt is made to create the candidate")
