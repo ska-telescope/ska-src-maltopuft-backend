@@ -2,15 +2,16 @@
 
 import logging
 from collections.abc import Sequence
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic
 
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import Row, Select
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func, insert, select
 
 from ska_src_maltopuft_backend.core.database.base import Base
+from ska_src_maltopuft_backend.core.extras import ModelT
 
-ModelT = TypeVar("ModelT", bound=Base)
 logger = logging.getLogger(__name__)
 
 
@@ -149,6 +150,27 @@ class BaseRepository(Generic[ModelT]):
         :return: The deleted model instance
         """
         db.delete(db_obj)
+        return db_obj
+
+    async def update(
+        self,
+        db: Session,
+        *,
+        db_obj: ModelT,
+        update_obj: dict[str, Any],
+    ) -> ModelT:
+        """Updates the model.
+
+        :param db: The database session.
+        :param db_obj: The existing database object.
+        :param update_obj: The attributes to update the object with.
+        :return: The updated object.
+        """
+        obj_data = jsonable_encoder(db_obj)
+        for field in obj_data:
+            if field in update_obj:
+                setattr(db_obj, field, update_obj[field])
+        db.add(db_obj)
         return db_obj
 
     def _query(

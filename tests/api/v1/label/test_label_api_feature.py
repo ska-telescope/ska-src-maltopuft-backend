@@ -87,6 +87,25 @@ def labeller_duplicate_label(
     label["labeller_id"] = existing_label.get("labeller_id")
 
 
+@given("an updated label")
+def updated_label_data(
+    result: dict[str, Any],
+    client: TestClient,
+) -> None:
+    """Generate an updated label."""
+    label = result.get("label")
+    assert isinstance(label, dict)
+
+    existing_label = client.get(url="/v1/labels/1").json()
+    update_entities = [1, 2, 3]
+    update_entities = [
+        ent
+        for ent in update_entities
+        if ent != existing_label.get("entity_id")
+    ]
+    label["entity_id"] = update_entities[0]
+
+
 @when("labels are retrieved from the database")
 def do_get_sp_candidates(
     client: TestClient,
@@ -125,6 +144,17 @@ def do_get_label_by_id(
     result["result"] = client.get(url="/v1/labels/1")
 
 
+@when("an attempt is made to update the label")
+def do_update_label(
+    client: TestClient,
+    result: dict[str, Any],
+) -> None:
+    result["result"] = client.put(
+        url="/v1/labels/1",
+        json=result.get("label"),
+    )
+
+
 @then("the response data should contain a label")
 def response_data_has_label(result: dict[str, Any]) -> None:
     response = result.get("response")
@@ -153,3 +183,15 @@ def response_data_has_3_label_ids(result: dict[str, Any]) -> None:
     data = response.json()
     data = LabelBulk(**data)
     assert len(data.ids) == 3  # noqa: PLR2004
+
+
+@then("the response data should contain the updated data")
+def response_data_is_updated_label(result: dict[str, Any]) -> None:
+    response = result.get("response")
+    assert response is not None
+    data = response.json()
+
+    updated_data = result.get("label")
+    assert isinstance(updated_data, dict)
+    for k in updated_data:
+        assert data.get(k) == updated_data.get(k)

@@ -26,6 +26,12 @@ class CreateLabel(BaseModel):
     entity_id: int = Field(gt=0)
 
 
+class UpdateLabel(BaseModel):
+    """Schema for Label model HTTP PUT requests."""
+
+    entity_id: int | None = Field(gt=0)
+
+
 class GetEntityQueryParams(CommonQueryParams):
     """Query parameters for Entity model HTTP GET requests."""
 

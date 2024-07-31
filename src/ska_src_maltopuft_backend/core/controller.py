@@ -2,7 +2,7 @@
 
 import logging
 from collections.abc import Sequence
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic
 
 from fastapi.encoders import jsonable_encoder
 from psycopg import errors as psycopgexc
@@ -11,20 +11,22 @@ from sqlalchemy import Row
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from ska_src_maltopuft_backend.core.database.base import Base
 from ska_src_maltopuft_backend.core.exceptions import (
     AlreadyExistsError,
     NotFoundError,
     ParentNotFoundError,
 )
+from ska_src_maltopuft_backend.core.extras import (
+    CreateModelT,
+    ModelT,
+    UpdateModelT,
+)
 from ska_src_maltopuft_backend.core.repository import BaseRepository
 
-ModelT = TypeVar("ModelT", bound=Base)
-CreateModelT = TypeVar("CreateModelT", bound=Base)
 logger = logging.getLogger(__name__)
 
 
-class BaseController(Generic[ModelT, CreateModelT]):
+class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
     """Base class for data controllers."""
 
     def __init__(
@@ -181,9 +183,38 @@ class BaseController(Generic[ModelT, CreateModelT]):
     async def delete(self, db: Session, id_: int) -> None:
         """Deletes the Object from the DB.
 
-        :param model: The model to delete.
+        :param db: The database session.
+        :param id_: The id of the object to delete from the database.
         :return: True if the object was deleted, False otherwise.
         """
         db_obj: ModelT = await self.get_by_id(db=db, id_=id_)
         await self.repository.delete(db=db, db_obj=db_obj)
         db.commit()
+
+    async def update(
+        self,
+        db: Session,
+        db_obj: ModelT,
+        update_obj: UpdateModelT,
+    ) -> ModelT:
+        """Updates the db_obj with the update_obj attributes.
+
+        The update method is only implemented for controllers that have been
+        bound to an update (Pydantic) model type var.
+
+        :param db: The database session.
+        :param db_obj: The existing database object.
+        :param update_obj: The attributes to update the object with.
+        :return: The updated object.
+        """
+        if not isinstance(update_obj, BaseModel):
+            raise NotImplementedError
+
+        updated_object = await self.repository.update(
+            db=db,
+            db_obj=db_obj,
+            update_obj=update_obj.model_dump(exclude_unset=True),
+        )
+        db.commit()
+        db.refresh(db_obj)
+        return updated_object

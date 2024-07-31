@@ -14,7 +14,7 @@ from ska_src_maltopuft_backend.candle.repository import (
 from ska_src_maltopuft_backend.core.controller import BaseController
 
 
-class CandidateController(BaseController[Candidate, CreateCandidate]):
+class CandidateController(BaseController[Candidate, CreateCandidate, None]):
     """Data controller for the Candidate model."""
 
     def __init__(self, repository: CandidateRepository) -> None:
@@ -26,7 +26,9 @@ class CandidateController(BaseController[Candidate, CreateCandidate]):
         self.repository = repository
 
 
-class SPCandidateController(BaseController[SPCandidate, CreateSPCandidate]):
+class SPCandidateController(
+    BaseController[SPCandidate, CreateSPCandidate, None],
+):
     """Data controller for the SPCandidate model."""
 
     def __init__(self, repository: SPCandidateRepository) -> None:
