@@ -10,7 +10,8 @@ Feature: Single pulse candidate service
         And the status code should be HTTP 200
 
     Scenario: Create sp candidate
-        Given a sp candidate
+        Given observation metadata exists in the database
+        And a sp candidate
         When an attempt is made to create the sp candidate
         Then a response should be returned
         And the response data should contain a sp candidate
@@ -31,7 +32,8 @@ Feature: Single pulse candidate service
         And the status code should be HTTP 404
 
     Scenario: Get sp candidates
-        Given a sp candidate
+        Given observation metadata exists in the database
+        And a sp candidate
         And the sp candidate exists in the database
         And a sp candidate
         And the sp candidate exists in the database
@@ -43,7 +45,8 @@ Feature: Single pulse candidate service
         And the status code should be HTTP 200
 
     Scenario: Get existing sp candidate by id
-        Given a sp candidate
+        Given observation metadata exists in the database
+        And a sp candidate
         And the sp candidate exists in the database
         When the sp candidate is retrieved from the database by id
         Then a response should be returned
@@ -57,7 +60,8 @@ Feature: Single pulse candidate service
         And the status code should be HTTP 404
 
     Scenario: Delete sp candidate
-        Given a sp candidate
+        Given observation metadata exists in the database
+        And a sp candidate
         And the sp candidate exists in the database
         When an attempt is made to delete the sp candidate from the database
         Then a response should be returned
@@ -67,7 +71,8 @@ Feature: Single pulse candidate service
         And the status code should be HTTP 404
 
     Scenario: Count sp candidate
-        Given a sp candidate
+        Given observation metadata exists in the database
+        And a sp candidate
         And the sp candidate exists in the database
         And a sp candidate
         And the sp candidate exists in the database
@@ -77,7 +82,8 @@ Feature: Single pulse candidate service
         And the response should equal 2
 
     Scenario: Count sp candidate after deletion
-        Given a sp candidate
+        Given observation metadata exists in the database
+        And a sp candidate
         And the sp candidate exists in the database
         And a sp candidate
         And the sp candidate exists in the database
@@ -95,7 +101,8 @@ Feature: Single pulse candidate service
         And the response should equal 0
 
     Scenario: Count sp candidate with query parameters
-        Given a sp candidate
+        Given observation metadata exists in the database
+        And a sp candidate
         And the sp candidate exists in the database
         When an attempt is made to count the sp candidates
         Then a response should be returned

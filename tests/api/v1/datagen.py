@@ -49,6 +49,7 @@ def candidate_data_generator(**kwargs: dict[str, Any]) -> dict[str, Any]:
         else:
             candidate_data[arg] = value
 
+    candidate_data["beam_id"] = 1
     return candidate_data
 
 

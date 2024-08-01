@@ -10,14 +10,16 @@ Feature: Label service
         And the status code should be HTTP 200
 
     Scenario: Create label
-        Given a label
+        Given observation metadata exists in the database
+        And a label
         When an attempt is made to create the label
         Then a response should be returned
         And the response data should contain a label
         And the status code should be HTTP 201
 
     Scenario: Create many labels
-        Given a label
+        Given observation metadata exists in the database
+        And a label
         And the labels are combined into one list
         And a label
         And the labels are combined into one list
@@ -29,7 +31,7 @@ Feature: Label service
         And the status code should be HTTP 201
 
     Scenario: Create label with null parent entity fails
-        Given an empty database
+        Given observation metadata exists in the database
         And a label
         And parent entity is None
         When an attempt is made to create the label
@@ -37,7 +39,7 @@ Feature: Label service
         And the status code should be HTTP 422
 
     Scenario: Create label with null parent labeller fails
-        Given an empty database
+        Given observation metadata exists in the database
         And a label
         And parent labeller is None
         When an attempt is made to create the label
@@ -45,7 +47,7 @@ Feature: Label service
         And the status code should be HTTP 422
 
     Scenario: Create label with null parent candidate fails
-        Given an empty database
+        Given observation metadata exists in the database
         And a label
         And parent candidate is None
         When an attempt is made to create the label
@@ -53,7 +55,7 @@ Feature: Label service
         And the status code should be HTTP 422
 
     Scenario: Create label with non-existent parent entity fails
-        Given an empty database
+        Given observation metadata exists in the database
         And a label
         And parent entity attribute is non-existent
         When an attempt is made to create the label
@@ -61,7 +63,7 @@ Feature: Label service
         And the status code should be HTTP 404
 
     Scenario: Create label with non-existent parent labeller fails
-        Given an empty database
+        Given observation metadata exists in the database
         And a label
         And parent labeller attribute is non-existent
         When an attempt is made to create the label
@@ -69,7 +71,8 @@ Feature: Label service
         And the status code should be HTTP 404
 
     Scenario: Get labels
-        Given a label
+        Given observation metadata exists in the database
+        And a label
         And the label exists in the database
         And a label
         And the label exists in the database
@@ -81,7 +84,8 @@ Feature: Label service
         And the status code should be HTTP 200
 
     Scenario: Get existing label by id
-        Given a label
+        Given observation metadata exists in the database
+        And a label
         And the label exists in the database
         When the label is retrieved from the database by id
         Then a response should be returned
@@ -95,7 +99,8 @@ Feature: Label service
         And the status code should be HTTP 404
 
     Scenario: Create duplicate label
-        Given a label
+        Given observation metadata exists in the database
+        And a label
         And the label exists in the database
         And a label
         And the label is for a candidate which the labeller has already labelled
@@ -104,7 +109,8 @@ Feature: Label service
         And the status code should be HTTP 409
 
     Scenario: Update label
-        Given an 'RFI' entity
+        Given observation metadata exists in the database
+        And an 'RFI' entity
         And the entity exists in the database
         And a 'SINGLE_PULSE' entity
         And the entity exists in the database

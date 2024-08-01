@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from ska_src_maltopuft_backend.core.exceptions import (
     AlreadyExistsError,
+    MissingRequiredAttributeError,
     NotFoundError,
     ParentNotFoundError,
 )
@@ -148,6 +149,12 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
                     "attribute."
                 )
                 raise AlreadyExistsError(msg) from exc
+            if isinstance(exc.orig, psycopgexc.NotNullViolation):
+                msg = (
+                    f"Can't create object {self._type} with missing "
+                    "required attributes."
+                )
+                raise MissingRequiredAttributeError(msg) from exc
         return created_object
 
     async def create_many(
@@ -177,6 +184,12 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
                     "attribute."
                 )
                 raise AlreadyExistsError(msg) from exc
+            if isinstance(exc.orig, psycopgexc.NotNullViolation):
+                msg = (
+                    f"Can't create object {self._type} with missing "
+                    "required attributes."
+                )
+                raise MissingRequiredAttributeError(msg) from exc
         logger.info(f"Created {len(created_ids)} {self.model_class} objects")
         return self._flatten_ids(created_ids)
 
