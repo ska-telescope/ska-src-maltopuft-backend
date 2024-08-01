@@ -134,8 +134,10 @@ ignore = [
     "B008",  # function-call-in-default-argument
     "D203", "D213",  # Silence incompatability warnings
     "D205",  # blank-line-after-summary
+    "D400",  # ends-in-period
     "D401",  # non-imperative-mood
     "D407",  # dashed-underline-after-section
+    "D415",  # ends-in-punctuation
     "G004",  # logging-f-string
     "INP001",  # implicit-namespace-package
     "PT012",  # `pytest.raises()` block should contain a single simple statement

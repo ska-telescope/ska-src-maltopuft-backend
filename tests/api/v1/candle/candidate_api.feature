@@ -14,7 +14,7 @@ Feature: Candidate service
         And a candidate
         When an attempt is made to create the candidate
         Then a response should be returned
-        And the response data should contain a candidate
+        And the response data should contain 1 candidates
         And the status code should be HTTP 201
 
     Scenario: Get candidates
@@ -27,7 +27,7 @@ Feature: Candidate service
         And the candidate exists in the database
         When candidates are retrieved from the database
         Then a response should be returned
-        And the response data should contain three candidates
+        And the response data should contain 3 candidates
         And the status code should be HTTP 200
 
     Scenario: Create a candidate with DM string

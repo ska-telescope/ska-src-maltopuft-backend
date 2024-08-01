@@ -3,13 +3,17 @@
 #  ruff: noqa: SLF001, PLR2004
 
 
+from typing import Any
+
 import pytest
 import pytest_asyncio
+import sqlalchemy as sa
 from ska_src_maltopuft_backend.app.models import User
 from ska_src_maltopuft_backend.app.schemas.requests import CreateUser
+from ska_src_maltopuft_backend.core.database.base import Base
 from ska_src_maltopuft_backend.core.repository import BaseRepository
 from sqlalchemy import Select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Mapped, Session, mapped_column
 from sqlalchemy.orm.exc import ObjectDeletedError
 
 from tests.api.v1.datagen import user_data_generator
@@ -36,7 +40,10 @@ async def test_create(db: Session, repository: BaseRepository) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_get_all(db: Session, repository: BaseRepository) -> None:
+async def test_get_all(
+    db: Session,
+    repository: BaseRepository,
+) -> None:
     """Given two users are created in the database,
     When all users are retrieved from the database,
     Then the result should have two records.
@@ -165,7 +172,7 @@ async def test_delete(db: Session, repository: BaseRepository) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_paginate_with_default_values(
+async def test_apply_pagination_with_default_values(
     repository: BaseRepository,
 ) -> None:
     """Given a query,
@@ -173,13 +180,13 @@ async def test_paginate_with_default_values(
     Then the `LIMIT` and `OFFSET` should be set to the default values.
     """
     query: Select = Select(User)
-    query = repository._paginate(query=query, q={})
+    query = repository._apply_pagination(query=query, q={})
     assert query._limit == 100
     assert query._offset == 0
 
 
 @pytest.mark.asyncio()
-async def test_paginate_with_non_default_values(
+async def test_apply_pagination_with_non_default_values(
     repository: BaseRepository,
 ) -> None:
     """Given a query,
@@ -190,7 +197,7 @@ async def test_paginate_with_non_default_values(
 
     skip = 3
     limit = 4
-    query = repository._paginate(
+    query = repository._apply_pagination(
         query=query,
         q={
             "skip": skip,
@@ -203,7 +210,10 @@ async def test_paginate_with_non_default_values(
 
 
 @pytest.mark.asyncio()
-async def test_paginate(db: Session, repository: BaseRepository) -> None:
+async def test_apply_pagination(
+    db: Session,
+    repository: BaseRepository,
+) -> None:
     """Given 5 records exist in the database,
     When all records are retrieved with skip=3 and limit=2,
     Then two records should be returned
@@ -285,15 +295,15 @@ async def test_sort_by_asc(db: Session, repository: BaseRepository) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_add_join_to_query(repository: BaseRepository) -> None:
+async def test_add_joins_to_query(repository: BaseRepository) -> None:
     """Given a query,
-    When joins are given to the query,
+    When an attempt is made to add valid joins to the query,
     Then the joins should be present in the query.
     """
     query: Select = Select(User)
-    join_ = {"label", "entity"}
+    join_ = ["label", "entity"]
 
-    query = repository._maybe_join(query=query, join_=join_)
+    query = repository._apply_joins(query=query, join_=join_)
     query_joins = [j[0].description for j in query._setup_joins]  # type: ignore[attr-defined]
     for j in join_:
         assert j in query_joins
@@ -306,58 +316,112 @@ async def test_add_no_join_to_query(repository: BaseRepository) -> None:
     Then the original query should not be changed.
     """
     query: Select = Select(User)
-    query_after_join = repository._maybe_join(query=query)
+    query_after_join = repository._apply_joins(query=query)
     assert query == query_after_join
 
 
 @pytest.mark.asyncio()
-async def test_add_invalid_join_to_query(repository: BaseRepository) -> None:
+async def test_add_empty_join_to_query(repository: BaseRepository) -> None:
     """Given a query,
-    When joins are specified in a list rather than a set,
-    Then a TypeError should be raised.
+    When empty joins are made on the query,
+    Then the original query should not be changed.
     """
     query: Select = Select(User)
-    join_ = ["label"]
-    with pytest.raises(TypeError):
-        repository._maybe_join(query=query, join_=join_)  # type: ignore[arg-type]
+    query_after_join = repository._apply_joins(query=query, join_=[])
+    assert query == query_after_join
 
 
 @pytest.mark.asyncio()
-async def test_where(repository: BaseRepository) -> None:
+async def test_add_invalid_table_to_join(repository: BaseRepository) -> None:
+    """Given a query,
+    When list of joins contains an invalid table,
+    Then a ValueError should be raised.
+    """
+    query: Select = Select(User)
+    invalid_table_name = "this_table_doesnt_exist"
+    join_ = [invalid_table_name]
+    with pytest.raises(
+        ValueError,
+        match=f"Invalid table name '{invalid_table_name}' provided",
+    ):
+        repository._apply_joins(query=query, join_=join_)  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio()
+async def test_add_invalid_join_type_to_query(
+    repository: BaseRepository,
+) -> None:
+    """Given a query,
+    When joins are specified in a set rather than a list,
+    Then a TypeError should be raised.
+    """
+    query: Select = Select(User)
+    join_ = {"label"}
+    join_type = type(join_)
+    with pytest.raises(
+        TypeError,
+        match=f"join_ parameter should be a list, found {join_type}",
+    ):
+        repository._apply_joins(query=query, join_=join_)  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio()
+async def test_add_duplicate_join_to_query(
+    repository: BaseRepository,
+) -> None:
+    """Given a query,
+    When the joins contain a duplicated table,
+    Then a TypeError should be raised.
+    """
+    query: Select = Select(User)
+    join_ = ["label", "label"]
+    with pytest.raises(
+        ValueError,
+        match="Duplicate table found in list of joins",
+    ):
+        repository._apply_joins(query=query, join_=join_)  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio()
+async def test_single_apply_filters(repository: BaseRepository) -> None:
     """Given a query,
     When a single value of ID is provided as a predicate,
     Then a user.id should be added to the where clause.
     """
     query: Select = Select(User)
-    query = repository._where(query=query, q={"id": 1})
-    assert '"user".id' in str(query._whereclause)
+    filters = {"id": 1}
+    filtered_query = repository._apply_filters(query=query, q=filters)
+    expected_query = query.where(User.id == filters.get("id"))
+    assert str(filtered_query) == str(expected_query)
 
 
 @pytest.mark.asyncio()
-async def test_where_with_no_predicates(repository: BaseRepository) -> None:
+async def test_apply_filters_with_no_predicates(
+    repository: BaseRepository,
+) -> None:
     """Given a query,
     When no predicates are given to the query,
     Then the original query should not be changed.
     """
     query: Select = Select(User)
-    query_after_predicate = repository._where(query=query, q={})
+    query_after_predicate = repository._apply_filters(query=query, q={})
     assert query == query_after_predicate
 
 
 @pytest.mark.asyncio()
-async def test_where_with_skip_and_limit(repository: BaseRepository) -> None:
+async def test_apply_filters_with_skip_and_limit(
+    repository: BaseRepository,
+) -> None:
     """Given a query,
     When skip and limits are present in the query parameters,
-    Then the query should not have a row limiting clause
-    And the query should not have a skip clause
-    And the original query should not be changed.
+    Then the original query should not be changed.
     """
     query: Select = Select(User)
-    query_after_predicate = repository._where(
+    query_after_predicate = repository._apply_filters(
         query=query,
         q={
-            "skip": 100,
-            "limit": 100,
+            "skip": 123,
+            "limit": 123,
         },
     )
 
@@ -365,13 +429,15 @@ async def test_where_with_skip_and_limit(repository: BaseRepository) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_where_with_null_predicate(repository: BaseRepository) -> None:
+async def test_apply_filters_with_null_predicate(
+    repository: BaseRepository,
+) -> None:
     """Given a query,
     When a predicate with value `None` is provided,
     Then the original query should not be changed.
     """
     query: Select = Select(User)
-    query_after_predicate = repository._where(
+    query_after_predicate = repository._apply_filters(
         query=query,
         q={"predicate": None},
     )
@@ -379,36 +445,141 @@ async def test_where_with_null_predicate(repository: BaseRepository) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_where_with_empty_param_list(repository: BaseRepository) -> None:
+async def test_apply_filters_with_empty_param_list(
+    repository: BaseRepository,
+) -> None:
     """Given a query,
     When an empty list is provided as a query parameter,
     Then the original query should not be changed.
     """
     query: Select = Select(User)
-    query_after = repository._where(query=query, q={"id": []})
+    query_after = repository._apply_filters(query=query, q={"id": []})
     assert query == query_after
 
 
 @pytest.mark.asyncio()
-async def test_where_with_id_param_list(repository: BaseRepository) -> None:
+async def test_apply_filters_with_id_param_list(
+    repository: BaseRepository,
+) -> None:
     """Given a query,
     When a list of ids is provided as a query parameter,
     Then an user.id IN clause should be added to the query.
     """
     query: Select = Select(User)
-    query = repository._where(query=query, q={"id": [1, 2, 3]})
-    assert 'WHERE "user".id IN' in str(query)
+    filters = {"id": [1, 2, 3]}
+    filtered_query = repository._apply_filters(query=query, q=filters)
+    expected_query = query.where(User.id.in_(filters["id"]))
+    assert str(filtered_query) == str(expected_query)
 
 
 @pytest.mark.asyncio()
-async def test_where_with_str_param_list(repository: BaseRepository) -> None:
+async def test_apply_filters_with_str_param_list(
+    repository: BaseRepository,
+) -> None:
     """Given a query,
     When a list of username strings is provided as a query parameter,
     Then an user.username IN clause should be added to the query.
     """
     query: Select = Select(User)
-    query = repository._where(query=query, q={"username": ["a", "b", "c"]})
-    assert 'WHERE "user".username IN' in str(query)
+    filters = {"username": ["a", "b", "c"]}
+    filtered_query = repository._apply_filters(
+        query=query,
+        q=filters,
+    )
+    expected_query = query.where(User.username.in_(filters["username"]))
+    assert str(filtered_query) == str(expected_query)
+
+
+@pytest.mark.asyncio()
+def test_apply_foreign_key_filter(repository: BaseRepository) -> None:
+    """Given a query,
+    When a list of user_id foreign keys is provided as a query parameter,
+    Then an user.user_id IN clause should be added to the query.
+    """
+    query: Select = Select(User)
+    filters = {"user_id": [1, 2, 3]}
+    filtered_query = repository._apply_filters(
+        query=query,
+        q=filters,
+    )
+    expected_query = query.where(User.id.in_([1, 2, 3]))
+    assert str(filtered_query) == str(expected_query)
+
+
+@pytest.mark.asyncio()
+def test_ignore_invalid_filters(repository: BaseRepository) -> None:
+    """Given a query,
+    When invalid (None or empty list) query parameters are given,
+    The the query should not be changed.
+    """
+    query: Select = Select(User)
+    filters: dict[str, Any] = {"username": None, "is_admin": []}
+    filtered_query = repository._apply_filters(query=query, q=filters)
+    assert str(filtered_query) == str(query)
+
+
+@pytest.mark.asyncio()
+def test_combined_filters(engine: sa.Engine) -> None:
+    """Given a database table with a string and float value,
+    And a query,
+    When a string is provided as a query parameter,
+    And a list of two floats are provided as a query parameter,
+    Then an model.string IN clause and a model.float range clause
+        should be added to the query,
+    """
+
+    # Create a model with string and float values for this test.
+    class FloatStringModel(Base):
+        __tablename__ = "float_string_model"
+        id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+        string_value: Mapped[str] = mapped_column(
+            sa.String(255),
+            nullable=True,
+        )
+        float_value: Mapped[float] = mapped_column(sa.Integer, nullable=True)
+
+    Base.metadata.tables["float_string_model"].create(bind=engine)
+    float_repository = BaseRepository(model=FloatStringModel)
+
+    # Actual test starts here
+    query: Select = Select(FloatStringModel)
+    filters = {"string_value": "hello", "float_value": [0.1, 0.5]}
+    filtered_query = float_repository._apply_filters(query=query, q=filters)
+    expected_query = query.where(
+        FloatStringModel.string_value == filters.get("string_value"),
+    ).where(
+        (FloatStringModel.float_value >= filters["float_value"][0])
+        & (FloatStringModel.float_value <= filters["float_value"][1]),
+    )
+    assert str(filtered_query) == str(expected_query)
+
+
+@pytest.mark.asyncio()
+def test_unsorted_continuous_range_filter(engine: sa.Engine) -> None:
+    """Given a database table with a float value.
+    And a query,
+    When a list of two reverse sorted floats are provided as a query parameter,
+    Then a model.float range clause should be added to the query in sorted order,
+    """
+
+    # Create a model with string and float values for this test.
+    class FloatModel(Base):
+        __tablename__ = "float_model"
+        id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+        float_value: Mapped[float] = mapped_column(sa.Integer, nullable=True)
+
+    Base.metadata.tables["float_model"].create(bind=engine)
+    float_repository = BaseRepository(model=FloatModel)
+
+    # Actual test starts here
+    query: Select = Select(FloatModel)
+    filters = {"float_value": [0.5, 0.1]}
+    filtered_query = float_repository._apply_filters(query=query, q=filters)
+    expected_query = query.where(
+        (FloatModel.float_value >= filters["float_value"][1])
+        & (FloatModel.float_value <= filters["float_value"][0]),
+    )
+    assert str(filtered_query) == str(expected_query)
 
 
 @pytest.mark.asyncio()

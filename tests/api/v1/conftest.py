@@ -1,11 +1,12 @@
 """BDD test steps shared between API feature tests."""
 
+import ast
 from typing import Any
 
 import pytest
 from fastapi import status
 from httpx import Response
-from pytest_bdd import given, then
+from pytest_bdd import given, parsers, then, when
 from sqlalchemy.orm import Session
 
 from tests.observation import datagen
@@ -42,6 +43,23 @@ def observation_metadata(db: Session, result: dict[str, Any]) -> None:
     db.add(beam_data)
     db.commit()
     result["beam_id"] = beam_data.id
+
+
+@when(parsers.parse("the query parameters {attributes} have values {values}"))
+def prepare_query_params(
+    result: dict[str, Any],
+    attributes: str,
+    values: Any,
+) -> None:
+    """Create a dictionary of query parameters."""
+    q = {}
+    for att, val in zip(
+        ast.literal_eval(attributes),
+        ast.literal_eval(values),
+        strict=False,
+    ):
+        q[att] = val
+    result["q"] = q
 
 
 @then("a response should be returned")

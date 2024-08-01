@@ -4,7 +4,7 @@ import datetime as dt
 from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, deferred, mapped_column, relationship
 
 from ska_src_maltopuft_backend.core.database.base import Base
 from ska_src_maltopuft_backend.core.mixins import TimestampMixin
@@ -42,7 +42,7 @@ class Candidate(Base, TimestampMixin):
     )
 
     # Relationships
-    beam: Mapped["Beam"] = relationship(back_populates="candidates")
+    beam: Mapped["Beam"] = deferred(relationship(back_populates="candidates"))
     sp_candidate: Mapped["SPCandidate"] = relationship(
         back_populates="candidate",
     )

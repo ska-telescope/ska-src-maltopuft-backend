@@ -8,8 +8,9 @@ from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
 from ska_src_maltopuft_backend.core.database.database import get_db
+from ska_src_maltopuft_backend.core.factory import Factory
 
-from .controller import entity_controller, label_controller
+from .controller import EntityController, LabelController
 from .requests import (
     CreateEntity,
     CreateLabel,
@@ -30,10 +31,13 @@ label_router = APIRouter()
 async def get_entities(
     q: GetEntityQueryParams = Depends(),
     db: Session = Depends(get_db),
+    entity_controller: EntityController = Depends(
+        Factory().get_entity_controller,
+    ),
 ) -> Any:
     """Get all entities."""
     logger.info(f"Getting all Entities with query parameters {q}")
-    return await entity_controller.get_all(db=db, q=q)
+    return await entity_controller.get_all(db=db, q=[q])
 
 
 @label_router.get(
@@ -43,6 +47,9 @@ async def get_entities(
 async def get_entity(
     entity_id: PositiveInt,
     db: Session = Depends(get_db),
+    entity_controller: EntityController = Depends(
+        Factory().get_entity_controller,
+    ),
 ) -> Entity:
     """Get entity by id."""
     logger.info(f"Getting Entity with id={entity_id}")
@@ -57,6 +64,9 @@ async def get_entity(
 async def post_entity(
     entity: CreateEntity,
     db: Session = Depends(get_db),
+    entity_controller: EntityController = Depends(
+        Factory().get_entity_controller,
+    ),
 ) -> Entity:
     """Create a new entity."""
     logger.info(f"Creating Entity with type={entity.type}")
@@ -73,10 +83,13 @@ async def post_entity(
 async def get_labels(
     q: GetLabelQueryParams = Depends(),
     db: Session = Depends(get_db),
+    label_controller: LabelController = Depends(
+        Factory().get_label_controller,
+    ),
 ) -> Any:
     """Get all labels."""
     logger.info(f"Getting all Labels with query parameters {q}")
-    return await label_controller.get_all(db=db, q=q)
+    return await label_controller.get_all(db=db, join_=["candidate"], q=[q])
 
 
 @label_router.get(
@@ -86,6 +99,9 @@ async def get_labels(
 async def get_label(
     label_id: PositiveInt,
     db: Session = Depends(get_db),
+    label_controller: LabelController = Depends(
+        Factory().get_label_controller,
+    ),
 ) -> Label:
     """Get label by id."""
     logger.info(f"Getting Label with id={label_id}")
@@ -100,6 +116,9 @@ async def get_label(
 async def post_labels(
     labels: CreateLabel | list[CreateLabel],
     db: Session = Depends(get_db),
+    label_controller: LabelController = Depends(
+        Factory().get_label_controller,
+    ),
 ) -> Label | LabelBulk:
     """Create a new label(s)."""
     if isinstance(labels, list):
@@ -122,6 +141,9 @@ async def update_item(
     label_id: PositiveInt,
     label: UpdateLabel,
     db: Session = Depends(get_db),
+    label_controller: LabelController = Depends(
+        Factory().get_label_controller,
+    ),
 ) -> Any:
     """Update a label."""
     existing_label = await label_controller.get_by_id(db=db, id_=label_id)

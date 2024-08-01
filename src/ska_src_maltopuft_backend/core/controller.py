@@ -46,11 +46,33 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
     ) -> list[int]:
         return [id_[0] for id_ in returned_ids]
 
+    def _merge_query_parameters(
+        self,
+        params: list[BaseModel] | None = None,
+    ) -> dict[str, Any]:
+        if params is None:
+            return {}
+        if not isinstance(params, list):
+            msg = (
+                "Parameter 'params' expected type list[BaseModel], "
+                f"received {type(params)}"
+            )
+            raise TypeError(msg)
+
+        if len(params) == 1:
+            return params[0].model_dump(exclude_unset=True)
+
+        params_ = [q.model_dump(exclude_unset=True) for q in params]
+        merged_params: dict[str, Any] = {}
+        for obj in params_:
+            merged_params.update(obj)
+        return merged_params
+
     async def get_by_id(
         self,
         db: Session,
         id_: int,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
     ) -> ModelT:
         """Returns the model instance matching the id.
 
@@ -75,29 +97,27 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
     async def count(
         self,
         db: Session,
-        join_: set[str] | None = None,
-        *,
-        q: BaseModel,
+        join_: list[str] | None = None,
+        q: list[BaseModel] | None = None,
     ) -> int:
         """Return count of objects matching given query parameters."""
-        count = await self.repository.count(
-            db=db,
-            join_=join_,
-            q=q.model_dump(exclude_unset=True),
+        return (
+            await self.repository.count(
+                db=db,
+                join_=join_,
+                q=self._merge_query_parameters(params=q),
+            )
+            or 0
         )
-        if count is None:
-            return 0
-        return count
 
     async def get_all(
         self,
         db: Session,
-        join_: set[str] | None = None,
+        join_: list[str] | None = None,
         order_: dict[str, list[str]] | None = None,
-        *,
-        q: BaseModel,
+        q: list[BaseModel] | None = None,
     ) -> Sequence[ModelT]:
-        """Returns a list of records based on pagination params.
+        """Returns a list of records based on query params.
 
         :param skip: The number of records to skip.
         :param limit: The number of records to return.
@@ -111,7 +131,7 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
             db=db,
             join_=join_,
             order_=order_,
-            q=q.model_dump(exclude_unset=True),
+            q=self._merge_query_parameters(params=q),
         )
         logger.info(
             f"Database returned {len(rows)} {self.model_class} objects.",

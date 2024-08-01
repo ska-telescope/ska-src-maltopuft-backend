@@ -49,6 +49,8 @@ class GetSPCandidateQueryParams(CommonQueryParams):
 
     candidate_id: Annotated[PositiveList[int], None] = Field(Query(default=[]))
 
+    latest: bool | None = False
+
 
 class CreateSPCandidate(BaseModel):
     """Schema for SPCandidate model HTTP POST requests."""

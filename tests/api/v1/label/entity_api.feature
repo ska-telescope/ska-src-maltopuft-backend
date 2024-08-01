@@ -55,7 +55,7 @@ Feature: Entity service
         And the entity exists in the database
         When entities are retrieved from the database
         Then a response should be returned
-        And the response data should contain three entities
+        And the response data should contain 3 entities
         And the status code should be HTTP 200
 
     Scenario: Create an entity with invalid type

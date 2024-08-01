@@ -5,7 +5,7 @@ include .make/python.mk
 
 # Define variables
 PYTHON_LINT_TARGET := ./src
-PYTHON_SWITCHES_FOR_PYLINT = --disable=R0903,W1203
+PYTHON_SWITCHES_FOR_PYLINT = --disable=R0801,R0903,W1203
 
 # Note:
 # PYTHON_VARS_AFTER_PYTEST are defined in pyproject.toml
@@ -20,3 +20,8 @@ pre-commit:
 	make python-lint
 	make python-test
 	make docs-build html
+
+# Bring up a development environment
+up:
+	docker compose -f "docker/docker-compose.yaml" down && docker compose  -f "docker/docker-compose.yaml" up -d --build maltopuftdb ska-src-maltopuft-backend
+	./dev-entrypoint.sh
