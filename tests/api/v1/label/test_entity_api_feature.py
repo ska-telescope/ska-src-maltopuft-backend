@@ -1,11 +1,11 @@
 """Entity service API tests."""
 
-# ruff: noqa: D103
+# ruff: noqa: D103, PLR2004
 
 from typing import Any
 
 from fastapi.testclient import TestClient
-from pytest_bdd import given, scenarios, then, when
+from pytest_bdd import given, parsers, scenarios, then, when
 from ska_src_maltopuft_backend.app.schemas.responses import (
     Entity,
     EntityNames,
@@ -96,12 +96,17 @@ def response_data_is_periodic_entity(result: dict[str, Any]) -> None:
     assert entity.type == EntityNames.PERIODIC_PULSE
 
 
-@then("the response data should contain three entities")
-def response_data_has_3_entities(result: dict[str, Any]) -> None:
+@then(parsers.parse("the response data should contain {num:d} entities"))
+def response_data_has_3_entities(result: dict[str, Any], num: int) -> None:
     response = result.get("response")
     assert response is not None
     data = response.json()
     assert data is not None
-    assert len(data) == 3  # noqa: PLR2004
+
+    if isinstance(data, dict):
+        data = [data]
+
+    assert len(data) == int(num)
     for d in data:
-        Entity(**d)
+        ent = Entity(**d)
+        assert ent.id is not None

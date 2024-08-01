@@ -13,57 +13,57 @@ Feature: User service
         Given a user
         When an attempt is made to create the user
         Then a response should be returned
-        And the response data should contain a user
+        And the response data should contain 1 users
         And the status code should be HTTP 201
 
     Scenario: Create user sets is_admin to False by default
-        Given a user with is_admin 'None'
+        Given a user where ("is_admin",) is ("",)
         When an attempt is made to create the user
         Then a response should be returned
-        And the response data should contain a user
+        And the response data should contain 1 users
         And the value of is_admin should be False
         And the status code should be HTTP 201
 
     Scenario: Create user is_admin can be overridden to True
-        Given a user with is_admin 'True'
+        Given a user where ("is_admin",) is ("True",)
         When an attempt is made to create the user
         Then a response should be returned
-        And the response data should contain a user
+        And the response data should contain 1 users
         And the value of is_admin should be True
         And the status code should be HTTP 201
 
     Scenario: Create user with duplicate username
-        Given a user with username 'test_user'
+        Given a user where ("username",) is ("test_user",)
         And the user exists in the database
-        And a user with username 'test_user'
+        And a user where ("username",) is ("test_user",)
         When an attempt is made to create the user
         Then an error response should be returned
         And the status code should be HTTP 409
 
     Scenario: Create user with duplicate email address
-        Given a user with email address 'test@example.com'
+        Given a user where ("email",) is ("test@example.com",)
         And the user exists in the database
-        And a user with email address 'test@example.com'
+        And a user where ("email",) is ("test@example.com",)
         When an attempt is made to create the user
         Then an error response should be returned
         And the status code should be HTTP 409
 
     Scenario: Create user with duplicate uuid
-        Given a user with uuid 'd9e414f3-2bee-48a1-8b4b-07ee5b50473d'
+        Given a user where ("uuid",) is ("d9e414f3-2bee-48a1-8b4b-07ee5b50473d",)
         And the user exists in the database
-        And a user with uuid 'd9e414f3-2bee-48a1-8b4b-07ee5b50473d'
+        And a user where ("uuid",) is ("d9e414f3-2bee-48a1-8b4b-07ee5b50473d",)
         When an attempt is made to create the user
         Then an error response should be returned
         And the status code should be HTTP 409
 
     Scenario: Create a user with invalid email address
-        Given a user with email address 'this is not an email address'
+        Given a user where ("email",) is ("this is not an email address",)
         When an attempt is made to create the user
         Then a validation error response should be returned
         And the status code should be HTTP 422
 
     Scenario: Create a user with invalid uuid
-        Given a user with uuid is 'this is not a uuid'
+        Given a user where ("uuid",) is ("this is not a uuid",)
         When an attempt is made to create the user
         Then a validation error response should be returned
         And the status code should be HTTP 422
@@ -77,7 +77,7 @@ Feature: User service
         And the user exists in the database
         When users are retrieved from the database
         Then a response should be returned
-        And the response data should contain three users
+        And the response data should contain 3 users
         And the status code should be HTTP 200
 
     Scenario: Get existing user by id

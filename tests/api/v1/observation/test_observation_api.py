@@ -16,6 +16,10 @@ def response_data_has_num_obs(result: dict[str, Any], num: int) -> None:
     assert response is not None
     data = response.json()
     assert data is not None
+
+    if isinstance(data, dict):
+        data = [data]
+
     assert len(data) == int(num)
     for d in data:
         obs = Observation(**d)

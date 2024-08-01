@@ -2,10 +2,11 @@
 
 # ruff: noqa: D103
 
+import ast
 from typing import Any
 
 from fastapi.testclient import TestClient
-from pytest_bdd import given, scenarios, then, when
+from pytest_bdd import given, parsers, scenarios, then, when
 from ska_src_maltopuft_backend.user.responses import User
 
 from tests.api.v1.datagen import user_data_generator
@@ -13,53 +14,21 @@ from tests.api.v1.datagen import user_data_generator
 scenarios("./user_api.feature")
 
 
-@given("a user with username 'test_user'")
-def user_data_with_username(result: dict[str, Any]) -> None:
-    result["user"] = user_data_generator(
-        username="test_user",  # type: ignore[arg-type]
-    )
-
-
-@given("a user with is_admin 'None'")
-def user_data_with_null_is_admin(result: dict[str, Any]) -> None:
-    result["user"] = user_data_generator(
-        is_admin="",  # type: ignore[arg-type]
-    )
-
-
-@given("a user with is_admin 'True'")
-def user_data_with_true_is_admin(result: dict[str, Any]) -> None:
-    result["user"] = user_data_generator(
-        is_admin=True,  # type: ignore[arg-type]
-    )
-
-
-@given("a user with email address 'test@example.com'")
-def user_data_known_email_address(result: dict[str, Any]) -> None:
-    result["user"] = user_data_generator(
-        email="test@example.com",  # type: ignore[arg-type]
-    )
-
-
-@given("a user with uuid 'd9e414f3-2bee-48a1-8b4b-07ee5b50473d'")
-def user_data_known_uuid(result: dict[str, Any]) -> None:
-    result["user"] = user_data_generator(
-        uuid="d9e414f3-2bee-48a1-8b4b-07ee5b50473d",  # type: ignore[arg-type]
-    )
-
-
-@given("a user with uuid is 'this is not a uuid'")
-def user_data_invalid_uuid(result: dict[str, Any]) -> None:
-    result["user"] = user_data_generator(
-        uuid="this is not a uuid",  # type: ignore[arg-type]
-    )
-
-
-@given("a user with email address 'this is not an email address'")
-def user_data_invalid_email_address(result: dict[str, Any]) -> None:
-    result["user"] = user_data_generator(
-        email="this is not an email address",  # type: ignore[arg-type]
-    )
+@given(parsers.parse("a user where {attributes} is {values}"))
+def user_with_attributes(
+    result: dict[str, Any],
+    attributes: str,
+    values: Any,
+) -> None:
+    """Create a dictionary of query parameters."""
+    user_attributes = {}
+    for att, val in zip(
+        ast.literal_eval(attributes),
+        ast.literal_eval(values),
+        strict=False,
+    ):
+        user_attributes[att] = val
+    result["user"] = user_data_generator(**user_attributes)
 
 
 @when("users are retrieved from the database")
@@ -89,25 +58,20 @@ def do_get_user_by_id(
     result["result"] = client.get(url="/v1/users/1")
 
 
-@then("the response data should contain a user")
-def response_data_is_user(result: dict[str, Any]) -> None:
+@then(parsers.parse("the response data should contain {num:d} users"))
+def response_data_has_num_user(result: dict[str, Any], num: int) -> None:
     response = result.get("response")
     assert response is not None
     data = response.json()
     assert data is not None
-    user = User(**data)
-    assert user.id is not None
 
+    if isinstance(data, dict):
+        data = [data]
 
-@then("the response data should contain three users")
-def response_data_has_3_users(result: dict[str, Any]) -> None:
-    response = result.get("response")
-    assert response is not None
-    data = response.json()
-    assert data is not None
-    assert len(data) == 3  # noqa: PLR2004
+    assert len(data) == int(num)
     for d in data:
-        User(**d)
+        user = User(**d)
+        assert user.id is not None
 
 
 @then("the value of is_admin should be False")

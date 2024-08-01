@@ -5,7 +5,7 @@
 from typing import Any
 
 from fastapi.testclient import TestClient
-from pytest_bdd import given, scenarios, then, when
+from pytest_bdd import given, parsers, scenarios, then, when
 from ska_src_maltopuft_backend.app.schemas.responses import Candidate
 
 from tests.api.v1.datagen import candidate_data_generator
@@ -62,22 +62,17 @@ def do_delete_candidate(
     result["result"] = client.delete(url="/v1/candle/1")
 
 
-@then("the response data should contain a candidate")
-def response_data_is_candidate(result: dict[str, Any]) -> None:
+@then(parsers.parse("the response data should contain {num:d} candidates"))
+def response_data_has_num_cand(result: dict[str, Any], num: int) -> None:
     response = result.get("response")
     assert response is not None
     data = response.json()
     assert data is not None
-    cand = Candidate(**data)
-    assert cand.id is not None
 
+    if isinstance(data, dict):
+        data = [data]
 
-@then("the response data should contain three candidates")
-def response_data_has_3_candidates(result: dict[str, Any]) -> None:
-    response = result.get("response")
-    assert response is not None
-    data = response.json()
-    assert data is not None
-    assert len(data) == 3  # noqa: PLR2004
+    assert len(data) == int(num)
     for d in data:
-        Candidate(**d)
+        cand = Candidate(**d)
+        assert cand.id is not None

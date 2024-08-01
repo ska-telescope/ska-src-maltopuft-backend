@@ -1,11 +1,11 @@
 """Label service API tests."""
 
-# ruff: noqa: D103
+# ruff: noqa: D103, PLR2004
 
 from typing import Any
 
 from fastapi.testclient import TestClient
-from pytest_bdd import given, scenarios, then, when
+from pytest_bdd import given, parsers, scenarios, then, when
 from ska_src_maltopuft_backend.app.schemas.responses import Label, LabelBulk
 
 scenarios("./label_api.feature")
@@ -155,34 +155,29 @@ def do_update_label(
     )
 
 
-@then("the response data should contain a label")
-def response_data_has_label(result: dict[str, Any]) -> None:
+@then(parsers.parse("the response data should contain {num:d} labels"))
+def response_data_has_num_labels(result: dict[str, Any], num: int) -> None:
     response = result.get("response")
     assert response is not None
     data = response.json()
     assert data is not None
-    label = Label(**data)
-    assert label.id is not None
 
+    if isinstance(data, dict):
+        data = [data]
 
-@then("the response data should contain three labels")
-def response_data_has_3_labels(result: dict[str, Any]) -> None:
-    response = result.get("response")
-    assert response is not None
-    data = response.json()
-    assert data is not None
-    assert len(data) == 3  # noqa: PLR2004
+    assert len(data) == int(num)
     for d in data:
-        Label(**d)
+        label = Label(**d)
+        assert label.id is not None
 
 
-@then("the response data should contain three label ids")
+@then("the response data should contain 3 label ids")
 def response_data_has_3_label_ids(result: dict[str, Any]) -> None:
     response = result.get("response")
     assert response is not None
     data = response.json()
     data = LabelBulk(**data)
-    assert len(data.ids) == 3  # noqa: PLR2004
+    assert len(data.ids) == 3
 
 
 @then("the response data should contain the updated data")

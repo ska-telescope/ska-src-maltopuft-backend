@@ -5,7 +5,7 @@
 from typing import Any
 
 from fastapi.testclient import TestClient
-from pytest_bdd import given, scenarios, then, when
+from pytest_bdd import given, parsers, scenarios, then, when
 from ska_src_maltopuft_backend.app.schemas.responses import SPCandidate
 
 from tests.api.v1.datagen import sp_candidate_data_generator
@@ -118,46 +118,25 @@ def do_get_sp_by_invalid_obs_id(
     result["result"] = client.get(url="/v1/candle/sp/?observation_id=2")
 
 
-@then("the response data should contain a sp candidate")
-def response_data_is_sp_scandidate(result: dict[str, Any]) -> None:
+@then(parsers.parse("the response data should contain {num:d} sp candidates"))
+def response_data_has_num_sp_cand(result: dict[str, Any], num: int) -> None:
     response = result.get("response")
     assert response is not None
     data = response.json()
     assert data is not None
-    cand = SPCandidate(**data)
-    assert cand.id is not None
 
+    if isinstance(data, dict):
+        data = [data]
 
-@then("the response data should contain three sp candidates")
-def response_data_has_3_sp_candidates(result: dict[str, Any]) -> None:
-    response = result.get("response")
-    assert response is not None
-    data = response.json()
-    assert data is not None
-    assert len(data) == 3
+    assert len(data) == int(num)
     for d in data:
-        SPCandidate(**d)
+        sp_cand = SPCandidate(**d)
+        assert sp_cand.id is not None
 
 
-@then("the response should equal 0")
-def response_data_is_0(result: dict[str, Any]) -> None:
+@then(parsers.parse("the response should equal {num:d}"))
+def response_data_is_num(result: dict[str, Any], num: int) -> None:
     response = result.get("response")
     assert response is not None
     data = response.json()
-    assert data == 0
-
-
-@then("the response should equal 1")
-def response_data_is_1(result: dict[str, Any]) -> None:
-    response = result.get("response")
-    assert response is not None
-    data = response.json()
-    assert data == 1
-
-
-@then("the response should equal 2")
-def response_data_is_2(result: dict[str, Any]) -> None:
-    response = result.get("response")
-    assert response is not None
-    data = response.json()
-    assert data == 2
+    assert data == num

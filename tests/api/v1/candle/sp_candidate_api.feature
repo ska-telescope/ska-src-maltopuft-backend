@@ -14,7 +14,7 @@ Feature: Single pulse candidate service
         And a sp candidate
         When an attempt is made to create the sp candidate
         Then a response should be returned
-        And the response data should contain a sp candidate
+        And the response data should contain 1 sp candidates
         And the status code should be HTTP 201
 
     Scenario: Create sp candidate with null parent
@@ -41,7 +41,7 @@ Feature: Single pulse candidate service
         And the sp candidate exists in the database
         When sp candidates are retrieved from the database
         Then a response should be returned
-        And the response data should contain three sp candidates
+        And the response data should contain 3 sp candidates
         And the status code should be HTTP 200
 
     Scenario: Get existing sp candidate by id
@@ -141,7 +141,7 @@ Feature: Single pulse candidate service
         And the sp candidate exists in the database
         When sp candidates are retrieved from the database by observation id
         Then a response should be returned
-        And the response data should contain three sp candidates
+        And the response data should contain 3 sp candidates
         And the status code should be HTTP 200
 
     Scenario: Get sp candidates with invalid observation metadata filter

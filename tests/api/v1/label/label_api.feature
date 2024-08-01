@@ -14,7 +14,7 @@ Feature: Label service
         And a label
         When an attempt is made to create the label
         Then a response should be returned
-        And the response data should contain a label
+        And the response data should contain 1 labels
         And the status code should be HTTP 201
 
     Scenario: Create many labels
@@ -27,7 +27,7 @@ Feature: Label service
         And the labels are combined into one list
         When an attempt is made to create the labels
         Then a response should be returned
-        And the response data should contain three label ids
+        And the response data should contain 3 label ids
         And the status code should be HTTP 201
 
     Scenario: Create label with null parent entity fails
@@ -80,7 +80,7 @@ Feature: Label service
         And the label exists in the database
         When labels are retrieved from the database
         Then a response should be returned
-        And the response data should contain three labels
+        And the response data should contain 3 labels
         And the status code should be HTTP 200
 
     Scenario: Get existing label by id
@@ -121,7 +121,7 @@ Feature: Label service
         And an updated label
         When an attempt is made to update the label
         Then a response should be returned
-        And the response data should contain a label
+        And the response data should contain 1 labels
         And the status code should be HTTP 200
         When the label is retrieved from the database by id
         Then a response should be returned
