@@ -3,7 +3,8 @@ name: ska-src-maltopuft
 
 services:
   maltopuftdb:
-    image: postgres:16.2-alpine3.19
+    image: maltopuftdb
+    build: ./
     restart: always
     container_name: "maltopuftdb"
     ports:
@@ -17,6 +18,8 @@ services:
       interval: 3s
       timeout: 3s
       retries: 5
+    volumes:
+      - ./initdb-pgsphere.sh:/docker-entrypoint-initdb.d/initdb-pgsphere.sh
 
   ska-src-maltopuft-backend:
     image: ska-src-maltopuft-backend:0.1.0
