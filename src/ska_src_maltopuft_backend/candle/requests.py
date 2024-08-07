@@ -7,6 +7,7 @@ from pydantic import (
     BaseModel,
     Field,
     PastDatetime,
+    PositiveFloat,
     PositiveInt,
     StringConstraints,
 )
@@ -31,9 +32,9 @@ class GetCandidateQueryParams(CommonQueryParams, RaDecPositionQueryParameters):
 class CreateCandidate(RaDecPositionBase):
     """Schema for Candidate model HTTP POST requests."""
 
-    dm: float = Field(gt=0)
-    snr: float = Field(gt=0)
-    width: float = Field(gt=0)
+    dm: PositiveFloat
+    snr: PositiveFloat
+    width: PositiveFloat
     beam_id: PositiveInt
 
 
@@ -56,4 +57,4 @@ class CreateSPCandidate(BaseModel):
     plot_path: Annotated[str, StringConstraints(strip_whitespace=True)]
     observed_at: PastDatetime
 
-    candidate_id: int = Field(gt=0)
+    candidate_id: PositiveInt

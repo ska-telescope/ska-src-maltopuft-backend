@@ -1,6 +1,12 @@
 """Candidate response schemas."""
 
-from pydantic import BaseModel, ConfigDict, Field, PastDatetime, PositiveInt
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    PastDatetime,
+    PositiveFloat,
+    PositiveInt,
+)
 
 from ska_src_maltopuft_backend.core.types import DecStr, RaStr
 
@@ -13,9 +19,9 @@ class Candidate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: PositiveInt
-    dm: float = Field(gt=0)
-    snr: float = Field(gt=0)
-    width: float = Field(gt=0)
+    dm: PositiveFloat
+    snr: PositiveFloat
+    width: PositiveFloat
     ra: RaStr
     dec: DecStr
     beam_id: PositiveInt
