@@ -1,4 +1,4 @@
-"""Add pos attribute to Candidate model
+"""Add pos attribute to Candidate and KnownPulsar models
 
 Revision ID: 572423489f3f
 Revises: e84e368b1f23
@@ -19,10 +19,12 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
-    """Add pos attribute to Candidate model."""
+    """Add pos attribute to Candidate and KnownPulsar models."""
     op.add_column("candidate", sa.Column("pos", sa.String(), nullable=False))
+    op.add_column("known_pulsar", sa.Column("pos", sa.String(), nullable=False))
 
 
 def downgrade() -> None:
-    """Drop pos attribute from Candidate model."""
+    """Drop pos attribute from Candidate and KnownPulsar models."""
+    op.drop_column("known_pulsar", "pos")
     op.drop_column("candidate", "pos")
