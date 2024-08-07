@@ -3,7 +3,7 @@
 from pydantic import BaseModel, ConfigDict, Field, PastDatetime
 
 from ska_src_maltopuft_backend.candle.responses import CandidateNested
-from ska_src_maltopuft_backend.core.extras import PositiveList
+from ska_src_maltopuft_backend.core.types import PositiveList
 from ska_src_maltopuft_backend.user.responses import User
 
 from .css_color import CssColorStr

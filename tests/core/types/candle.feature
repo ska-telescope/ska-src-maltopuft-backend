@@ -1,4 +1,4 @@
-@unit @candidate
+@unit @candidate @candle @types
 Feature: Candidate handler
     Scenario Outline: RA pattern matching
         Given input value <value> is provided

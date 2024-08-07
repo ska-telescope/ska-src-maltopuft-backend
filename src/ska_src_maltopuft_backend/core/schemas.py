@@ -3,9 +3,28 @@
 from typing import Annotated
 
 from fastapi import Query
-from pydantic import BaseModel, Field, PastDatetime, PositiveInt
+from pydantic import (
+    BaseModel,
+    Field,
+    PastDatetime,
+    PositiveInt,
+    computed_field,
+)
 
-from .extras import PositiveList
+from .types import DecStr, PositiveList, RaStr
+
+
+class RaDecPositionBase(BaseModel):
+    """Schema for Ra and Dec attributes."""
+
+    ra: RaStr = Field(...)
+    dec: DecStr = Field(...)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def pos(self) -> str:
+        """Compute the (ra, dec) position tuple."""
+        return f"({self.ra},{self.dec})"
 
 
 class CommonQueryParams(BaseModel):

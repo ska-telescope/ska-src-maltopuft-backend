@@ -9,14 +9,10 @@ import pytest
 from pydantic import ValidationError
 from pydantic.type_adapter import TypeAdapter
 from pytest_bdd import given, parsers, scenarios, then, when
-from ska_src_maltopuft_backend.candle.extras import (
-    DEC_PATTERN,
-    RA_PATTERN,
-    DecStr,
-    RaStr,
-)
+from ska_src_maltopuft_backend.core.types import DecStr, RaStr
+from ska_src_maltopuft_backend.core.types.types import DEC_PATTERN, RA_PATTERN
 
-scenarios("./candle_extras.feature")
+scenarios("./candle.feature")
 
 
 @pytest.fixture()

@@ -291,7 +291,7 @@ async def test_sort_by_asc(db: Session, repository: BaseRepository) -> None:
     for idx in range(len(users) - 1):
         current_user = users[idx][0]
         next_user = users[idx + 1][0]
-        assert current_user.username < next_user.username
+        assert current_user.username.lower() < next_user.username.lower()
 
 
 @pytest.mark.asyncio()

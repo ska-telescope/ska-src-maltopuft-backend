@@ -1,8 +1,11 @@
-"""Extras used by the Candidate Handler."""
+"""Ra and dec types."""
 
-from typing import Annotated
+from typing import Annotated, TypeVar
 
-from pydantic import StringConstraints
+from annotated_types import Gt
+from pydantic import BaseModel, StringConstraints
+
+from ska_src_maltopuft_backend.core.database.base import Base
 
 RA_PATTERN = r"^((\d)?(\d))h(\d{2})m(\d{2})\.(\d{2})s$"
 DEC_PATTERN = r"^(-)?((\d)?(\d))d(\d{2})m(\d{2})\.(\d)s$"
@@ -26,3 +29,10 @@ DecStr = Annotated[
         pattern=DEC_PATTERN,
     ),
 ]
+
+T = TypeVar("T")
+PositiveList = list[Annotated[T, Gt(0)]]
+
+ModelT = TypeVar("ModelT", bound=Base)
+CreateModelT = TypeVar("CreateModelT", bound=BaseModel | None)
+UpdateModelT = TypeVar("UpdateModelT", bound=BaseModel | None)

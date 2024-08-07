@@ -3,8 +3,8 @@
 from fastapi import Query
 from pydantic import BaseModel, Field
 
-from ska_src_maltopuft_backend.core.extras import PositiveList
 from ska_src_maltopuft_backend.core.schemas import CommonQueryParams
+from ska_src_maltopuft_backend.core.types import PositiveList
 
 from .css_color import CssColorStr
 from .entity import EntityNames
