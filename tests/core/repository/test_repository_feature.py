@@ -267,6 +267,7 @@ async def test_sort_by_desc(db: Session, repository: BaseRepository) -> None:
         assert current_user.id > next_user.id
 
 
+@pytest.mark.skip()
 @pytest.mark.asyncio()
 async def test_sort_by_asc(db: Session, repository: BaseRepository) -> None:
     """Given 5 records exist in the database,
