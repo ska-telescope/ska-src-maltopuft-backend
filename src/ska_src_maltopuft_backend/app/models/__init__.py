@@ -1,6 +1,11 @@
 """MALTOPUFT database models."""
 
 from ska_src_maltopuft_backend.candle.models import Candidate, SPCandidate
+from ska_src_maltopuft_backend.catalogue.models import (
+    Catalogue,
+    CatalogueVisit,
+    KnownPulsar,
+)
 from ska_src_maltopuft_backend.core.database.base import Base
 from ska_src_maltopuft_backend.label.models import Entity, Label
 from ska_src_maltopuft_backend.observation.models import (
@@ -28,4 +33,7 @@ __all__ = [
     "TilingConfig",
     "Beam",
     "Host",
+    "Catalogue",
+    "CatalogueVisit",
+    "KnownPulsar",
 ]
