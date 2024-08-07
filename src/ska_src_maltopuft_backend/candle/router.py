@@ -9,7 +9,10 @@ from sqlalchemy.orm import Session
 
 from ska_src_maltopuft_backend.core.database.database import get_db
 from ska_src_maltopuft_backend.core.factory import Factory
-from ska_src_maltopuft_backend.core.schemas import ForeignKeyQueryParams
+from ska_src_maltopuft_backend.core.schemas import (
+    ForeignKeyQueryParams,
+    RaDecPositionQueryParameters,
+)
 
 from .controller import CandidateController, SPCandidateController
 from .requests import (
@@ -36,6 +39,7 @@ candle_router = APIRouter()
 async def get_sp_candidates(
     q: GetSPCandidateQueryParams = Depends(),
     q_foreign_key: ForeignKeyQueryParams = Depends(),
+    q_pos: RaDecPositionQueryParameters = Depends(),
     db: Session = Depends(get_db),
     sp_candidate_controller: SPCandidateController = Depends(
         Factory().get_sp_candidate_controller,
@@ -51,7 +55,7 @@ async def get_sp_candidates(
     selected and ordered by descending observeration time in order to return
     the *most recent* candidates to users by default.
     """
-    params = [q, q_foreign_key]
+    params = [q, q_foreign_key, q_pos]
     logger.info(
         f"Getting all single pulse candidates with query parameters {params}",
     )
@@ -67,6 +71,7 @@ async def get_sp_candidates(
 async def get_sp_candidates_count(
     q: GetSPCandidateQueryParams = Depends(),
     q_foreign_key: ForeignKeyQueryParams = Depends(),
+    q_pos: RaDecPositionQueryParameters = Depends(),
     db: Session = Depends(get_db),
     sp_candidate_controller: SPCandidateController = Depends(
         Factory().get_sp_candidate_controller,
@@ -76,7 +81,7 @@ async def get_sp_candidates_count(
     return await sp_candidate_controller.count(
         db=db,
         join_=["candidate", "beam", "host", "observation", "schedule_block"],
-        q=[q, q_foreign_key],
+        q=[q, q_foreign_key, q_pos],
     )
 
 

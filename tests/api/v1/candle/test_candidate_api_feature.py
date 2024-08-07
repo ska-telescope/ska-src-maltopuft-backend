@@ -2,6 +2,7 @@
 
 # ruff: noqa: D103
 
+import ast
 from typing import Any
 
 from fastapi.testclient import TestClient
@@ -25,6 +26,23 @@ def candidate_data_invalid_dm_negative_float(result: dict[str, Any]) -> None:
     result["candidate"] = candidate_data_generator(
         dm=-1,  # type: ignore[arg-type]
     )
+
+
+@given(parsers.parse("a candidate where {attributes} is {values}"))
+def candidate_with_attributes(
+    result: dict[str, Any],
+    attributes: str,
+    values: Any,
+) -> None:
+    """Create a candidate model with the given attributes."""
+    cand_attributes = {}
+    for att, val in zip(
+        ast.literal_eval(attributes),
+        ast.literal_eval(values),
+        strict=False,
+    ):
+        cand_attributes[att] = val
+    result["candidate"] = candidate_data_generator(**cand_attributes)
 
 
 @when("candidates are retrieved from the database")

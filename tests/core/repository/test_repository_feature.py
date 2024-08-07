@@ -612,3 +612,43 @@ async def test_update(db: Session, repository: BaseRepository) -> None:
     assert updated_obj.id == id_
     for k, v in updated_model.model_dump().items():
         assert getattr(updated_obj, k) == v
+
+
+def test_has_pos_filter_with_no_params(repository: BaseRepository) -> None:
+    """No pos filter params present returns False."""
+    q: dict[str, Any] = {}
+    assert not repository._has_pos_filter_params(q=q)
+
+
+def test_has_pos_filter_with_invalid_params(
+    repository: BaseRepository,
+) -> None:
+    """Present pos filter params returns True, even if they are invalid."""
+    q: dict[str, Any] = {
+        "ra": None,
+        "dec": [],
+        "pos": "(None,[])",
+        "radius": None,
+    }
+    assert repository._has_pos_filter_params(q=q)
+
+
+def test_has_pos_filter_with_missing_param(repository: BaseRepository) -> None:
+    """Missing pos filter param returns False."""
+    q: dict[str, Any] = {
+        "ra": "6h03m00.65s",
+        "dec": "-40d03m23.2s",
+        "pos": "(6h03m00.65s,-40d03m23.2s)",
+    }
+    assert not repository._has_pos_filter_params(q=q)
+
+
+def test_has_pos_filter_with_valid_params(repository: BaseRepository) -> None:
+    """Present and valid pos filter params returns True."""
+    q: dict[str, Any] = {
+        "ra": "6h03m00.65s",
+        "dec": "-40d03m23.2s",
+        "pos": "(6h03m00.65s,-40d03m23.2s)",
+        "radius": 1,
+    }
+    assert repository._has_pos_filter_params(q=q)

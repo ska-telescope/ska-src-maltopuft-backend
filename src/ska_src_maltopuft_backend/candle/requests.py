@@ -14,18 +14,17 @@ from pydantic import (
 from ska_src_maltopuft_backend.core.schemas import (
     CommonQueryParams,
     RaDecPositionBase,
+    RaDecPositionQueryParameters,
 )
-from ska_src_maltopuft_backend.core.types import DecStr, PositiveList, RaStr
+from ska_src_maltopuft_backend.core.types import PositiveList
 
 
-class GetCandidateQueryParams(CommonQueryParams):
+class GetCandidateQueryParams(CommonQueryParams, RaDecPositionQueryParameters):
     """Query parameters for Candidate model HTTP GET requests."""
 
     dm: Annotated[PositiveList[float], None] = Field(Query(default=[]))
     snr: Annotated[PositiveList[float], None] = Field(Query(default=[]))
     width: Annotated[PositiveList[float], None] = Field(Query(default=[]))
-    ra: list[RaStr | None] = Field(Query(default=[]))
-    dec: list[DecStr | None] = Field(Query(default=[]))
     beam_id: Annotated[PositiveList[int], None] = Field(Query(default=[]))
 
 
@@ -35,8 +34,6 @@ class CreateCandidate(RaDecPositionBase):
     dm: float = Field(gt=0)
     snr: float = Field(gt=0)
     width: float = Field(gt=0)
-    ra: RaStr
-    dec: DecStr
     beam_id: PositiveInt
 
 

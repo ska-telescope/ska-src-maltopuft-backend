@@ -70,3 +70,23 @@ Feature: Candidate service
         When the candidate is retrieved from the database by id
         Then an error response should be returned
         And the status code should be HTTP 404
+
+    Scenario: Cone search with point inside circle bounds
+        Given observation metadata exists in the database
+        And a candidate where ("ra","dec",) is ("6h03m00.65s","-40d03m23.2s",)
+        And the candidate exists in the database
+        When the query parameters ("ra","dec","radius") have values ("6h03m00.65s","-40d03m23.2s",1)
+        And candidates are retrieved from the database
+        Then a response should be returned
+        And the response data should contain 1 candidates
+        And the status code should be HTTP 200
+
+    Scenario: Cone search with point outside circle bounds
+        Given observation metadata exists in the database
+        And a candidate where ("ra","dec",) is ("6h03m00.65s","-40d03m23.2s",)
+        And the candidate exists in the database
+        When the query parameters ("ra","dec","radius") have values ("50h03m00.65s","-50d03m23.2s",1)
+        And candidates are retrieved from the database
+        Then a response should be returned
+        And the response data should contain 0 candidates
+        And the status code should be HTTP 200
