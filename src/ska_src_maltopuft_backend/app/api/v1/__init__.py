@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from ska_src_maltopuft_backend.app.api.responses import api_responses
 from ska_src_maltopuft_backend.candle.router import candle_router
+from ska_src_maltopuft_backend.catalogue.router import catalogue_router
 from ska_src_maltopuft_backend.health.router import health_router
 from ska_src_maltopuft_backend.label.router import label_router
 from ska_src_maltopuft_backend.observation.router import observation_router
@@ -40,5 +41,11 @@ v1_router.include_router(
     observation_router,
     prefix="/obs",
     tags=["Observation"],
+    responses=api_responses,  # type: ignore[arg-type]
+)
+v1_router.include_router(
+    catalogue_router,
+    prefix="/catalogues",
+    tags=["Catalogues"],
     responses=api_responses,  # type: ignore[arg-type]
 )

@@ -4,6 +4,9 @@ from ska_src_maltopuft_backend.candle.repository import (
     CandidateRepository,
     SPCandidateRepository,
 )
+from ska_src_maltopuft_backend.catalogue.repository import (
+    KnownPulsarRepository,
+)
 from ska_src_maltopuft_backend.label.repository import (
     EntityRepository,
     LabelRepository,
@@ -20,4 +23,5 @@ __all__ = [
     "LabelRepository",
     "ObservationRepository",
     "UserRepository",
+    "KnownPulsarRepository",
 ]

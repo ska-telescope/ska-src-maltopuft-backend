@@ -2,30 +2,7 @@
 
 from functools import partial
 
-from ska_src_maltopuft_backend.app.controllers import (
-    CandidateController,
-    EntityController,
-    LabelController,
-    ObservationController,
-    SPCandidateController,
-    UserController,
-)
-from ska_src_maltopuft_backend.app.models import (
-    Candidate,
-    Entity,
-    Label,
-    Observation,
-    SPCandidate,
-    User,
-)
-from ska_src_maltopuft_backend.app.repositories import (
-    CandidateRepository,
-    EntityRepository,
-    LabelRepository,
-    ObservationRepository,
-    SPCandidateRepository,
-    UserRepository,
-)
+from ska_src_maltopuft_backend.app import controllers, models, repositories
 
 
 class Factory:
@@ -34,36 +11,61 @@ class Factory:
     """
 
     # Repositories
-    user_repository = partial(UserRepository, User)
-    candidate_repository = partial(CandidateRepository, Candidate)
-    sp_candidate_repository = partial(SPCandidateRepository, SPCandidate)
-    entity_repository = partial(EntityRepository, Entity)
-    label_repository = partial(LabelRepository, Label)
-    observation_repository = partial(ObservationRepository, Observation)
+    user_repository = partial(repositories.UserRepository, models.User)
+    candidate_repository = partial(
+        repositories.CandidateRepository,
+        models.Candidate,
+    )
+    sp_candidate_repository = partial(
+        repositories.SPCandidateRepository,
+        models.SPCandidate,
+    )
+    entity_repository = partial(repositories.EntityRepository, models.Entity)
+    label_repository = partial(repositories.LabelRepository, models.Label)
+    observation_repository = partial(
+        repositories.ObservationRepository,
+        models.Observation,
+    )
+    known_pulsar_repository = partial(
+        repositories.KnownPulsarRepository,
+        models.KnownPulsar,
+    )
 
-    def get_user_controller(self) -> UserController:
+    def get_user_controller(self) -> controllers.UserController:
         """UserController factory."""
-        return UserController(repository=self.user_repository())
+        return controllers.UserController(repository=self.user_repository())
 
-    def get_observation_controller(self) -> ObservationController:
+    def get_observation_controller(self) -> controllers.ObservationController:
         """ObservationController factory."""
-        return ObservationController(repository=self.observation_repository())
+        return controllers.ObservationController(
+            repository=self.observation_repository(),
+        )
 
-    def get_candidate_controller(self) -> CandidateController:
+    def get_candidate_controller(self) -> controllers.CandidateController:
         """CandidateController factory."""
-        return CandidateController(repository=self.candidate_repository())
+        return controllers.CandidateController(
+            repository=self.candidate_repository(),
+        )
 
-    def get_sp_candidate_controller(self) -> SPCandidateController:
+    def get_sp_candidate_controller(self) -> controllers.SPCandidateController:
         """SPCandidateController factory."""
-        return SPCandidateController(
+        return controllers.SPCandidateController(
             repository=self.sp_candidate_repository(),
             observation_controller=self.get_observation_controller(),
         )
 
-    def get_entity_controller(self) -> EntityController:
+    def get_entity_controller(self) -> controllers.EntityController:
         """EntityController factory."""
-        return EntityController(repository=self.entity_repository())
+        return controllers.EntityController(
+            repository=self.entity_repository(),
+        )
 
-    def get_label_controller(self) -> LabelController:
+    def get_label_controller(self) -> controllers.LabelController:
         """LabelController factory."""
-        return LabelController(repository=self.label_repository())
+        return controllers.LabelController(repository=self.label_repository())
+
+    def get_known_pulsar_controller(self) -> controllers.KnownPulsarController:
+        """KnownPulsarController factory."""
+        return controllers.KnownPulsarController(
+            repository=self.known_pulsar_repository(),
+        )

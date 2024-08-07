@@ -6,6 +6,10 @@ from ska_src_maltopuft_backend.candle.requests import (
     GetCandidateQueryParams,
     GetSPCandidateQueryParams,
 )
+from ska_src_maltopuft_backend.catalogue.requests import (
+    CreateKnownPulsar,
+    GetKnownPulsarQueryParams,
+)
 from ska_src_maltopuft_backend.label.requests import (
     CreateEntity,
     CreateLabel,
@@ -28,4 +32,6 @@ __all__ = [
     "CreateLabel",
     "GetUserQueryParams",
     "CreateUser",
+    "GetKnownPulsarQueryParams",
+    "CreateKnownPulsar",
 ]

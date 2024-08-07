@@ -4,6 +4,9 @@ from ska_src_maltopuft_backend.candle.controller import (
     CandidateController,
     SPCandidateController,
 )
+from ska_src_maltopuft_backend.catalogue.controller import (
+    KnownPulsarController,
+)
 from ska_src_maltopuft_backend.label.controller import (
     EntityController,
     LabelController,
@@ -20,4 +23,5 @@ __all__ = [
     "LabelController",
     "ObservationController",
     "UserController",
+    "KnownPulsarController",
 ]
