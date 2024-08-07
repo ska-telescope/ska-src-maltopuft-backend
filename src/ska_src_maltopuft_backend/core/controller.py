@@ -17,12 +17,12 @@ from ska_src_maltopuft_backend.core.exceptions import (
     NotFoundError,
     ParentNotFoundError,
 )
-from ska_src_maltopuft_backend.core.extras import (
+from ska_src_maltopuft_backend.core.repository import BaseRepository
+from ska_src_maltopuft_backend.core.types import (
     CreateModelT,
     ModelT,
     UpdateModelT,
 )
-from ska_src_maltopuft_backend.core.repository import BaseRepository
 
 logger = logging.getLogger(__name__)
 

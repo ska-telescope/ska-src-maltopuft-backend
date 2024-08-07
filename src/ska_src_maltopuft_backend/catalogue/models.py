@@ -86,6 +86,7 @@ class KnownPulsar(Base, TimestampMixin):
     ra: Mapped[str] = mapped_column(sa.Unicode(12), nullable=True)
     dec: Mapped[str] = mapped_column(sa.Unicode(12), nullable=True)
     period: Mapped[float] = mapped_column(nullable=True)
+    pos: Mapped[str] = mapped_column(sa.String(), nullable=True)
 
     # Foreign keys
     catalogue_id: Mapped[int] = mapped_column(

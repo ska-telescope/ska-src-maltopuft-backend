@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func, insert, select
 
 from .database.base import Base
-from .extras import ModelT
+from .types import ModelT
 
 logger = logging.getLogger(__name__)
 

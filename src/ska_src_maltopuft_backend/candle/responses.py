@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, ConfigDict, Field, PastDatetime, PositiveInt
 
-from .extras import DecStr, RaStr
+from ska_src_maltopuft_backend.core.types import DecStr, RaStr
 
 
 class Candidate(BaseModel):

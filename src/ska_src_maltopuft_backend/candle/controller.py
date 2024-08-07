@@ -17,8 +17,8 @@ from ska_src_maltopuft_backend.candle.repository import (
     SPCandidateRepository,
 )
 from ska_src_maltopuft_backend.core.controller import BaseController
-from ska_src_maltopuft_backend.core.extras import ModelT
 from ska_src_maltopuft_backend.core.schemas import CommonQueryParams
+from ska_src_maltopuft_backend.core.types import ModelT
 from ska_src_maltopuft_backend.observation.controller import (
     ObservationController,
 )

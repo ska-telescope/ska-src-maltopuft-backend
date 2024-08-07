@@ -11,10 +11,11 @@ from pydantic import (
     StringConstraints,
 )
 
-from ska_src_maltopuft_backend.core.extras import PositiveList
-from ska_src_maltopuft_backend.core.schemas import CommonQueryParams
-
-from .extras import DecStr, RaStr
+from ska_src_maltopuft_backend.core.schemas import (
+    CommonQueryParams,
+    RaDecPositionBase,
+)
+from ska_src_maltopuft_backend.core.types import DecStr, PositiveList, RaStr
 
 
 class GetCandidateQueryParams(CommonQueryParams):
@@ -28,7 +29,7 @@ class GetCandidateQueryParams(CommonQueryParams):
     beam_id: Annotated[PositiveList[int], None] = Field(Query(default=[]))
 
 
-class CreateCandidate(BaseModel):
+class CreateCandidate(RaDecPositionBase):
     """Schema for Candidate model HTTP POST requests."""
 
     dm: float = Field(gt=0)

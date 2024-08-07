@@ -34,6 +34,7 @@ class Candidate(Base, TimestampMixin):
     width: Mapped[float] = mapped_column(nullable=False)
     ra: Mapped[str] = mapped_column(sa.Unicode(12), nullable=False)
     dec: Mapped[str] = mapped_column(sa.Unicode(12), nullable=False)
+    pos: Mapped[str] = mapped_column(sa.String(), nullable=False)
 
     # Foreign keys
     beam_id: Mapped[int] = mapped_column(
