@@ -39,6 +39,7 @@ class Factory:
         """ObservationController factory."""
         return controllers.ObservationController(
             repository=self.observation_repository(),
+            known_pulsar_controller=self.get_known_pulsar_controller(),
         )
 
     def get_candidate_controller(self) -> controllers.CandidateController:

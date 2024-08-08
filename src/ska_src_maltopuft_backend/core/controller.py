@@ -94,6 +94,23 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
 
         return db_obj[0]
 
+    async def get_by_id_multi(
+        self,
+        db: Session,
+        ids_: list[int],
+    ) -> Sequence[Row[ModelT]]:
+        """Returns the model instances matching the ids.
+
+        :param id_: The ids to match.
+        :return: The model instances.
+        """
+        db_obj = await self.repository.get_by_value_multi(
+            db=db,
+            field="id",
+            values=ids_,
+        )
+        return [row[0] for row in db_obj]
+
     async def count(
         self,
         db: Session,
