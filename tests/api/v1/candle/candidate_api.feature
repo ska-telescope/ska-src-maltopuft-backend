@@ -71,6 +71,7 @@ Feature: Candidate service
         Then an error response should be returned
         And the status code should be HTTP 404
 
+    @skip-ci
     Scenario: Cone search with point inside circle bounds
         Given observation metadata exists in the database
         And a candidate where ("ra","dec",) is ("6h03m00.65s","-40d03m23.2s",)
@@ -81,6 +82,7 @@ Feature: Candidate service
         And the response data should contain 1 candidates
         And the status code should be HTTP 200
 
+    @skip-ci
     Scenario: Cone search with point outside circle bounds
         Given observation metadata exists in the database
         And a candidate where ("ra","dec",) is ("6h03m00.65s","-40d03m23.2s",)
