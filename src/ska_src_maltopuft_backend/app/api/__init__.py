@@ -9,5 +9,4 @@ router = APIRouter()
 router.include_router(root_router)
 router.include_router(v1_router, prefix="/v1")
 
-
 __all__ = ["router"]

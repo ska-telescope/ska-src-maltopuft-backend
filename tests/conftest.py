@@ -2,6 +2,7 @@
 
 # ruff: noqa: ARG001 E402
 
+import os
 import uuid
 from collections.abc import Generator
 from unittest.mock import AsyncMock
@@ -25,6 +26,15 @@ from ska_src_maltopuft_backend.core.database.database import (
 from ska_src_maltopuft_backend.core.server import app
 from sqlalchemy.orm import Session, sessionmaker
 from starlette.authentication import AuthCredentials
+
+
+def pytest_bdd_apply_tag(tag: str, function: pytest.Item) -> bool | None:
+    """Custom handling of pytest_bdd tags."""
+    if os.getenv("ENVIRONMENT") == "CI" and tag == "skip-ci":
+        marker = pytest.mark.skip(reason="Not implemented in CI yet")
+        marker(function)
+        return True
+    return None
 
 
 @pytest.fixture()

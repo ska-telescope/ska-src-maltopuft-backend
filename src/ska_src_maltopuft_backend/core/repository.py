@@ -6,7 +6,7 @@ from collections.abc import Sequence
 from typing import Any, ClassVar, Generic
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import Row, Select
+from sqlalchemy import Row, Select, text
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func, insert, select
 
@@ -292,6 +292,16 @@ class BaseRepository(Generic[ModelT]):
         if q is None or not q:
             return query
 
+        if self._has_pos_filter_params(q):
+            _, _ = q.pop("ra"), q.pop("dec")
+            pos, radius = q.pop("pos"), q.pop("radius")
+            if pos is not None and radius is not None:
+                query = self._apply_pos_filter(
+                    query=query,
+                    pos=pos,
+                    radius=radius,
+                )
+
         for k, v in q.items():
             if self._is_pagination_param(k):
                 continue
@@ -354,7 +364,7 @@ class BaseRepository(Generic[ModelT]):
 
     def _is_pagination_param(self, key: str) -> bool:
         """Check if the key is a pagination parameter."""
-        return key in {"skip", "limit"}
+        return key in ("skip", "limit")
 
     def _is_invalid_filter(self, value: Any) -> bool:
         """Check if the filter value is invalid (None or empty list)."""
@@ -363,6 +373,11 @@ class BaseRepository(Generic[ModelT]):
     def _is_foreign_key_filter(self, key: str) -> bool:
         """Check if the key is a foreign key filter."""
         return key in self.foreign_key_map
+
+    def _has_pos_filter_params(self, q: dict[str, Any]) -> bool:
+        """Check if the key is a position (ra, dec) filter."""
+        pos_keys = ("ra", "dec", "pos", "radius")
+        return all(key in q for key in pos_keys)
 
     def _apply_foreign_key_filter(
         self,
@@ -412,3 +427,15 @@ class BaseRepository(Generic[ModelT]):
 
         # Treat list as discrete values
         return query.where(getattr(self.model_class, key).in_(value))
+
+    def _apply_pos_filter(
+        self,
+        query: Select,
+        pos: str,
+        radius: float,
+    ) -> Select:
+        """Adds a where clause to a query that implements a cone search in a
+        radius (radius) about point (pos).
+        """
+        pos_filter = text(f"spoint(pos) @ scircle '<{pos},{radius}d>'")
+        return query.where(pos_filter)
