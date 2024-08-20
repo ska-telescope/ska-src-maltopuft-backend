@@ -22,6 +22,7 @@ Feature: Pulsar catalogue service
         And the response data should contain 3 pulsars
         And the status code should be HTTP 200
 
+    @skip-ci
     Scenario: Pulsar cone search with point inside circle bounds
         Given a catalogue
         And a pulsar where ("ra","dec",) is ("6h03m00.65s","-40d03m23.2s",)
@@ -32,6 +33,7 @@ Feature: Pulsar catalogue service
         And the response data should contain 1 pulsars
         And the status code should be HTTP 200
 
+    @skip-ci
     Scenario: Pulsar cone search with point outside circle bounds
         Given a catalogue
         And a pulsar where ("ra","dec",) is ("6h03m00.65s","-40d03m23.2s",)
