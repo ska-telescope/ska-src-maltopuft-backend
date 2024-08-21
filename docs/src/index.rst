@@ -25,19 +25,28 @@ MALTOPUFT documentation
 
   README
 
-.. PAGES ========================================================
+.. User guide ====================================================
 ..
 
 .. toctree::
   :maxdepth: 2
-  :caption: Developer documentation
+  :caption: User guide
   :hidden:
 
-  pages/maltopuft.rst
-  pages/getting-started.md
-  pages/project-tooling.md
-  pages/project-structure.rst
-  pages/account.rst
-  pages/auth.rst
-  pages/crud.rst
+  pages/user-guide/account.rst
+
+.. Developer guide ===============================================
+..
+
+.. toctree::
+  :maxdepth: 2
+  :caption: Developer guide
+  :hidden:
+
+  pages/developer-guide/maltopuft.rst
+  pages/developer-guide/getting-started.md
+  pages/developer-guide/project-structure.rst
+  pages/developer-guide/project-tooling.md
+  pages/developer-guide/auth.rst
+  pages/developer-guide/crud.rst
   autoapi/index.rst
