@@ -6,7 +6,6 @@ from pydantic import (
     UUID4,
     BaseModel,
     ConfigDict,
-    EmailStr,
     Field,
     PastDatetime,
     StringConstraints,
@@ -20,7 +19,6 @@ class User(BaseModel):
 
     id: int = Field(gt=0)
     uuid: UUID4
-    email: EmailStr
     username: Annotated[str, StringConstraints(strip_whitespace=True)]
     is_admin: bool
     created_at: PastDatetime

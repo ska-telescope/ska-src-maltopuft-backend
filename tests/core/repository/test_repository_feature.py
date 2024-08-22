@@ -65,7 +65,7 @@ async def test_get_by(db: Session, repository: BaseRepository) -> None:
     fake_user = await repository.create(db=db, attributes=fake_user_data)
     db.commit()
 
-    for field in ("id", "uuid", "email", "username", "is_admin"):
+    for field in ("id", "uuid", "username", "is_admin"):
         value = getattr(fake_user, field)
         user = await repository.get_by(db=db, field=field, value=value)
         user = user[0][0]

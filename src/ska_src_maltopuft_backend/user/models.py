@@ -25,11 +25,6 @@ class User(Base, TimestampMixin):
         unique=True,
         nullable=False,
     )
-    email: Mapped[str] = mapped_column(
-        sa.Unicode(255),
-        nullable=False,
-        unique=True,
-    )
     username: Mapped[str] = mapped_column(
         sa.Unicode(255),
         nullable=False,
@@ -39,3 +34,12 @@ class User(Base, TimestampMixin):
 
     # Relationships
     labels: Mapped[list["Label"]] = relationship(back_populates="labeller")
+
+    def __repr__(self) -> str:
+        """User repr."""
+        return (
+            f"<User: id={self.id},"
+            f"uuid={self.uuid},"
+            f"username={self.username},"
+            f"is_admin={self.is_admin}"
+        )
