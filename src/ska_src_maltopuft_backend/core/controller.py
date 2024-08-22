@@ -80,7 +80,7 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         :param join_: The joins to make.
         :return: The model instance.
         """
-        db_obj: Row[ModelT] | None = await self.repository.get_unique_by(
+        db_obj: ModelT | None = await self.repository.get_unique_by(
             db=db,
             field="id",
             value=id_,
@@ -92,7 +92,7 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
             msg = f"{self._type} with id={id_} does not exist"
             raise NotFoundError(msg)
 
-        return db_obj[0]
+        return db_obj
 
     async def get_by_id_multi(
         self,
