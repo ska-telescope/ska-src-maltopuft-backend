@@ -8,12 +8,7 @@ from .exceptions import (
     InvalidAudienceError,
     PermissionDeniedError,
 )
-from .schemas import (
-    AccessToken,
-    AuthenticatedUser,
-    UnauthenticatedUser,
-    UserGroups,
-)
+from .schemas import AccessToken, AuthenticatedUser, UserGroups
 
 __all__ = [
     "BearerTokenAuthBackend",
@@ -25,5 +20,4 @@ __all__ = [
     "AccessToken",
     "UserGroups",
     "AuthenticatedUser",
-    "UnauthenticatedUser",
 ]

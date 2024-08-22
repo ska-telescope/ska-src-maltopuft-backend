@@ -43,13 +43,3 @@ class AuthenticatedUser(BaseUser):
     name: str
     preferred_username: str
     is_authenticated: bool = True
-
-
-@dataclass
-class UnauthenticatedUser(BaseUser):
-    """Unauthenticated user schema."""
-
-    # pylint: disable=W0223
-
-    name: str = ""
-    is_authenticated: bool = False
