@@ -1,11 +1,14 @@
 """Middleware to verify user authorisation."""
 
 import logging
+from typing import Any
 
 import httpx
 import jwt
+import sqlalchemy as sa
 from fastapi import status
 from fastapi.responses import JSONResponse
+from sqlalchemy.orm import Session
 from starlette.authentication import (
     AuthCredentials,
     AuthenticationBackend,
@@ -13,11 +16,13 @@ from starlette.authentication import (
 )
 from starlette.requests import HTTPConnection
 
+from ska_src_maltopuft_backend.app.schemas.requests import CreateUser
 from ska_src_maltopuft_backend.core.config import settings
 from ska_src_maltopuft_backend.core.exceptions import MaltopuftError
+from ska_src_maltopuft_backend.core.factory import Factory
 
 from .exceptions import InvalidAudienceError
-from .schemas import AccessToken, AuthenticatedUser
+from .schemas import AccessToken, AuthenticatedUser, UserGroups
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +36,13 @@ class BearerTokenAuthBackend(AuthenticationBackend):
     """
 
     # pylint: disable=R0903
+
+    def __init__(self, db: Session) -> None:
+        """Initialises the transactional database connection and user
+        controller.
+        """
+        self.db = db
+        self.user_controller = Factory().get_user_controller()
 
     def _get_token_from_header(self, auth_header: str) -> str:
         """Extract bearer token from Authorization header.
@@ -90,6 +102,30 @@ class BearerTokenAuthBackend(AuthenticationBackend):
         decoded = jwt.decode(token, options={"verify_signature": False})
         return AccessToken(**decoded)
 
+    async def _get_or_create_user(self, token: AccessToken) -> dict[str, Any]:
+        """Get the request user if it exists, otherwise create the request
+        user.
+        """
+        user = await self.user_controller.repository.get_unique_by(
+            db=self.db,
+            field="uuid",
+            value=token.sub,
+        )
+        if not user:
+            user_data = {
+                "uuid": token.sub,
+                "username": token.preferred_username,
+                "is_admin": UserGroups.MALTOPUFT_ADMIN in token.groups,
+            }
+            user = await self.user_controller.create(
+                db=self.db,
+                attributes=CreateUser(**user_data).model_dump(),
+            )
+        return {
+            c.key: getattr(user, c.key)
+            for c in sa.inspect(user).mapper.column_attrs
+        }
+
     async def authenticate(
         self,
         conn: HTTPConnection,
@@ -129,10 +165,11 @@ class BearerTokenAuthBackend(AuthenticationBackend):
         if decoded_token.aud != settings.MALTOPUFT_AUDIENCE:
             raise InvalidAudienceError
 
+        user = await self._get_or_create_user(token=decoded_token)
         # Inject authenticated user information into request
         return (
             AuthCredentials(decoded_token.groups),
-            AuthenticatedUser(**decoded_token.model_dump()),
+            AuthenticatedUser(**user),
         )
 
     def on_auth_error(

@@ -2,6 +2,7 @@
 
 # ruff: noqa: ARG001 E402
 
+import datetime as dt
 import os
 import uuid
 from collections.abc import Generator
@@ -109,10 +110,10 @@ def client_with_auth(db: Session) -> Generator[TestClient, None, None]:
         yield c
 
 
-@pytest.fixture(scope="module")
-def auth_backend() -> "BearerTokenAuthBackend":
+@pytest.fixture()
+def auth_backend(db: Session) -> "BearerTokenAuthBackend":
     """Instantiate a BearerTokenAuthBackend object test fixture."""
-    return BearerTokenAuthBackend()
+    return BearerTokenAuthBackend(db=db)
 
 
 @pytest.fixture(scope="session")
@@ -128,10 +129,14 @@ def authenticated_user() -> tuple[AuthCredentials, AuthenticatedUser]:
             ],
         ),
         AuthenticatedUser(
-            name="test-user",
             is_authenticated=True,
-            sub=uuid.uuid4(),
-            preferred_username="test-user",
+            id="1",
+            name="test-user",
+            is_admin=False,
+            created_at=dt.datetime.now(tz=dt.timezone.utc),  # noqa: UP017
+            updated_at=dt.datetime.now(tz=dt.timezone.utc),  # noqa: UP017
+            uuid=uuid.uuid4(),
+            username="test-user",
         ),
     )
 

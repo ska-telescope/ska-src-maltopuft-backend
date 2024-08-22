@@ -31,7 +31,7 @@ def valid_auth_header(context: dict[str, Any]) -> None:
     )
 
 
-@given("an bearer token authorization header")
+@given("an invalid bearer token authorization header")
 def invalid_auth_header(context: dict[str, Any]) -> None:
     context["request"] = build_request(
         headers={
