@@ -48,6 +48,11 @@ class ObservationFactory(SQLAlchemyFactory[Observation]):
 def obs_data_generator(**kwargs: Any) -> Observation:
     """Generate fake observation data."""
     data = ObservationFactory.build().__dict__
+    # Valid input needs to be provided here because the SQLAlchemy model
+    # factory doesn't have enough information to generate valid ra and dec
+    # strings.
+    data["s_ra"] = "5h21m09s"
+    data["s_dec"] = "16d38m22s"
     return Observation(
         **set_sqlalchemy_factory_args(data, **kwargs),
     )

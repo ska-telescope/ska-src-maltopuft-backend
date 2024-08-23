@@ -1,4 +1,4 @@
-"""Database CRUD operations for the User model."""
+"""Database CRUD operations for the Observation metadata models."""
 
 from ska_src_maltopuft_backend.core.repository import BaseRepository
 

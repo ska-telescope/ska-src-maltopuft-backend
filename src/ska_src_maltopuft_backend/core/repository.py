@@ -150,6 +150,27 @@ class BaseRepository(Generic[ModelT]):
         query = self._filter_by(query=query, field=field, value=value)
         return await self._execute_one(db=db, query=query)
 
+    async def get_by_value_multi(  # pylint: disable=R0913 # noqa: PLR0913
+        self,
+        db: Session,
+        field: str,
+        values: list[Any],
+        join_: list[str] | None = None,
+        order_: dict[str, dict[str, str]] | None = None,
+    ) -> Sequence[Row[ModelT]]:
+        """Returns the model instances matching the field and values.
+
+        :param db: The database session.
+        :param field: The field to match.
+        :param value: The value to match.
+        :param join_: The joins to make.
+        :param order_: The order of the results. (e.g desc, asc)
+        :return: The model instances.
+        """
+        query = self._build_query(join_=join_, order_=order_)
+        query = self._apply_filters(query=query, q={field: values})
+        return await self._execute_all(db=db, query=query)
+
     async def delete(self, db: Session, db_obj: ModelT) -> ModelT:
         """Deletes the model.
 

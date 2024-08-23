@@ -21,7 +21,7 @@ depends_on: str | Sequence[str] | None = None
 def upgrade() -> None:
     """Add pos attribute to Candidate and KnownPulsar models."""
     op.add_column("candidate", sa.Column("pos", sa.String(), nullable=False))
-    op.add_column("known_pulsar", sa.Column("pos", sa.String(), nullable=False))
+    op.add_column("known_pulsar", sa.Column("pos", sa.String(), nullable=True))
 
 
 def downgrade() -> None:
