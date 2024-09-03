@@ -25,6 +25,7 @@ RUN poetry config virtualenvs.in-project true --local \
     && poetry install --only main --no-root
 
 # Copy source code and install main package
+COPY alembic alembic
 COPY . .
 RUN poetry install --only main
 
