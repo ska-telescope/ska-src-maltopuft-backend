@@ -52,18 +52,12 @@ def engine() -> Generator[sa.engine.base.Engine, None, None]:
     """
     engine = init_engine()
 
-    with engine.connect() as connection:
-        connection.execute(sa.text("DROP TABLE IF EXISTS alembic_revision"))
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
     try:
         yield engine
     finally:
-        with engine.connect() as connection:
-            connection.execute(
-                sa.text("DROP TABLE IF EXISTS alembic_revision"),
-            )
         Base.metadata.drop_all(bind=engine)
         engine.dispose()
 
