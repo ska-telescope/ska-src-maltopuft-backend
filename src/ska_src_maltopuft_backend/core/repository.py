@@ -136,7 +136,7 @@ class BaseRepository(Generic[ModelT]):
         value: Any,
         join_: list[str] | None = None,
         order_: dict[str, dict[str, str]] | None = None,
-    ) -> Row[ModelT] | None:
+    ) -> ModelT | None:
         """Returns the model instance matching the field and value.
 
         :param db: The database session.
@@ -375,13 +375,18 @@ class BaseRepository(Generic[ModelT]):
         self,
         db: Session,
         query: Select,
-    ) -> Row[ModelT] | None:
+    ) -> ModelT | None:
         """Returns the first result from the query if it exists.
 
         :param query: The query to execute.
         :return: The first model instance.
         """
-        return db.execute(query).first()
+        obj = db.execute(query).first()
+        if not obj:
+            return None
+        if isinstance(obj, Row) and len(obj) == 0:
+            return None
+        return obj[0]
 
     def _is_pagination_param(self, key: str) -> bool:
         """Check if the key is a pagination parameter."""

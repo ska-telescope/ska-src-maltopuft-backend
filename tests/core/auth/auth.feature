@@ -5,7 +5,7 @@ Feature: TokenBearerAuthBackend
         Then the token is extracted and returned
 
     Scenario: Invalid Authorization header
-        Given an bearer token authorization header
+        Given an invalid bearer token authorization header
         Then an AuthenticationError is raised for invalid or unsupported authentication scheme
         And on_auth_error returns a JSONResponse with HTTP 401 status code
 

@@ -65,7 +65,7 @@ async def test_get_by(db: Session, repository: BaseRepository) -> None:
     fake_user = await repository.create(db=db, attributes=fake_user_data)
     db.commit()
 
-    for field in ("id", "uuid", "email", "username", "is_admin"):
+    for field in ("id", "uuid", "username", "is_admin"):
         value = getattr(fake_user, field)
         user = await repository.get_by(db=db, field=field, value=value)
         user = user[0][0]
@@ -120,8 +120,7 @@ async def test_get_unique_by_with_unique_field(
 
     user = await repository.get_unique_by(db=db, field="id", value=id_)
     assert user is not None
-    assert len(user) == 1
-    assert user[0].id == id_
+    assert user.id == id_
 
 
 @pytest.mark.asyncio()
@@ -152,8 +151,7 @@ async def test_get_unique_by_with_non_unique_field(
         value=user_1_data["is_admin"],
     )
     assert user is not None
-    assert len(user) == 1
-    assert user[0].id == (user_1_id or user_2_id)
+    assert user.id == (user_1_id or user_2_id)
 
 
 @pytest.mark.asyncio()

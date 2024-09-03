@@ -2,9 +2,10 @@
 
 from enum import Enum
 
-from pydantic import UUID4, BaseModel, Field, HttpUrl
-from pydantic.dataclasses import dataclass
-from starlette.authentication import BaseUser
+from pydantic import UUID4, BaseModel, HttpUrl, PositiveInt
+from starlette.authentication import SimpleUser
+
+from ska_src_maltopuft_backend.app.schemas.responses import User
 
 
 class AccessToken(BaseModel):
@@ -19,8 +20,8 @@ class AccessToken(BaseModel):
     aud: str
     scope: str
     name: str
-    exp: int = Field(gt=0)
-    iat: int = Field(gt=0)
+    exp: PositiveInt
+    iat: PositiveInt
     jti: UUID4
 
 
@@ -33,23 +34,9 @@ class UserGroups(str, Enum):
     MALTOPUFT_ADMIN = "src/maltopuft/admin"
 
 
-@dataclass
-class AuthenticatedUser(BaseUser):
+class AuthenticatedUser(User, SimpleUser):
     """Logged in (authenticated) user schema."""
 
     # pylint: disable=W0223
 
-    sub: UUID4
-    name: str
-    preferred_username: str
     is_authenticated: bool = True
-
-
-@dataclass
-class UnauthenticatedUser(BaseUser):
-    """Unauthenticated user schema."""
-
-    # pylint: disable=W0223
-
-    name: str = ""
-    is_authenticated: bool = False

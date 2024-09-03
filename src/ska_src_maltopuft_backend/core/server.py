@@ -10,6 +10,8 @@ from ska_src_maltopuft_backend.app.api import router
 from ska_src_maltopuft_backend.core.auth import BearerTokenAuthBackend
 from ska_src_maltopuft_backend.core.exceptions import MaltopuftError
 
+from .database.database import get_db
+
 
 def init_routers(app_: FastAPI) -> None:
     """Include all routers defined in src.api initialisation."""
@@ -51,7 +53,7 @@ def make_middleware() -> list[Middleware]:
         ),
         Middleware(
             AuthenticationMiddleware,
-            backend=BearerTokenAuthBackend(),
+            backend=BearerTokenAuthBackend(db=next(get_db())),
             on_error=BearerTokenAuthBackend.on_auth_error,
         ),
     ]

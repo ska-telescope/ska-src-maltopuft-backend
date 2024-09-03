@@ -5,10 +5,12 @@ from typing import Any
 
 import pytest
 from fastapi import status
+from fastapi.testclient import TestClient
 from httpx import Response
 from pytest_bdd import given, parsers, then, when
 from sqlalchemy.orm import Session
 
+from tests.api.v1.datagen import user_data_generator
 from tests.observation import datagen
 
 
@@ -43,6 +45,29 @@ def observation_metadata(db: Session, result: dict[str, Any]) -> None:
     db.add(beam_data)
     db.commit()
     result["beam_id"] = beam_data.id
+
+
+@given(parsers.parse("a user where {attributes} is {values}"))
+def user_with_attributes(
+    result: dict[str, Any],
+    attributes: str,
+    values: Any,
+) -> None:
+    """Create a dictionary of query parameters."""
+    user_attributes = {}
+    for att, val in zip(
+        ast.literal_eval(attributes),
+        ast.literal_eval(values),
+        strict=False,
+    ):
+        user_attributes[att] = val
+    result["user"] = user_data_generator(**user_attributes)
+
+
+@given("the user exists in the database")
+def user_exists(result: dict[str, Any], client: TestClient) -> None:
+    """Take user from the 'result' fixture and create it."""
+    client.post(url="/v1/users", json=result.get("user"))
 
 
 @when(parsers.parse("the query parameters {attributes} have values {values}"))
