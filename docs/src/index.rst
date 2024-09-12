@@ -34,6 +34,7 @@ MALTOPUFT documentation
   :hidden:
 
   pages/user-guide/account.rst
+  pages/user-guide/usage.rst
 
 .. Developer guide ===============================================
 ..
