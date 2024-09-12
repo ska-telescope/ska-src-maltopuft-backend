@@ -48,12 +48,15 @@ async def get_sp_candidates(
     """Get all single pulse candidates.
 
     When no query parameters are specified, the default behaviour is to fetch
-    single pulse candidates from the latest observation in ascending time
+    single pulse candidates from the earliest observation in ascending time
     order.
 
     If query parameters are specified, those single pulse candidates are
     selected and ordered by descending observeration time in order to return
     the *most recent* candidates to users by default.
+
+    If the ``latest`` query parameter is set to true, only candidates from
+    the most recent observation are returned (in ascending time order).
     """
     params = [q, q_foreign_key, q_pos]
     logger.info(
