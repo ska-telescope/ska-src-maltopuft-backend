@@ -3,19 +3,19 @@
 ## Prerequisites
 
 * Python >=3.11.
-* [PostgreSQL database](https://www.postgresql.org/docs/16/index.html). The application is developed with the latest version at the time of writing (PostgreSQL 16.2) deployed on Alpine 3.19 OS.
+* [PostgreSQL 16.x](https://www.postgresql.org/docs/16/index.html) with the [pgSphere](https://postgrespro.github.io/pgsphere/) extension enabled.
 * For containerised deployments, the only requirement is a working container engine installation running on your machine.
-    * [Podman](https://podman.io/docs) is the preferred container engine. [Docker](https://www.docker.com/get-started/) can be used equivalently (as a first port of call, try simply replacing `podman --> docker` in any commands below).
+    * [Podman](https://podman.io/docs) is the preferred container engine. [Docker](https://www.docker.com/get-started/) can be used equivalently (in the first instance, try simply replacing `podman` with `docker` in any commands below).
 
 ## Run the application
 
-After following one of the deployment methods below, navigating to `localhost:8000`, `127.0.0.1:8000` or `0.0.0.0:8000` in the browser should return the application landing page (`/`). API documentation generated with [OpenAPI](https://www.openapis.org/) can be viewed by navigating to the `/docs` endpoint.
+After following one of the deployment methods below, navigating to `localhost:8000`, `127.0.0.1:8000` or `0.0.0.0:8000` in the browser should return the application landing page (`/`). Interactive [OpenAPI](https://www.openapis.org/) documentation can be viewed by navigating to the `/docs` endpoint.
 
 ### Compose (recommended)
 
 It is recommended to deploy a local development environment with the docker compose file provided at `./docker/docker-compose.yaml`. This method brings up all the application dependencies and configures the network connectivity between them on the local machine.
 
-The build steps below build `Dockerfile`s on the local filesystem rather than using pre-existing, locally built images or pulling published images from a container registry.
+The build steps below build `Dockerfile`s on the local filesystem rather than using existing images (either built locally or by pulling images published to a container registry).
 
 In order for the supplied `docker-compose.yaml` to work out-of-the-box, this repository (`ska-src-maltopuft-backend`) and the frontend repository (`ska-src-maltopuft-frontend`) must therefore exist at the same level in the directory tree, as shown below:
 
@@ -24,31 +24,32 @@ In order for the supplied `docker-compose.yaml` to work out-of-the-box, this rep
     ├─ ska-src-maltopuft-backend/
         ├─ docker/
             ├─ docker-compose.yaml
+        ├─ Dockerfile
         ├─ ...
     ├─ ska-src-maltopuft-frontend/
+        ├─ Dockerfile
         ├─ ...
 ```
 
-Alternatively, the `build` fields in `docker-compose.yaml` can be modified to point to the respective directory. The remainder of this document assumes that commands are run from the `ska-src-maltopuft-backend/` directory.
+Alternatively, the `build` fields in `docker-compose.yaml` can be modified to point to the respective directory on the filesystem. The remainder of this document assumes that commands are run from the `ska-src-maltopuft-backend/` directory.
 
-Next, configure the `.env.docker` file by copying from the example:
+Next, configure the `.env.docker` file by copying from the example provided:
 
 ```
 cp .env.example .env.docker
 ```
 
-The contents of `.env.example` will work as-is with the docker compose configuration provided.
+The contents of `.env.example` will work as-is with the default docker compose configuration.
 
-You can rename `.env.docker` to anything you like. If renaming the file, the value of `services.ska-src-maltopuft-backend.env_file` must be modified. Alternatively, this field can be removed and provided as a [command-line argument](https://docs.docker.com/compose/environment-variables/set-environment-variables/#substitute-with---env-file).
+You can rename `.env.docker` to anything you like. If renaming the file, the value of `services.ska-src-maltopuft-backend.env_file` in `docker-compose.yml` must be modified accordingly. Alternatively, this field can be removed and provided as a [command-line argument](https://docs.docker.com/compose/environment-variables/set-environment-variables/#substitute-with---env-file).
 
 After configuring the environment variables, the following command will bring up the application development environment:
-
 
 ```bash
 podman compose -f "docker/docker-compose.yaml" up -d --build
 ```
 
-If you are only interested in bringing up the backend service and database the command can be modified as follows:
+If you are only interested in bringing up the backend service and database the command can be modified to specify only those services:
 
 ```bash
 podman compose  -f "docker/docker-compose.yaml" up -d --build maltopuftdb ska-src-maltopuft-backend
