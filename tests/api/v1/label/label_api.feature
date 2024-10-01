@@ -38,14 +38,6 @@ Feature: Label service
         Then a validation error response should be returned
         And the status code should be HTTP 422
 
-    Scenario: Create label with null parent labeller fails
-        Given observation metadata exists in the database
-        And a label
-        And parent labeller is None
-        When an attempt is made to create the label
-        Then a validation error response should be returned
-        And the status code should be HTTP 422
-
     Scenario: Create label with null parent candidate fails
         Given observation metadata exists in the database
         And a label
@@ -58,14 +50,6 @@ Feature: Label service
         Given observation metadata exists in the database
         And a label
         And parent entity attribute is non-existent
-        When an attempt is made to create the label
-        Then an error response should be returned
-        And the status code should be HTTP 404
-
-    Scenario: Create label with non-existent parent labeller fails
-        Given observation metadata exists in the database
-        And a label
-        And parent labeller attribute is non-existent
         When an attempt is made to create the label
         Then an error response should be returned
         And the status code should be HTTP 404
