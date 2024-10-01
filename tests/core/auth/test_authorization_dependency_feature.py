@@ -10,7 +10,6 @@ from ska_src_maltopuft_backend.core.auth import (
     AuthorizationChecker,
     PermissionDeniedError,
 )
-from ska_src_maltopuft_backend.core.config import settings
 
 scenarios("./authorization_dependency.feature")
 
@@ -21,16 +20,6 @@ def context() -> dict[str, Any]:
         "user_scopes": Any,
         "auth_checker": Any,
     }
-
-
-@given("authentication is enabled")
-def auth_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
-    # Enable auth
-    monkeypatch.setattr(
-        settings,
-        "AUTH_ENABLED",
-        "1",
-    )
 
 
 @given(parsers.parse("a request object containing valid {user_scopes}"))

@@ -29,9 +29,19 @@ def unauthed_user_flow(
     auth_backend: BearerTokenAuthBackend,
 ) -> None:
     result["user"] = asyncio.run(
-        auth_backend._get_or_create_user(  # noqa: SLF001
+        auth_backend._get_or_create_token_user(  # noqa: SLF001
             result.get("token"),  #  type: ignore[arg-type]
         ),
+    )
+
+
+@when("the test user is retrieved from the database")
+def test_user_flow(
+    result: dict[str, Any],
+    auth_backend: BearerTokenAuthBackend,
+) -> None:
+    result["user"] = asyncio.run(
+        auth_backend._get_or_create_test_admin_user(),  # noqa: SLF001
     )
 
 

@@ -55,7 +55,7 @@ def no_auth_header(context: dict[str, Any]) -> None:
 
 
 @when("the authentication middleware is executed")
-def unauthed_user_flow(
+def auth_flow(
     context: dict[str, Any],
     auth_backend: BearerTokenAuthBackend,
 ) -> None:
@@ -105,7 +105,7 @@ def check_invalid_scheme_error(
 
 
 @then("nothing is returned")
-def no_user_data(context: dict[str, Any]) -> None:
+def no_user_data_returned(context: dict[str, Any]) -> None:
     assert context.get("auth_result") is None
 
 
