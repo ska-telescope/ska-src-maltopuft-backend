@@ -46,7 +46,7 @@ def label_and_parent_data(
     result["user"] = user_data_generator()
     result["candidate"] = candidate_data_generator()
 
-    user = client.post(url="/v1/users", json=result.get("user")).json()
+    client.post(url="/v1/users", json=result.get("user")).json()
     cand = client.post(url="/v1/candle", json=result.get("candidate")).json()
 
     # Try to get an entity. If none exists, create one.
@@ -59,7 +59,6 @@ def label_and_parent_data(
         ).json()
 
     result["label"] = label_data_generator(
-        labeller_id=user.get("id"),
         candidate_id=cand.get("id"),
         entity_id=entity.get("id"),
     )

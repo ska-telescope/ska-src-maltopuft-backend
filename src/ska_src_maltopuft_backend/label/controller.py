@@ -38,11 +38,12 @@ class LabelController(BaseController[Label, CreateLabel, UpdateLabel]):
         """Create new label with labeller_id."""
         request: Request = kwargs.pop("request")
 
-        if request is None:
-            msg = "Request object is required."
-            raise ValueError(msg)
+        try:
+            attributes["labeller_id"] = request.user.id
+        except AttributeError:
+            msg = "Request object does not have a user attribute"
+            raise AttributeError(msg) from None
 
-        attributes["labeller_id"] = request.user.id
         return await super().create(
             db=db,
             attributes=attributes,
@@ -57,14 +58,15 @@ class LabelController(BaseController[Label, CreateLabel, UpdateLabel]):
     ) -> list[int]:
         """Create a list of labels with labeller_id."""
         request = kwargs.pop("request")
-
-        if request is None:
-            msg = "Request object is required."
-            raise ValueError(msg)
+        try:
+            labeller_id = request.user.id
+        except AttributeError:
+            msg = "Request object does not have a user attribute"
+            raise AttributeError(msg) from None
 
         labels_with_labeller_id = []
         for obj in objects:
-            obj["labeller_id"] = request.user.id
+            obj["labeller_id"] = labeller_id
             labels_with_labeller_id.append(obj)
 
         return await super().create_many(
