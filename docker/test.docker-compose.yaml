@@ -28,6 +28,7 @@ services:
       - PORT=8000
     volumes:
       - ${MALTOPUFT_ROOT_DIR}/ska-src-maltopuft-backend/src:/ska-src-maltopuft-backend/src
+      - ${MALTOPUFT_ROOT_DIR}/ska-src-maltopuft-backend/alembic:/ska-src-maltopuft-backend/alembic
     env_file:
       - path: ${MALTOPUFT_ROOT_DIR}/ska-src-maltopuft-backend/.env.example
     ports:
