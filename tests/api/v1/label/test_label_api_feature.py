@@ -19,14 +19,6 @@ def label_null_parent_entity(result: dict[str, Any]) -> None:
     label["entity_id"] = ""
 
 
-@given("parent labeller is None")
-def label_null_parent_labeller(result: dict[str, Any]) -> None:
-    """Generate fake label data with null parent labeller."""
-    label = result.get("label")
-    assert isinstance(label, dict)
-    label["labeller_id"] = ""
-
-
 @given("parent candidate is None")
 def label_null_parent_candidate(result: dict[str, Any]) -> None:
     """Generate fake label data with null parent candidate."""
@@ -41,14 +33,6 @@ def label_non_existent_parent_entity(result: dict[str, Any]) -> None:
     label = result.get("label")
     assert isinstance(label, dict)
     label["entity_id"] = 999
-
-
-@given("parent labeller attribute is non-existent")
-def label_non_existent_parent_labeller(result: dict[str, Any]) -> None:
-    """Generate fake label data with non-existent parent entity."""
-    label = result.get("label")
-    assert isinstance(label, dict)
-    label["labeller_id"] = 999
 
 
 @given("parent candidate attribute is non-existent")

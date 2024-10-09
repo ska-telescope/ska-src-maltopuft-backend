@@ -33,6 +33,10 @@ class BearerTokenAuthBackend(AuthenticationBackend):
     Uses the ska-src-auth-api to request a token exchange for the maltopuft
     backend from a base64 encoded access token extracted from an authorization
     header of the form "Bearer <token>".
+
+    If the AUTH_ENABLED environment variable is set to False, then a test
+    admin user is created and injected into the request. This setting should
+    not be used in production.
     """
 
     # pylint: disable=R0903
@@ -102,9 +106,33 @@ class BearerTokenAuthBackend(AuthenticationBackend):
         decoded = jwt.decode(token, options={"verify_signature": False})
         return AccessToken(**decoded)
 
-    async def _get_or_create_user(self, token: AccessToken) -> dict[str, Any]:
-        """Get the request user if it exists, otherwise create the request
-        user.
+    async def _get_or_create_test_admin_user(self) -> dict[str, Any]:
+        """Get or create a test user."""
+        user = await self.user_controller.repository.get_unique_by(
+            db=self.db,
+            field="username",
+            value="admin",
+        )
+        if not user:
+            user_data = {
+                "username": "admin",
+                "is_admin": True,
+            }
+            user = await self.user_controller.create(
+                db=self.db,
+                attributes=CreateUser(**user_data).model_dump(),
+            )
+        return {
+            c.key: getattr(user, c.key)
+            for c in sa.inspect(user).mapper.column_attrs
+        }
+
+    async def _get_or_create_token_user(
+        self,
+        token: AccessToken,
+    ) -> dict[str, Any]:
+        """Get the request user in the access token if it exists, otherwise
+        create the request user.
         """
         user = await self.user_controller.repository.get_unique_by(
             db=self.db,
@@ -149,7 +177,12 @@ class BearerTokenAuthBackend(AuthenticationBackend):
 
         """
         if not settings.AUTH_ENABLED:
-            return None
+            # Inject test admin user into request
+            user = await self._get_or_create_test_admin_user()
+            return (
+                AuthCredentials(UserGroups.MALTOPUFT_ADMIN),
+                AuthenticatedUser(**user),
+            )
 
         auth_header = conn.headers.get("Authorization")
 
@@ -157,6 +190,7 @@ class BearerTokenAuthBackend(AuthenticationBackend):
             # Inject UnauthenticatedUser into request
             return None
 
+        # Exchange token
         token = self._get_token_from_header(auth_header=auth_header)
         token = self._do_exchange_token(token=token)
 
@@ -165,7 +199,7 @@ class BearerTokenAuthBackend(AuthenticationBackend):
         if decoded_token.aud != settings.MALTOPUFT_AUDIENCE:
             raise InvalidAudienceError
 
-        user = await self._get_or_create_user(token=decoded_token)
+        user = await self._get_or_create_token_user(token=decoded_token)
         # Inject authenticated user information into request
         return (
             AuthCredentials(decoded_token.groups),

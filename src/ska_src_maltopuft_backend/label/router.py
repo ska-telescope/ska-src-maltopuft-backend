@@ -3,10 +3,11 @@
 import logging
 from typing import Any
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
+from ska_src_maltopuft_backend.core.auth.authenticated import Authenticated
 from ska_src_maltopuft_backend.core.database.database import get_db
 from ska_src_maltopuft_backend.core.factory import Factory
 
@@ -112,8 +113,10 @@ async def get_label(
     "/",
     response_model=Label | LabelBulk,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(Authenticated)],
 )
 async def post_labels(
+    request: Request,
     labels: CreateLabel | list[CreateLabel],
     db: Session = Depends(get_db),
     label_controller: LabelController = Depends(
@@ -123,9 +126,11 @@ async def post_labels(
     """Create a new label(s)."""
     if isinstance(labels, list):
         logger.info(f"Creating {len(labels)} Labels")
+        labels_dict = [obj.model_dump() for obj in labels]
         created_label_ids = await label_controller.create_many(
             db=db,
-            objects=labels,
+            objects=labels_dict,
+            request=request,
         )
         return LabelBulk(ids=created_label_ids)
 
@@ -133,6 +138,7 @@ async def post_labels(
     return await label_controller.create(
         db=db,
         attributes=labels.model_dump(),
+        request=request,
     )
 
 

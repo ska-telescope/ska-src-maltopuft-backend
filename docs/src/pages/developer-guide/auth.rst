@@ -7,7 +7,7 @@ Authentication and Authorization
 This documentation outlines the authentication and authorization process in the MALTOPUFT application.
 
 .. tip::
-    Authentication can be toggled on/off with the `AUTH_ENABLED` environment variable. Authentication is enabled by default and can be disabled by setting `AUTH_ENABLED` to 0. 
+    Authentication can be toggled on/off with the `AUTH_ENABLED` environment variable. Authentication is enabled by default and can be disabled by setting `AUTH_ENABLED` to 0. This setting should not be used in production.
 
 Introduction
 ============

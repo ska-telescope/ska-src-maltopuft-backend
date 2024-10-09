@@ -15,6 +15,7 @@ Feature: TokenBearerAuthBackend
         And on_auth_error returns a JSONResponse with HTTP 401 status code
 
     Scenario: Missing authorization header returns unauthenticated user
-        Given no authorization header is present in the request
+        Given authentication is enabled
+        And no authorization header is present in the request
         When the authentication middleware is executed
         Then nothing is returned

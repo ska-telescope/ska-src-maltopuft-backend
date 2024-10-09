@@ -4,7 +4,6 @@ import logging
 from collections.abc import Sequence
 from typing import Any, Generic
 
-from fastapi.encoders import jsonable_encoder
 from psycopg import errors as psycopgexc
 from pydantic import BaseModel
 from sqlalchemy import Row
@@ -156,9 +155,11 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         return [row[0] for row in rows]
 
     async def create(
-        self,
+        self,  # pylint: disable=unused-argument
         db: Session,
         attributes: dict[str, Any],
+        *args: Any,  # noqa: ARG002
+        **kwargs: Any,  # noqa: ARG002
     ) -> ModelT:
         """Creates a new Object in the DB.
 
@@ -195,12 +196,13 @@ class BaseController(Generic[ModelT, CreateModelT, UpdateModelT]):
         return created_object
 
     async def create_many(
-        self,
+        self,  # pylint: disable=unused-argument
         db: Session,
-        objects: list[CreateModelT],
+        objects: list[dict[str, Any]],
+        *args: Any,  # noqa: ARG002
+        **kwargs: Any,  # noqa: ARG002
     ) -> list[int]:
         """Create a list of objects."""
-        objects = [jsonable_encoder(obj) for obj in objects]
         try:
             created_ids = await self.repository.create_many(
                 db=db,

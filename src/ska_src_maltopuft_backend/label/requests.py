@@ -21,7 +21,6 @@ class GetLabelQueryParams(CommonQueryParams):
 class CreateLabel(BaseModel):
     """Schema for Label model HTTP POST requests."""
 
-    labeller_id: int = Field(gt=0)
     candidate_id: int = Field(gt=0)
     entity_id: int = Field(gt=0)
 
