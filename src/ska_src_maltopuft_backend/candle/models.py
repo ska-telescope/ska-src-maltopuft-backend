@@ -52,6 +52,11 @@ class Candidate(Base, TimestampMixin):
 
     __table_args__ = (
         sa.UniqueConstraint(
+            "dm",
+            "snr",
+            "width",
+            "ra",
+            "dec",
             "observed_at",
             "beam_id",
         ),
