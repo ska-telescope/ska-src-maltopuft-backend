@@ -8,6 +8,7 @@ from typing import Any, ClassVar, Generic
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import Row, Select, text
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.sql.expression import func, insert, select
 
 from .database.base import Base
@@ -258,7 +259,7 @@ class BaseRepository(Generic[ModelT]):
     def _apply_ordering(
         self,
         query: Select,
-        order_: dict | None = None,
+        order_: dict[str, list[str]] | None = None,
     ) -> Select:
         """Returns the query ordered by the given column.
 
@@ -273,16 +274,26 @@ class BaseRepository(Generic[ModelT]):
         desc = order_.get("desc")
 
         if asc is not None:
-            for order in asc:
-                query = query.order_by(
-                    getattr(self.model_class, order).asc(),
-                )
+            for attr in asc:
+                order = self._get_order_class_attr(attr_=attr)
+                query = query.order_by(order.asc())
         if desc is not None:
-            for order in desc:
-                query = query.order_by(
-                    getattr(self.model_class, order).desc(),
-                )
+            for attr in desc:
+                order = self._get_order_class_attr(attr_=attr)
+                query = query.order_by(order.desc())
         return query
+
+    def _get_order_class_attr(self, attr_: str) -> InstrumentedAttribute:
+        split_attr = attr_.split(".")
+
+        if len(split_attr) == 1:
+            model_class = self.model_class
+            attr = split_attr[-1]
+        else:
+            model_class = self.table_name_class_map.get(split_attr[0])
+            attr = split_attr[-1]
+
+        return getattr(model_class, attr)
 
     def _filter_by(
         self,

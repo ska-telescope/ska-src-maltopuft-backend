@@ -24,6 +24,7 @@ class Candidate(BaseModel):
     width: PositiveFloat
     ra: RaStr
     dec: DecStr
+    observed_at: PastDatetime
     beam_id: PositiveInt
     created_at: PastDatetime
     updated_at: PastDatetime
@@ -36,7 +37,6 @@ class SPCandidate(BaseModel):
 
     id: PositiveInt
     plot_path: str
-    observed_at: PastDatetime
     candidate_id: PositiveInt
     created_at: PastDatetime
     updated_at: PastDatetime

@@ -35,6 +35,7 @@ class Candidate(Base, TimestampMixin):
     ra: Mapped[str] = mapped_column(sa.Unicode(12), nullable=False)
     dec: Mapped[str] = mapped_column(sa.Unicode(12), nullable=False)
     pos: Mapped[str] = mapped_column(sa.String(), nullable=False)
+    observed_at: Mapped[dt.datetime] = mapped_column(nullable=False)
 
     # Foreign keys
     beam_id: Mapped[int] = mapped_column(
@@ -49,6 +50,13 @@ class Candidate(Base, TimestampMixin):
     )
     labels: Mapped[list["Label"]] = relationship(back_populates="candidate")
 
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "observed_at",
+            "beam_id",
+        ),
+    )
+
     def __repr__(self) -> str:
         """Candidate repr."""
         return (
@@ -58,6 +66,8 @@ class Candidate(Base, TimestampMixin):
             f"width={self.width},"
             f"ra={self.ra},"
             f"dec={self.dec},"
+            f"observed_at={self.observed_at},"
+            f"beam_id={self.beam_id},"
         )
 
 
@@ -73,8 +83,7 @@ class SPCandidate(Base, TimestampMixin):
     __tablename__ = "sp_candidate"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    plot_path: Mapped[str] = mapped_column(nullable=False)
-    observed_at: Mapped[dt.datetime] = mapped_column(nullable=False)
+    plot_path: Mapped[str] = mapped_column(nullable=False, unique=True)
 
     # Foreign keys
     candidate_id: Mapped[int] = mapped_column(
@@ -93,6 +102,5 @@ class SPCandidate(Base, TimestampMixin):
         return (
             f"<SPCandidate: id={self.id},"
             f"plot_path={self.plot_path},"
-            f"observed_at={self.observed_at},"
             f"candidate_id={self.candidate_id}"
         )

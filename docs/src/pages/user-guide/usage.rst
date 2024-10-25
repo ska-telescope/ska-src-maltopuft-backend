@@ -34,6 +34,7 @@ At this point in time, it is required to make two API requests to create a singl
       "dm": 1,
       "snr": 1,
       "width": 1,
+      "observed_at": "2024-09-12T13:35:30.917Z",
       "beam_id": 10
     }'
 
@@ -50,14 +51,13 @@ The second creates the single pulse candidate:
       -H 'Content-Type: application/json' \
       -d '{
       "plot_path": "/path/to/file",
-      "observed_at": "2024-09-12T13:35:30.917Z",
       "candidate_id": 1
     }'
 
 Fast transient candidate querying
 =================================
 
-Single pulse candidates can be retrieved ``observed_at`` as follows.
+Single pulse candidates can be retrieved by ascending ``candidate.observed_at`` as follows.
 
 .. code-block:: bash
 
@@ -71,7 +71,6 @@ Single pulse candidates can be retrieved ``observed_at`` as follows.
       {
         "id": 5859,
         "plot_path": "5859.jpg",
-        "observed_at": "2023-12-13T20:15:11.898000",
         "candidate_id": 5859,
         "created_at": "2024-09-12T13:49:41.393458",
         "updated_at": "2024-09-12T13:49:41.393458",
@@ -83,6 +82,7 @@ Single pulse candidates can be retrieved ``observed_at`` as follows.
           "ra": "53h92m48s",
           "dec": "1d05m66s",
           "beam_id": 3,
+          "observed_at": "2023-12-13T20:15:11.898000",
           "created_at": "2024-09-12T13:49:41.393458",
           "updated_at": "2024-09-12T13:49:41.393458"
         }
@@ -90,7 +90,6 @@ Single pulse candidates can be retrieved ``observed_at`` as follows.
       {
         "id": 1784,
         "plot_path": "1784.jpg",
-        "observed_at": "2023-12-13T20:15:11.927000",
         "candidate_id": 1784,
         "created_at": "2024-09-12T13:49:41.393458",
         "updated_at": "2024-09-12T13:49:41.393458",
@@ -102,13 +101,14 @@ Single pulse candidates can be retrieved ``observed_at`` as follows.
           "ra": "5h19m58s",
           "dec": "1d05m66s",
           "beam_id": 3,
+          "observed_at": "2023-12-13T20:15:11.927000",
           "created_at": "2024-09-12T13:49:41.393458",
           "updated_at": "2024-09-12T13:49:41.393458"
         }
       },
     ]
 
-When no query parameters are specified, the default behaviour is to fetch single pulse candidates from the earliest observation in ascending time order. If query parameters are specified, single pulse candidates are selected and ordered by descending observeration time in order to return the *most recent* candidates.
+When no query parameters are specified, the default behaviour is to fetch single pulse candidates from the earliest observation in ascending time order. If order query parameters are specified, single pulse candidates are selected and ordered by descending observeration time in order to return the *most recent* candidates.
 
 If the ``latest`` query parameter is set to ``true``, only candidates from the most recent observation are returned (in ascending time order):
 
@@ -124,7 +124,6 @@ If the ``latest`` query parameter is set to ``true``, only candidates from the m
       {
         "id": 8969,
         "plot_path": "tpn-0-12_1702540743166/60292.332245239406_DM_323.58_beam_390C.jpg",
-        "observed_at": "2023-12-14T07:58:25.989000",
         "candidate_id": 8969,
         "created_at": "2024-09-12T13:49:41.393458",
         "updated_at": "2024-09-12T13:49:41.393458",
@@ -136,6 +135,7 @@ If the ``latest`` query parameter is set to ``true``, only candidates from the m
           "ra": "5h19m58s",
           "dec": "1d05m66s",
           "beam_id": 5469,
+          "observed_at": "2023-12-14T07:58:25.989000",
           "created_at": "2024-09-12T13:49:41.393458",
           "updated_at": "2024-09-12T13:49:41.393458"
         }
@@ -143,7 +143,6 @@ If the ``latest`` query parameter is set to ``true``, only candidates from the m
       {
         "id": 492,
         "plot_path": "tpn-0-12_1702540742276/60292.3322456931_DM_308.54_beam_389C.jpg",
-        "observed_at": "2023-12-14T07:58:26.028000",
         "candidate_id": 492,
         "created_at": "2024-09-12T13:49:41.393458",
         "updated_at": "2024-09-12T13:49:41.393458",
@@ -155,6 +154,7 @@ If the ``latest`` query parameter is set to ``true``, only candidates from the m
           "ra": "5h19m58s",
           "dec": "1d05m66s",
           "beam_id": 5468,
+          "observed_at": "2023-12-14T07:58:26.028000",
           "created_at": "2024-09-12T13:49:41.393458",
           "updated_at": "2024-09-12T13:49:41.393458"
         }
@@ -162,7 +162,6 @@ If the ``latest`` query parameter is set to ``true``, only candidates from the m
       {
         "id": 1240,
         "plot_path": "tpn-0-12_1702540738189/60292.3322463737_DM_296.87_beam_395C.jpg",
-        "observed_at": "2023-12-14T07:58:26.087000",
         "candidate_id": 1240,
         "created_at": "2024-09-12T13:49:41.393458",
         "updated_at": "2024-09-12T13:49:41.393458",
@@ -174,6 +173,7 @@ If the ``latest`` query parameter is set to ``true``, only candidates from the m
           "ra": "5h19m58s",
           "dec": "1d05m66s",
           "beam_id": 5474,
+          "observed_at": "2023-12-14T07:58:26.087000",
           "created_at": "2024-09-12T13:49:41.393458",
           "updated_at": "2024-09-12T13:49:41.393458"
         }
@@ -181,7 +181,6 @@ If the ``latest`` query parameter is set to ``true``, only candidates from the m
       {
         "id": 2838,
         "plot_path": "tpn-0-12_1702540739059/60292.3322603247_DM_314.68_beam_395C.jpg",
-        "observed_at": "2023-12-14T07:58:27.292000",
         "candidate_id": 2838,
         "created_at": "2024-09-12T13:49:41.393458",
         "updated_at": "2024-09-12T13:49:41.393458",
@@ -193,6 +192,7 @@ If the ``latest`` query parameter is set to ``true``, only candidates from the m
           "ra": "5h19m58s",
           "dec": "1d05m66s",
           "beam_id": 5474,
+          "observed_at": "2023-12-14T07:58:27.292000",
           "created_at": "2024-09-12T13:49:41.393458",
           "updated_at": "2024-09-12T13:49:41.393458"
         }
@@ -328,8 +328,8 @@ Once the label entities have been created, labels can be assigned to candidates 
       'http://localhost:8000/v1/labels/' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
+      -H 'Bearer your-token' \
       -d '{
-      "labeller_id": 1,
       "candidate_id": 1,
       "entity_id": 1
     }'
@@ -360,12 +360,12 @@ Labels can be retrieved with:
           "ra": "5h19m58s",
           "dec": "1d05m66s",
           "beam_id": 4270,
+          "observed_at": "2023-12-14T02:44:32.473000",
           "created_at": "2024-09-12T13:49:41.393458",
           "updated_at": "2024-09-12T13:49:41.393458",
           "sp_candidate": {
             "id": 1,
             "plot_path": "1.jpg",
-            "observed_at": "2023-12-14T02:44:32.473000",
             "candidate_id": 1,
             "created_at": "2024-09-12T13:49:41.393458",
             "updated_at": "2024-09-12T13:49:41.393458"

@@ -65,7 +65,7 @@ async def get_sp_candidates(
     return await sp_candidate_controller.get_all(
         db=db,
         join_=["candidate", "beam", "host", "observation", "schedule_block"],
-        order_={"asc": ["observed_at"]},
+        order_={"asc": ["candidate.observed_at"]},
         q=params,
     )
 
