@@ -49,24 +49,20 @@ class MeerkatScheduleBlock(Base, TimestampMixin):
     __tablename__ = "meerkat_schedule_block"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    meerkat_id: Mapped[int] = mapped_column(nullable=False)
-    meerkat_id_code: Mapped[str] = mapped_column(nullable=False)
+    meerkat_id: Mapped[int] = mapped_column(nullable=False, unique=True)
+    meerkat_id_code: Mapped[str] = mapped_column(nullable=False, unique=True)
     proposal_id: Mapped[str] = mapped_column(nullable=False)
 
     # Foreign keys
     schedule_block_id: Mapped[int] = mapped_column(
         sa.ForeignKey("schedule_block.id"),
         nullable=False,
+        unique=True,
     )
 
     # Relationships
     schedule_block: Mapped["ScheduleBlock"] = relationship(
         back_populates="meerkat_schedule_block",
-    )
-
-    __table_args__ = (
-        sa.UniqueConstraint("meerkat_id"),
-        sa.UniqueConstraint("meerkat_id_code"),
     )
 
     def __repr__(self) -> str:
@@ -165,6 +161,18 @@ class Observation(Base, TimestampMixin):
         back_populates="observation",
     )
 
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "t_min",
+            "s_ra",
+            "s_dec",
+            "facility_name",
+            "instrument_name",
+            "coherent_beam_config_id",
+            "schedule_block_id",
+        ),
+    )
+
     def __repr__(self) -> str:
         """Observation repr."""
         return (
@@ -202,6 +210,23 @@ class TilingConfig(Base, TimestampMixin):
     # Relationships
     observation: Mapped["Observation"] = relationship(
         back_populates="tiling_config",
+    )
+
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "coordinate_type",
+            "epoch",
+            "epoch_offset",
+            "method",
+            "nbeams",
+            "overlap",
+            "reference_frequency",
+            "shape",
+            "target",
+            "ra",
+            "dec",
+            "observation_id",
+        ),
     )
 
     def __repr__(self) -> str:
@@ -248,6 +273,17 @@ class Beam(Base, TimestampMixin):
         back_populates="beams",
     )
 
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "number",
+            "coherent",
+            "ra",
+            "dec",
+            "host_id",
+            "observation_id",
+        ),
+    )
+
     def __repr__(self) -> str:
         """Beam repr."""
         return (
@@ -276,6 +312,13 @@ class Host(Base, TimestampMixin):
     # Relationships
     beams: Mapped["Beam"] = relationship(
         back_populates="host",
+    )
+
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "ip_address",
+            "hostname",
+        ),
     )
 
     def __repr__(self) -> str:
