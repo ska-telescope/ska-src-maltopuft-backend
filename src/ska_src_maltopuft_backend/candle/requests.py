@@ -26,6 +26,7 @@ class GetCandidateQueryParams(CommonQueryParams, RaDecPositionQueryParameters):
     dm: Annotated[PositiveList[float], None] = Field(Query(default=[]))
     snr: Annotated[PositiveList[float], None] = Field(Query(default=[]))
     width: Annotated[PositiveList[float], None] = Field(Query(default=[]))
+    observed_at: list[Annotated[PastDatetime, None]] = Field(Query(default=[]))
     beam_id: Annotated[PositiveList[int], None] = Field(Query(default=[]))
 
 
@@ -35,6 +36,7 @@ class CreateCandidate(RaDecPositionBase):
     dm: PositiveFloat
     snr: PositiveFloat
     width: PositiveFloat
+    observed_at: PastDatetime
     beam_id: PositiveInt
 
 
@@ -44,7 +46,6 @@ class GetSPCandidateQueryParams(CommonQueryParams):
     plot_path: list[
         (Annotated[str, StringConstraints(strip_whitespace=True)] | None)
     ] = Field(Query(default=[]))
-    observed_at: list[Annotated[PastDatetime, None]] = Field(Query(default=[]))
 
     candidate_id: Annotated[PositiveList[int], None] = Field(Query(default=[]))
 
@@ -55,6 +56,5 @@ class CreateSPCandidate(BaseModel):
     """Schema for SPCandidate model HTTP POST requests."""
 
     plot_path: Annotated[str, StringConstraints(strip_whitespace=True)]
-    observed_at: PastDatetime
 
     candidate_id: PositiveInt

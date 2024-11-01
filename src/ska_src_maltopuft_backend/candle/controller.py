@@ -117,7 +117,7 @@ class SPCandidateController(
         """
         _params = await self._prepare_query_parameters(db=db, params=q)
         if self._is_fetch_latest_observation(params=_params):
-            order_ = {"asc": ["observed_at"]}
+            order_ = {"asc": ["candidate.observed_at"]}
         rows: Sequence[Row[ModelT]] = await self.repository.get_all(
             db=db,
             join_=join_,
