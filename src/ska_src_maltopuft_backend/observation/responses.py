@@ -3,7 +3,10 @@
 from pydantic import BaseModel, ConfigDict, PastDatetime, PositiveInt
 
 from ska_src_maltopuft_backend.app.schemas.responses import KnownPulsar
-from ska_src_maltopuft_backend.core.types import DecStr, RaStr
+from ska_src_maltopuft_backend.core.types import (
+    DeclinationDegrees,
+    RightAscensionDegrees,
+)
 
 
 class ScheduleBlock(BaseModel):
@@ -26,8 +29,8 @@ class Observation(BaseModel):
 
     t_min: PastDatetime | None = None
     t_max: PastDatetime | None = None
-    s_ra: RaStr
-    s_dec: DecStr
+    s_ra: RightAscensionDegrees
+    s_dec: DeclinationDegrees
 
     created_at: PastDatetime
     updated_at: PastDatetime

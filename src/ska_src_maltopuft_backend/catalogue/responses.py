@@ -8,7 +8,10 @@ from pydantic import (
     PositiveInt,
 )
 
-from ska_src_maltopuft_backend.core.types import DecStr, RaStr
+from ska_src_maltopuft_backend.core.types import (
+    DeclinationDegrees,
+    RightAscensionDegrees,
+)
 
 
 class KnownPulsar(BaseModel):
@@ -22,8 +25,8 @@ class KnownPulsar(BaseModel):
     name: str
     dm: PositiveFloat | None
     width: PositiveFloat | None
-    ra: RaStr
-    dec: DecStr
+    ra: RightAscensionDegrees
+    dec: DeclinationDegrees
     period: PositiveFloat | None
     created_at: PastDatetime
     updated_at: PastDatetime

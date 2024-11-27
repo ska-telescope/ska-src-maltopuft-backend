@@ -51,8 +51,8 @@ def obs_data_generator(**kwargs: Any) -> Observation:
     # Valid input needs to be provided here because the SQLAlchemy model
     # factory doesn't have enough information to generate valid ra and dec
     # strings.
-    data["s_ra"] = "5h21m09s"
-    data["s_dec"] = "16d38m22s"
+    data["s_ra"] = 80.28750
+    data["s_dec"] = 16.63944
     return Observation(
         **set_sqlalchemy_factory_args(data, **kwargs),
     )

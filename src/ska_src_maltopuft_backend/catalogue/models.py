@@ -1,6 +1,7 @@
 """External catalogue known radio pulse source models."""
 
 import datetime as dt
+from decimal import Decimal
 
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -83,8 +84,14 @@ class KnownPulsar(Base, TimestampMixin):
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
     dm: Mapped[float] = mapped_column(nullable=True)
     width: Mapped[float] = mapped_column(nullable=True)
-    ra: Mapped[str] = mapped_column(sa.Unicode(12), nullable=True)
-    dec: Mapped[str] = mapped_column(sa.Unicode(12), nullable=True)
+    ra: Mapped[Decimal] = mapped_column(
+        sa.REAL(precision=5),
+        nullable=True,
+    )
+    dec: Mapped[Decimal] = mapped_column(
+        sa.REAL(precision=5),
+        nullable=True,
+    )
     period: Mapped[float] = mapped_column(nullable=True)
     pos: Mapped[str] = mapped_column(sa.String(), nullable=True)
 

@@ -15,14 +15,14 @@ from pydantic import (
     field_validator,
 )
 
-from .types import DecStr, PositiveList, RaStr
+from .types import DeclinationDegrees, PositiveList, RightAscensionDegrees
 
 
 class RaDecPositionBase(BaseModel):
     """Schema for Ra and Dec attributes."""
 
-    ra: RaStr = Field(...)
-    dec: DecStr = Field(...)
+    ra: RightAscensionDegrees = Field(...)
+    dec: DeclinationDegrees = Field(...)
 
     @computed_field  # type: ignore[misc]
     @property
@@ -34,8 +34,8 @@ class RaDecPositionBase(BaseModel):
 class RaDecPositionQueryParameters(BaseModel):
     """Query parameters for Ra and Dec attributes used in cone searches."""
 
-    ra: RaStr | None = None
-    dec: DecStr | None = None
+    ra: RightAscensionDegrees | None = None
+    dec: DeclinationDegrees | None = None
     radius: PositiveFloat | None = None
 
     @computed_field  # type: ignore[misc]

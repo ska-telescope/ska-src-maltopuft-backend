@@ -2,16 +2,16 @@
 
 from .types import (
     CreateModelT,
-    DecStr,
+    DeclinationDegrees,
     ModelT,
     PositiveList,
-    RaStr,
+    RightAscensionDegrees,
     UpdateModelT,
 )
 
 __all__ = [
-    "DecStr",
-    "RaStr",
+    "DeclinationDegrees",
+    "RightAscensionDegrees",
     "ModelT",
     "CreateModelT",
     "UpdateModelT",

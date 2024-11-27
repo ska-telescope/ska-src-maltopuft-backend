@@ -1,6 +1,7 @@
 """Candidate handler database models."""
 
 import datetime as dt
+from decimal import Decimal
 from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
@@ -32,8 +33,14 @@ class Candidate(Base, TimestampMixin):
     dm: Mapped[float] = mapped_column(nullable=False)
     snr: Mapped[float] = mapped_column(nullable=False)
     width: Mapped[float] = mapped_column(nullable=False)
-    ra: Mapped[str] = mapped_column(sa.Unicode(12), nullable=False)
-    dec: Mapped[str] = mapped_column(sa.Unicode(12), nullable=False)
+    ra: Mapped[Decimal] = mapped_column(
+        sa.REAL(precision=5),
+        nullable=False,
+    )
+    dec: Mapped[Decimal] = mapped_column(
+        sa.REAL(precision=5),
+        nullable=False,
+    )
     pos: Mapped[str] = mapped_column(sa.String(), nullable=False)
     observed_at: Mapped[dt.datetime] = mapped_column(nullable=False)
 

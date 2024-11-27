@@ -634,8 +634,8 @@ def test_has_pos_filter_with_invalid_params(
 def test_has_pos_filter_with_missing_param(repository: BaseRepository) -> None:
     """Missing pos filter param returns False."""
     q: dict[str, Any] = {
-        "ra": "6h03m00.65s",
-        "dec": "-40d03m23.2s",
+        "ra": 90.75270833,
+        "dec": -40.05644444,
         "pos": "(6h03m00.65s,-40d03m23.2s)",
     }
     assert not repository._has_pos_filter_params(q=q)
@@ -644,8 +644,8 @@ def test_has_pos_filter_with_missing_param(repository: BaseRepository) -> None:
 def test_has_pos_filter_with_valid_params(repository: BaseRepository) -> None:
     """Present and valid pos filter params returns True."""
     q: dict[str, Any] = {
-        "ra": "6h03m00.65s",
-        "dec": "-40d03m23.2s",
+        "ra": 90.75270833,
+        "dec": -40.05644444,
         "pos": "(6h03m00.65s,-40d03m23.2s)",
         "radius": 1,
     }

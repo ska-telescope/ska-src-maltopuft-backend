@@ -2,37 +2,14 @@
 
 from typing import Annotated, TypeVar
 
-from annotated_types import Gt
-from pydantic import BaseModel, StringConstraints
+from annotated_types import Ge, Gt, Le
+from pydantic import BaseModel
 
 from ska_src_maltopuft_backend.core.database.base import Base
 
-RA_PATTERN = r"^(\d)?\dh\d{2}m\d{2}(\.(\d)?\d)?s$"
-DEC_PATTERN = r"^(-)?(\d)?\dd\d{2}m\d{2}(\.\d)?s$"
+RightAscensionDegrees = Annotated[float, Ge(0), Le(180), lambda x: round(x, 5)]
 
-RaStr = Annotated[
-    str,
-    StringConstraints(
-        strip_whitespace=True,
-        # 0h00m00s
-        min_length=8,
-        # 00h00m00.00s
-        max_length=12,
-        pattern=RA_PATTERN,
-    ),
-]
-
-DecStr = Annotated[
-    str,
-    StringConstraints(
-        strip_whitespace=True,
-        # 0d00m00s
-        min_length=8,
-        # -00h00m00.0s
-        max_length=12,
-        pattern=DEC_PATTERN,
-    ),
-]
+DeclinationDegrees = Annotated[float, Ge(-90), Le(90), lambda x: round(x, 5)]
 
 T = TypeVar("T")
 PositiveList = list[Annotated[T, Gt(0)]]
