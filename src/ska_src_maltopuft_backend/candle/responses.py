@@ -8,7 +8,10 @@ from pydantic import (
     PositiveInt,
 )
 
-from ska_src_maltopuft_backend.core.types import DecStr, RaStr
+from ska_src_maltopuft_backend.core.types import (
+    DeclinationDegrees,
+    RightAscensionDegrees,
+)
 
 
 class Candidate(BaseModel):
@@ -22,8 +25,8 @@ class Candidate(BaseModel):
     dm: PositiveFloat
     snr: PositiveFloat
     width: PositiveFloat
-    ra: RaStr
-    dec: DecStr
+    ra: RightAscensionDegrees
+    dec: DeclinationDegrees
     observed_at: PastDatetime
     beam_id: PositiveInt
     created_at: PastDatetime

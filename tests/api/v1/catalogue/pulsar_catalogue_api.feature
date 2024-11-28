@@ -25,9 +25,9 @@ Feature: Pulsar catalogue service
     @skip-ci
     Scenario: Pulsar cone search with point inside circle bounds
         Given a catalogue
-        And a pulsar where ("ra","dec",) is ("6h03m00.65s","-40d03m23.2s",)
+        And a pulsar where ("ra","dec",) is (90.75270833,-40.05644444,)
         And the pulsar exists in the database
-        When the query parameters ("ra","dec","radius") have values ("6h03m00.65s","-40d03m23.2s",1)
+        When the query parameters ("ra","dec","radius") have values (90.75270833,-40.05644444,1)
         And pulsars are retrieved from the database
         Then a response should be returned
         And the response data should contain 1 pulsars
@@ -36,9 +36,9 @@ Feature: Pulsar catalogue service
     @skip-ci
     Scenario: Pulsar cone search with point outside circle bounds
         Given a catalogue
-        And a pulsar where ("ra","dec",) is ("6h03m00.65s","-40d03m23.2s",)
+        And a pulsar where ("ra","dec",) is (90.75270833,-40.05644444,)
         And the pulsar exists in the database
-        When the query parameters ("ra","dec","radius") have values ("50h03m00.65s","-50d03m23.2s",1)
+        When the query parameters ("ra","dec","radius") have values (0,0,1)
         And pulsars are retrieved from the database
         Then a response should be returned
         And the response data should contain 0 pulsars

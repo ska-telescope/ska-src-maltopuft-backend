@@ -51,8 +51,8 @@ def obs_data_generator(**kwargs: Any) -> Observation:
     # Valid input needs to be provided here because the SQLAlchemy model
     # factory doesn't have enough information to generate valid ra and dec
     # strings.
-    data["s_ra"] = "5h21m09s"
-    data["s_dec"] = "16d38m22s"
+    data["s_ra"] = 80.28750
+    data["s_dec"] = 16.63944
     return Observation(
         **set_sqlalchemy_factory_args(data, **kwargs),
     )
@@ -65,6 +65,7 @@ class CoherentBeamConfigFactory(SQLAlchemyFactory[CoherentBeamConfig]):
 def cb_config_data_generator(**kwargs: Any) -> CoherentBeamConfig:
     """Generate fake coherent beam configuration data."""
     data = CoherentBeamConfigFactory.build().__dict__
+    data["fraction_overlap"] = 0.25
     return CoherentBeamConfig(
         **set_sqlalchemy_factory_args(data, **kwargs),
     )
@@ -89,6 +90,8 @@ class BeamFactory(SQLAlchemyFactory[Beam]):
 def beam_data_generator(**kwargs: Any) -> Beam:
     """Generate fake beam data."""
     data = BeamFactory.build().__dict__
+    data["ra"] = 80.28750
+    data["dec"] = 16.63944
     return Beam(
         **set_sqlalchemy_factory_args(data, **kwargs),
     )
