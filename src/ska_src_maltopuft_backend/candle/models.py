@@ -34,11 +34,11 @@ class Candidate(Base, TimestampMixin):
     snr: Mapped[float] = mapped_column(nullable=False)
     width: Mapped[float] = mapped_column(nullable=False)
     ra: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=8, scale=5),
         nullable=False,
     )
     dec: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=8, scale=5),
         nullable=False,
     )
     pos: Mapped[str] = mapped_column(sa.String(), nullable=False)

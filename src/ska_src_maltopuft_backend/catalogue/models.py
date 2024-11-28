@@ -85,11 +85,11 @@ class KnownPulsar(Base, TimestampMixin):
     dm: Mapped[float] = mapped_column(nullable=True)
     width: Mapped[float] = mapped_column(nullable=True)
     ra: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=8, scale=5),
         nullable=True,
     )
     dec: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=8, scale=5),
         nullable=True,
     )
     period: Mapped[float] = mapped_column(nullable=True)

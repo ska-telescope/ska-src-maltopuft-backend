@@ -38,7 +38,7 @@ def invalid_input_value(context: dict[str, Any], value: Any) -> None:
 @then("validation with RightAscensionDegrees type is successful")
 def do_validate_ra_str(context: dict[str, Any]) -> None:
     res = context["ra_type_adapter"].validate_python(context.get("input"))
-    assert 0 <= res <= 180
+    assert 0 <= res <= 360
 
 
 @then("validation with DeclinationDegrees type is successful")

@@ -85,7 +85,7 @@ class CoherentBeamConfig(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     angle: Mapped[float] = mapped_column(nullable=False)
     fraction_overlap: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=5, scale=5),
         nullable=False,
     )
     x: Mapped[float] = mapped_column(nullable=False)
@@ -124,11 +124,11 @@ class Observation(Base, TimestampMixin):
     calib_level: Mapped[int] = mapped_column(nullable=True)
     obs_id: Mapped[str] = mapped_column(nullable=True)
     s_ra: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=8, scale=5),
         nullable=False,
     )
     s_dec: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=8, scale=5),
         nullable=False,
     )
     t_min: Mapped[dt.datetime] = mapped_column(nullable=True)
@@ -208,11 +208,11 @@ class TilingConfig(Base, TimestampMixin):
     shape: Mapped[str] = mapped_column(nullable=False)
     target: Mapped[str] = mapped_column(nullable=False)
     ra: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=8, scale=5),
         nullable=False,
     )
     dec: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=8, scale=5),
         nullable=False,
     )
 
@@ -263,11 +263,11 @@ class Beam(Base, TimestampMixin):
     number: Mapped[int] = mapped_column(nullable=False)
     coherent: Mapped[bool] = mapped_column(nullable=False)
     ra: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=8, scale=5),
         nullable=False,
     )
     dec: Mapped[Decimal] = mapped_column(
-        sa.REAL(precision=5),
+        sa.Numeric(precision=8, scale=5),
         nullable=False,
     )
 

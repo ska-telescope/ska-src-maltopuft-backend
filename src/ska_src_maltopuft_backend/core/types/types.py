@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from ska_src_maltopuft_backend.core.database.base import Base
 
-RightAscensionDegrees = Annotated[float, Ge(0), Le(180), lambda x: round(x, 5)]
+RightAscensionDegrees = Annotated[float, Ge(0), Le(360), lambda x: round(x, 5)]
 
 DeclinationDegrees = Annotated[float, Ge(-90), Le(90), lambda x: round(x, 5)]
 

@@ -7,9 +7,9 @@ Feature: Candidate handler
         Examples:
         | value       |
         | 0           |
-        | 180         |
+        | 360         |
         | 0.00000     |
-        | 180.00000   |
+        | 360.00000   |
 
     Scenario Outline: Valid DeclinationDegrees type
         Given valid input value <value> is provided
@@ -30,7 +30,7 @@ Feature: Candidate handler
         Examples:
         | value      |
         | -0.500001  |
-        | 180.500001 |
+        | 360.500001 |
 
     Scenario Outline: Invalid DeclinationDegrees type
         Given invalid input value <value> is provided
